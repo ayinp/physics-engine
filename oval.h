@@ -6,11 +6,13 @@
 class Oval : CollisionShape
 {
 public:
+    int width;
+    int height;
 public:
-    Oval(Vec2d location);
-    virtual shapeType type() override;
-    virtual Vec2d Center() override;
-    virtual vector<Vec2d> Corners() override;
+    Oval(Vec2d location, int width, int height);
+    virtual ShapeType type() override;
+    virtual Vec2d center() override;
+    virtual void draw(mssm::Graphics& g) override;
 };
 
 #endif // OVAL_H

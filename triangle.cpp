@@ -1,17 +1,76 @@
 #include "triangle.h"
 
-Triangle::Triangle(Vec2d location)
-    :CollisionShape(location)
+using namespace mssm;
+
+MyTriangle::MyTriangle(Vec2d location, bool isRightTriangle, bool slopeLeft, int width, int height)
+    :CollisionShape(location), isRightTriangle{isRightTriangle}, slopeLeft{slopeLeft}, width{width}, height{height}
 {
 
 }
 
-Vec2d Triangle::Center()
+ShapeType MyTriangle::type()
 {
-
+    return ShapeType::triangle;
 }
 
-vector<Vec2d> Triangle::Corners()
+Vec2d MyTriangle::center()
 {
+    return location;
+}
 
+Vec2d MyTriangle::centerOfMass()
+{
+    if(isRightTriangle){
+        if(slopeLeft){
+            Vec2d bottomRight = {location.x + width/2, location.y + height/2};
+            return {bottomRight.x - width/3, bottomRight.y - height/3};
+        }
+        else{
+            Vec2d bottomLeft = {location.x - width/2, location.y + height/2};
+            return {bottomLeft.x + width/3, bottomLeft.y - height/3};
+        }
+    }
+    else{
+        Vec2d bottomCenter =  {location.x, location.y + height/2};
+         cout << "got Here" << endl;
+        return {bottomCenter.x, bottomCenter.y - height/3};
+    }
+}
+
+vector<Vec2d> MyTriangle::corners()
+{
+    Vec2d corner1;
+    Vec2d corner2;
+    Vec2d corner3;
+
+    if(isRightTriangle){
+        if(slopeLeft){ //right angle is on right, hypot on left
+            corner1 = {location.x + width/2, location.y - height/2};
+            corner2 = {location.x - width/2, location.y + height/2};
+            corner3 = {location.x + width/2, location.y + height/2};
+        }
+        else{ // right angle is on left, hypot on right
+            corner1 = {location.x - width/2, location.y - height/2};
+            corner2 = {location.x - width/2, location.y + height/2};
+            corner3 = {location.x + width/2, location.y + height/2};
+        }
+    }
+    else{ //equilatoral
+
+        corner1 = {location.x, location.y - height/2};
+        corner2 = {location.x - width/2, location.y + height/2};
+        corner3 = {location.x + width/2, location.y + height/2};
+    }
+
+    return {corner1, corner2, corner3};
+}
+
+void MyTriangle::draw(mssm::Graphics &g)
+{
+    g.polygon(corners(), WHITE, WHITE);
+    for(int i = 0; i < corners().size(); i++){
+        g.ellipse(corners()[i], 5, 5, RED, RED);
+    }
+    g.ellipse(center(), 5, 5, RED, RED);
+    g.ellipse(centerOfMass(), 5, 5, BLUE, BLUE);
 }

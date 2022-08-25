@@ -3,14 +3,20 @@
 
 #include "collisionshape.h"
 
-class Triangle : CollisionShape
+class MyTriangle : CollisionShape
 {
 public:
+    bool isRightTriangle = true;
+    bool slopeLeft = true;
+    int height;
+    int width;
 public:
-    Triangle(Vec2d location);
-    virtual shapeType type() override;
-    virtual Vec2d Center() override;
-    virtual vector<Vec2d> Corners() override;
+    MyTriangle(Vec2d location, bool isRightTriangle, bool slopeLeft, int width, int height);
+    virtual ShapeType type() override;
+    virtual Vec2d center() override;
+    Vec2d centerOfMass();
+    vector<Vec2d> corners();
+    virtual void draw(mssm::Graphics& g) override;
 };
 
 #endif // TRIANGLE_H
