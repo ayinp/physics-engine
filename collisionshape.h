@@ -3,6 +3,8 @@
 
 #include "graphics.h"
 
+namespace ayin {
+
 enum ShapeType
 {
     rectangle,
@@ -22,5 +24,7 @@ public:
     virtual Vec2d center() = 0;
     virtual void draw(mssm::Graphics& g) = 0;
 };
+
+}
 
 #endif // COLLISIONSHAPE_H

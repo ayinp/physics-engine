@@ -1,24 +1,25 @@
 #include "triangle.h"
 
 using namespace mssm;
+using namespace ayin;
 
-MyTriangle::MyTriangle(Vec2d location, bool isRightTriangle, bool slopeLeft, int width, int height)
+Triangle::Triangle(Vec2d location, bool isRightTriangle, bool slopeLeft, int width, int height)
     :CollisionShape(location), isRightTriangle{isRightTriangle}, slopeLeft{slopeLeft}, width{width}, height{height}
 {
 
 }
 
-ShapeType MyTriangle::type()
+ShapeType Triangle::type()
 {
     return ShapeType::triangle;
 }
 
-Vec2d MyTriangle::center()
+Vec2d Triangle::center()
 {
     return location;
 }
 
-Vec2d MyTriangle::centerOfMass()
+Vec2d Triangle::centerOfMass()
 {
     if(isRightTriangle){
         if(slopeLeft){
@@ -32,12 +33,11 @@ Vec2d MyTriangle::centerOfMass()
     }
     else{
         Vec2d bottomCenter =  {location.x, location.y + height/2};
-         cout << "got Here" << endl;
         return {bottomCenter.x, bottomCenter.y - height/3};
     }
 }
 
-vector<Vec2d> MyTriangle::corners()
+vector<Vec2d> Triangle::corners()
 {
     Vec2d corner1;
     Vec2d corner2;
@@ -65,7 +65,7 @@ vector<Vec2d> MyTriangle::corners()
     return {corner1, corner2, corner3};
 }
 
-void MyTriangle::draw(mssm::Graphics &g)
+void Triangle::draw(mssm::Graphics &g)
 {
     g.polygon(corners(), WHITE, WHITE);
     for(int i = 0; i < corners().size(); i++){

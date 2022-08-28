@@ -1,24 +1,25 @@
 #include "rectangle.h"
 
 using namespace mssm;
+using namespace ayin;
 
-MyRectangle::MyRectangle(Vec2d location, int width, int height)
+Rectangle::Rectangle(Vec2d location, int width, int height)
     :CollisionShape(location), width{width}, height{height}
 {
 
 }
 
-ShapeType MyRectangle::type()
+ShapeType Rectangle::type()
 {
     return ShapeType::rectangle;
 }
 
-Vec2d MyRectangle::center()
+Vec2d Rectangle::center()
 {
     return location;
 }
 
-vector<Vec2d> MyRectangle::corners()
+vector<Vec2d> Rectangle::corners()
 {
     Vec2d topLeft = {location.x - width/2, location.y - height/2};
     Vec2d topRight = {location.x + width/2, location.y - height/2};
@@ -28,7 +29,7 @@ vector<Vec2d> MyRectangle::corners()
     return {topLeft, topRight, bottomLeft, bottomRight};
 }
 
-void MyRectangle::draw(Graphics &g)
+void Rectangle::draw(Graphics &g)
 {
     g.rect({location.x-width/2, location.y-height/2}, width, height, WHITE, WHITE);
     for(int i = 0; i < corners().size(); i++){

@@ -1,6 +1,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+namespace ayin {
 
 class GameObject
 {
@@ -9,5 +10,7 @@ public:
 public:
     GameObject();
 };
+
+}
 
 #endif // OBJECT_H

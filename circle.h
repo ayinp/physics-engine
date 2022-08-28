@@ -2,17 +2,18 @@
 #define OVAL_H
 
 #include "collisionshape.h"
+namespace ayin {
 
-class Oval : CollisionShape
+class Circle : public CollisionShape
 {
 public:
-    int width;
-    int height;
+    int rad;
 public:
-    Oval(Vec2d location, int width, int height);
+    Circle(Vec2d location, int rad);
     virtual ShapeType type() override;
     virtual Vec2d center() override;
     virtual void draw(mssm::Graphics& g) override;
 };
+}
 
 #endif // OVAL_H

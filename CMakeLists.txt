@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.13.0)
 #   sudo apt-get install freeglut3-dev
 
 # HEY!  Want to change the name of the project/executable?  Do it on the next line
-project(graphics2022 LANGUAGES CXX C)
+project(physics-engine LANGUAGES CXX C)
 
 set(INCLUDE_RANDOM TRUE)
 set(INCLUDE_PATHS TRUE)
@@ -53,10 +53,12 @@ add_executable(${PROJECT_NAME} ${ADD_EX_EXTRA}
     collisionshape.cpp
     triangle.h
     triangle.cpp
-    oval.h
-    oval.cpp
+    circle.h
+    circle.cpp
     rectangle.h
     rectangle.cpp
+    collision.h
+    collision.cpp
 )
 
 #set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
