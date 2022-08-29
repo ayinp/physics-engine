@@ -15,6 +15,10 @@ public:
     virtual ShapeType type() override;
     virtual Vec2d center() override;
     vector<Vec2d> corners();
+    Vec2d topLeft();
+    Vec2d topRight();
+    Vec2d bottomLeft();
+    Vec2d bottomRight();
     virtual void draw(mssm::Graphics& g) override;
 };
 }

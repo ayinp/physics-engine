@@ -1,6 +1,8 @@
 #include "collision.h"
+#include "graphics.h"
 
 using namespace ayin;
+
 
 
 bool collides(Circle *c1, Circle *c2)
@@ -24,9 +26,52 @@ bool collides(Triangle *t1, Triangle *t2)
 
 }
 
-bool collides(Circle *c, Rectangle *r)
+bool collides(Circle *c, Rectangle *r, mssm::Graphics& g)
 {
+    bool isAbove = c->location.y < r->topLeft().y;
+    bool isLeft = c->location.x < r->topLeft().x;
+    bool isBelow = c->location.y > r->bottomLeft().y;
+    bool isRight = c->location.x > r->bottomRight().x;
 
+    g.cout << (isAbove ? "above" : "not above") << endl;
+    g.cout << (isBelow ? "below" : "not below") << endl;
+    g.cout << (isLeft ? "left" : "not left") << endl;
+    g.cout << (isRight ? "right" : "not right") << endl;
+
+    if(isAbove){
+        if(isLeft){
+            g.cout << "TL" << endl;
+        }
+        else if(isRight){
+            g.cout << "TR" << endl;
+        }
+        else{
+            g.cout << "T" << endl;
+        }
+    }
+    else if(isBelow){
+        if(isLeft){
+            g.cout << "BL" << endl;
+        }
+        else if(isRight){
+            g.cout << "BR" << endl;
+        }
+        else{
+            g.cout << "B" << endl;
+        }
+    }
+    else{
+        if(isLeft){
+            g.cout << "L" << endl;
+        }
+        else if(isRight){
+            g.cout << "R" << endl;
+        }
+        else{
+            g.cout << "M" << endl;
+        }
+    }
+    return false;
 }
 
 bool collides(Circle *c, Triangle *t)

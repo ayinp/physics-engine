@@ -21,17 +21,32 @@ Vec2d Rectangle::center()
 
 vector<Vec2d> Rectangle::corners()
 {
-    Vec2d topLeft = {location.x - width/2, location.y - height/2};
-    Vec2d topRight = {location.x + width/2, location.y - height/2};
-    Vec2d bottomLeft = {location.x - width/2, location.y + height/2};
-    Vec2d bottomRight = {location.x + width/2, location.y + height/2};
+    return {topLeft(), topRight(), bottomLeft(), bottomRight()};
+}
 
-    return {topLeft, topRight, bottomLeft, bottomRight};
+Vec2d Rectangle::topLeft()
+{
+    return {location.x - width/2, location.y - height/2};
+}
+
+Vec2d Rectangle::topRight()
+{
+    return {location.x + width/2, location.y - height/2};
+}
+
+Vec2d Rectangle::bottomLeft()
+{
+     return {location.x - width/2, location.y + height/2};
+}
+
+Vec2d Rectangle::bottomRight()
+{
+     return {location.x + width/2, location.y + height/2};
 }
 
 void Rectangle::draw(Graphics &g)
 {
-    g.rect({location.x-width/2, location.y-height/2}, width, height, WHITE, WHITE);
+    g.rect({location.x-width/2, location.y-height/2}, width, height, WHITE);
     for(int i = 0; i < corners().size(); i++){
         g.ellipse(corners()[i], 5, 5, RED, RED);
     }
