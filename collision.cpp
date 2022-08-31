@@ -41,34 +41,67 @@ bool collides(Circle *c, Rectangle *r, mssm::Graphics& g)
     if(isAbove){
         if(isLeft){
             g.cout << "TL" << endl;
+            if((c->location - r->topLeft()).magnitude() < c->rad){
+                return true;
+            }
+            return false;
         }
         else if(isRight){
             g.cout << "TR" << endl;
+            if((c->location - r->topRight()).magnitude() < c->rad){
+                return true;
+            }
+            return false;
         }
         else{
             g.cout << "T" << endl;
+            if(abs(r->location.y - c->location.y) - (c->rad + r->height/2) < 0){
+                return true;
+            }
+            return false;
         }
     }
     else if(isBelow){
         if(isLeft){
             g.cout << "BL" << endl;
+            if((c->location - r->bottomLeft()).magnitude() < c->rad){
+                return true;
+            }
+            return false;
         }
         else if(isRight){
             g.cout << "BR" << endl;
+            if((c->location - r->bottomRight()).magnitude() < c->rad){
+                return true;
+            }
+            return false;
         }
         else{
             g.cout << "B" << endl;
+            if(abs(c->location.y - r->location.y) - (c->rad + r->height/2) < 0){
+                return true;
+            }
+            return false;
         }
     }
     else{
         if(isLeft){
             g.cout << "L" << endl;
+            if(abs(c->location.x - r->location.x) - (c->rad + r->width/2) < 0){
+                return true;
+            }
+            return false;
         }
         else if(isRight){
             g.cout << "R" << endl;
+            if(abs(r->location.x - c->location.x) - (c->rad + r->width/2) < 0){
+                return true;
+            }
+            return false;
         }
         else{
             g.cout << "M" << endl;
+            return true;
         }
     }
     return false;
