@@ -20,14 +20,14 @@ int main()
     //   Paths::findAsset("skull.png");
     Graphics g("Test", 1024, 768);
 
-    Rectangle shape1(Vec2d{ g.width()/2, g.height()/2}, 100, 100);
+    Triangle shape1(Vec2d{g.width()/2, g.height()/2}, false, false, 100, 100);
 
 
     while (g.draw()) {
-        Circle shape2(g.mousePos(), 100);
+        Rectangle shape2(g.mousePos(), 100, 100);
         shape1.draw(g);
         shape2.draw(g);
-        if(collides(&shape2, &shape1, g)){
+        if(collides(&shape2, &shape1)){
             g.cout << "AHHHHHHHHHH" << endl;
         }
 

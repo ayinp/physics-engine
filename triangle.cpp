@@ -68,9 +68,11 @@ vector<Vec2d> Triangle::corners()
 void Triangle::draw(mssm::Graphics &g)
 {
     g.polygon(corners(), WHITE, WHITE);
-    for(int i = 0; i < corners().size(); i++){
-        g.ellipse(corners()[i], 5, 5, RED, RED);
-    }
+
+    g.ellipse(corners()[0], 5, 5, RED, RED);
+    g.ellipse(corners()[1], 5, 5, GREEN, GREEN);
+    g.ellipse(corners()[2], 5, 5, YELLOW, YELLOW);
+
     g.ellipse(center(), 5, 5, RED, RED);
     g.ellipse(centerOfMass(), 5, 5, BLUE, BLUE);
 }

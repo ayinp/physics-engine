@@ -9,9 +9,9 @@ class GameObject
 public:
     bool isStatic{true};
     Vec2d location;
-    CollisionShape* hitBox(Vec2d(location));
+    CollisionShape* hitBox;
 public:
-    GameObject();
+    GameObject(Vec2d location, CollisionShape *hitBox);
 };
 
 }
