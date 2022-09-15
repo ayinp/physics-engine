@@ -151,35 +151,38 @@ double cross(Vec2d v1, Vec2d v2){
 bool toRight(Vec2d p1, Vec2d p2, Vec2d a){
     Vec2d v1 = p2-p1;
     Vec2d v2 = a-p1;
-    if(cross(v1, v2) < 0){ // might have to be flipped if everything is backwards
-        return true;
-    }
+    return cross(v1, v2) > 0; // might have to be flipped if everything is backwar
 }
 
-bool collides(Rectangle *r, Triangle *t)
+bool collides(Rectangle *r, Triangle *t, mssm::Graphics &g)
 {
     bool pToR = true;
     for(int i = 1; i <= t->corners().size(); i++){
+        pToR = true;
         for(int j = 0; j < r->corners().size(); j++){
             if(toRight(t->corners()[i%3], t->corners()[(i+1)%3], r->corners()[j])){
-                pToR = true;
+              //  g.line((t->corners()[i%3] + t->corners()[(i+1)%3])*.5, r->corners()[j], mssm::ORANGE);
+//                pToR = true;
             }
             else{
                 pToR = false;
-                break;
+             //   g.line((t->corners()[i%3] + t->corners()[(i+1)%3])*.5, r->corners()[j], mssm::BLUE);
             }
         }
-        if(pToR){
+        if(pToR){  // it was always to right, so doesn't collide
            return false;
         }
     }
 
     for(int i = 1; i <= r->corners().size(); i++){
+        pToR = true;
         for(int j = 0; j < t->corners().size(); j++){
             if(toRight(r->corners()[i%4], r->corners()[(i+1)%4], t->corners()[j])){
-                pToR = true;
+                g.line((r->corners()[i%4] + r->corners()[(i+1)%4])*.5, t->corners()[j], mssm::YELLOW);
+//                pToR = true;
             }
             else{
+                g.line((r->corners()[i%4] + r->corners()[(i+1)%4])*.5, t->corners()[j], mssm::GREEN);
                 pToR = false;
                 break;
             }
@@ -188,5 +191,6 @@ bool collides(Rectangle *r, Triangle *t)
            return false;
         }
     }
+
     return true;
 }

@@ -21,7 +21,7 @@ Vec2d Rectangle::center()
 
 vector<Vec2d> Rectangle::corners()
 {
-    return {topLeft(), topRight(), bottomLeft(), bottomRight()};
+    return {topLeft(), bottomLeft(), bottomRight(), topRight()};
 }
 
 Vec2d Rectangle::topLeft()

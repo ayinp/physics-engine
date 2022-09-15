@@ -10,6 +10,6 @@ bool collides(ayin::Rectangle* r1, ayin::Rectangle* r2);
 bool collides(ayin::Triangle* t1, ayin::Triangle* t2);
 bool collides(ayin::Circle* c, ayin::Rectangle* r);
 bool collides(ayin::Circle* c, ayin::Triangle* t);
-bool collides(ayin::Rectangle* r, ayin::Triangle* t);
+bool collides(ayin::Rectangle* r, ayin::Triangle* t, mssm::Graphics& g);
 
 #endif // COLLISION_H
