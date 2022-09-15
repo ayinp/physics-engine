@@ -4,7 +4,7 @@ using namespace mssm;
 using namespace ayin;
 
 Triangle::Triangle(Vec2d location, bool isRightTriangle, bool slopeLeft, int width, int height)
-    :CollisionShape(location), isRightTriangle{isRightTriangle}, slopeLeft{slopeLeft}, width{width}, height{height}
+    :PolygonShape(location), isRightTriangle{isRightTriangle}, slopeLeft{slopeLeft}, width{width}, height{height}
 {
 
 }

@@ -4,7 +4,7 @@ using namespace mssm;
 using namespace ayin;
 
 Rectangle::Rectangle(Vec2d location, int width, int height)
-    :CollisionShape(location), width{width}, height{height}
+    :PolygonShape(location), width{width}, height{height}
 {
 
 }

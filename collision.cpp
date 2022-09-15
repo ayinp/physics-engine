@@ -41,11 +41,6 @@ bool collides(Rectangle *r1, Rectangle *r2)
     return false;
 }
 
-bool collides(Triangle *t1, Triangle *t2)
-{
-
-}
-
 bool collides(Circle *c, Rectangle *r)
 {
     bool isAbove = c->location.y < r->topLeft().y;
@@ -154,13 +149,15 @@ bool toRight(Vec2d p1, Vec2d p2, Vec2d a){
     return cross(v1, v2) > 0; // might have to be flipped if everything is backwar
 }
 
-bool collides(Rectangle *r, Triangle *t, mssm::Graphics &g)
+bool collides(PolygonShape *s1, PolygonShape *s2, mssm::Graphics &g)
 {
+    vector<Vec2d> s1Corners = s1->corners();
+    vector<Vec2d> s2Corners = s2->corners();
     bool pToR = true;
-    for(int i = 1; i <= t->corners().size(); i++){
+    for(int i = 1; i <= s2Corners.size(); i++){
         pToR = true;
-        for(int j = 0; j < r->corners().size(); j++){
-            if(toRight(t->corners()[i%3], t->corners()[(i+1)%3], r->corners()[j])){
+        for(int j = 0; j < s1Corners.size(); j++){
+            if(toRight(s2Corners[i%s2Corners.size()], s2Corners[(i+1)%s2Corners.size()], s1Corners[j])){
               //  g.line((t->corners()[i%3] + t->corners()[(i+1)%3])*.5, r->corners()[j], mssm::ORANGE);
 //                pToR = true;
             }
@@ -174,15 +171,15 @@ bool collides(Rectangle *r, Triangle *t, mssm::Graphics &g)
         }
     }
 
-    for(int i = 1; i <= r->corners().size(); i++){
+    for(int i = 1; i <= s1Corners.size(); i++){
         pToR = true;
-        for(int j = 0; j < t->corners().size(); j++){
-            if(toRight(r->corners()[i%4], r->corners()[(i+1)%4], t->corners()[j])){
-                g.line((r->corners()[i%4] + r->corners()[(i+1)%4])*.5, t->corners()[j], mssm::YELLOW);
+        for(int j = 0; j < s2Corners.size(); j++){
+            if(toRight(s1Corners[i%s1Corners.size()], s1Corners[(i+1)%s1Corners.size()], s2Corners[j])){
+                g.line((s1Corners[i%s1Corners.size()] + s1Corners[(i+1)%s1Corners.size()])*.5, s2Corners[j], mssm::YELLOW);
 //                pToR = true;
             }
             else{
-                g.line((r->corners()[i%4] + r->corners()[(i+1)%4])*.5, t->corners()[j], mssm::GREEN);
+                g.line((s1Corners[i%s1Corners.size()] +s1Corners[(i+1)%s1Corners.size()])*.5, s2Corners[j], mssm::GREEN);
                 pToR = false;
                 break;
             }
