@@ -5,6 +5,7 @@
 #include "triangle.h"
 #include "vec2d.h"
 #include "collision.h"
+#include "world.h"
 //#include "paths.h"
 
 using namespace std;
@@ -20,20 +21,40 @@ int main()
     //   Paths::findAsset("skull.png");
     Graphics g("Test", 1024, 768);
 
-    Triangle shape1(Vec2d{g.width()/2, g.height()/2}, false, false, 100, 100);
+
+
+    World world;
+
+
+    for(int i = 0; i < 6; i++){
+        if(i%3 == 0){
+            Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
+            Triangle* t = new Triangle(location, 0, 0, g.randomInt(10, 100), g.randomInt(10, 100));
+            GameObject obj(location, t);
+            obj.velocity = {g.randomDouble(-5, 5), g.randomDouble(-5, 5)};
+            world.objects.push_back(obj);
+        }
+        else if(i%3 == 1){
+            Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
+            Rectangle* r = new Rectangle(location, g.randomInt(10, 100), g.randomInt(10, 100));
+            GameObject obj(location, r);
+            obj.velocity = {g.randomDouble(-5, 5), g.randomDouble(-5, 5)};
+            world.objects.push_back(obj);
+        }
+        else if(i%3 == 2){
+            Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
+            Circle* c = new Circle(location, g.randomInt(10, 100));
+            GameObject obj(location, c);
+            obj.velocity = {g.randomDouble(-5, 5), g.randomDouble(-5, 5)};
+            world.objects.push_back(obj);
+        }
+
+    }
 
 
     while (g.draw()) {
-        Triangle shape2(g.mousePos(), false, false, 100, 100);
-        shape1.draw(g);
-        shape2.draw(g);
-        if(collides(&shape2, &shape1, g)){
-            g.cout << "AHHHHHHHHHH" << endl;
-        }
-
-        if(g.onKeyPress('R')){
-            shape1.location = {g.randomInt(0, g.width()), g.randomInt(0, g.height())};
-        }
+        world.draw(g);
+        world.update(g);
     }
 
     return 0;

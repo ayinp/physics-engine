@@ -61,6 +61,8 @@ add_executable(${PROJECT_NAME} ${ADD_EX_EXTRA}
     collision.cpp
     polygonshape.h
     polygonshape.cpp
+    world.h
+    world.cpp
 )
 
 #set(CMAKE_THREAD_PREFER_PTHREAD TRUE)

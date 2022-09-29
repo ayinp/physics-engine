@@ -11,7 +11,7 @@ Circle::Circle(Vec2d location, int rad)
 
 ShapeType Circle::type()
 {
-    return ShapeType::oval;
+    return ShapeType::circle;
 }
 
 Vec2d Circle::center()
@@ -19,8 +19,8 @@ Vec2d Circle::center()
     return location;
 }
 
-void Circle::draw(mssm::Graphics &g)
+void Circle::draw(mssm::Graphics &g, Color color)
 {
-    g.ellipse(location, rad*2, rad*2, WHITE);
+    g.ellipse(location, rad*2, rad*2, color);
     g.ellipse(center(), 5, 5, RED, RED);
 }

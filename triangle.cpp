@@ -65,9 +65,9 @@ vector<Vec2d> Triangle::corners()
     return {corner1, corner2, corner3};
 }
 
-void Triangle::draw(mssm::Graphics &g)
+void Triangle::draw(mssm::Graphics &g, Color color)
 {
-    g.polygon(corners(), WHITE, WHITE);
+    g.polygon(corners(), color);
 
     g.ellipse(corners()[0], 5, 5, RED, RED);
     g.ellipse(corners()[1], 5, 5, GREEN, GREEN);

@@ -12,7 +12,7 @@ public:
     Circle(Vec2d location, int rad);
     virtual ShapeType type() override;
     virtual Vec2d center() override;
-    virtual void draw(mssm::Graphics& g) override;
+    virtual void draw(mssm::Graphics& g,  mssm::Color color = mssm::WHITE) override;
 };
 }
 

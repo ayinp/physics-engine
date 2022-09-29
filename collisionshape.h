@@ -9,7 +9,7 @@ enum ShapeType
 {
     rectangle,
     triangle,
-    oval,
+    circle
 };
 
 class CollisionShape
@@ -22,7 +22,7 @@ public:
     CollisionShape(Vec2d location);
     virtual ShapeType type() = 0;
     virtual Vec2d center() = 0;
-    virtual void draw(mssm::Graphics& g) = 0;
+    virtual void draw(mssm::Graphics& g, mssm::Color color = mssm::WHITE) = 0;
 };
 
 }

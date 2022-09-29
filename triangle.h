@@ -17,7 +17,7 @@ public:
     virtual ShapeType type() override;
     virtual Vec2d center() override;
     virtual vector<Vec2d> corners() override;
-    virtual void draw(mssm::Graphics& g) override;
+    virtual void draw(mssm::Graphics& g,  mssm::Color color = mssm::WHITE) override;
     Vec2d centerOfMass();
 };
 }
