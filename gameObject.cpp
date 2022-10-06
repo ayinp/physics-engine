@@ -1,10 +1,34 @@
 #include "gameObject.h"
 using namespace ayin;
 
-GameObject::GameObject(Vec2d location, CollisionShape *hitBox)
-    :location{location}, hitBox{hitBox}
+GameObject::GameObject(Vec2d location, CollisionShape *hitBox, function<void()> onCollisionEnter,
+                       function<void()> onCollisionLeave, function<void()> onCollisionStay)
+    :location{location}, hitBox{hitBox}, collisionEnter{onCollisionEnter}, collisionLeave{onCollisionLeave},
+      collisionStay{onCollisionStay}
+
 {
 
+}
+
+void GameObject::onCollisionEnter(GameObject HeHitMe)
+{
+    if(collisionEnter){
+        collisionEnter();
+    }
+}
+
+void GameObject::onCollisionLeave(GameObject HeHitMe)
+{
+    if(collisionLeave){
+        collisionLeave();
+    }
+}
+
+void GameObject::onCollisionStay(GameObject HeHitMe)
+{
+    if(collisionStay){
+        collisionStay();
+    }
 }
 
 void GameObject::draw(mssm::Graphics &g)
