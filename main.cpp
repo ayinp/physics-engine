@@ -16,6 +16,14 @@ using namespace ayin;
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #endif
 
+void onCollision(GameObject* me, GameObject* heHitMe){
+    me->velocity = -me->velocity;
+    cout << "NOOOOOOOOOOOOOOOOOOOOOOO " << (long long)me << " " << (long long)heHitMe << endl;
+    //    heHitMe->velocity = -heHitMe->velocity;
+}
+
+
+
 int main()
 {
     //   Paths::findAsset("skull.png");
@@ -30,31 +38,33 @@ int main()
         if(i%3 == 0){
             Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
             Triangle* t = new Triangle(location, 0, 0, g.randomInt(10, 100), g.randomInt(10, 100));
-            GameObject obj(location, t);
+            GameObject obj(location, t, onCollision);
             obj.velocity = {g.randomDouble(-5, 5), g.randomDouble(-5, 5)};
             world.objects.push_back(obj);
         }
         else if(i%3 == 1){
             Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
             Rectangle* r = new Rectangle(location, g.randomInt(10, 100), g.randomInt(10, 100));
-            GameObject obj(location, r);
+            GameObject obj(location, r, onCollision);
             obj.velocity = {g.randomDouble(-5, 5), g.randomDouble(-5, 5)};
             world.objects.push_back(obj);
         }
         else if(i%3 == 2){
             Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
             Circle* c = new Circle(location, g.randomInt(10, 100));
-            GameObject obj(location, c);
+            GameObject obj(location, c, onCollision);
             obj.velocity = {g.randomDouble(-5, 5), g.randomDouble(-5, 5)};
             world.objects.push_back(obj);
         }
 
     }
 
-
+    world.objects[0].velocity = {0, 0};
     while (g.draw()) {
         world.draw(g);
         world.update(g);
+        world.objects[0].location = g.mousePos();
+
     }
 
     return 0;

@@ -149,7 +149,7 @@ bool toRight(Vec2d p1, Vec2d p2, Vec2d a){
     return cross(v1, v2) > 0; // might have to be flipped if everything is backwar
 }
 
-bool collides(PolygonShape *s1, PolygonShape *s2, mssm::Graphics &g)
+bool collides(PolygonShape *s1, PolygonShape *s2)
 {
     vector<Vec2d> s1Corners = s1->corners();
     vector<Vec2d> s2Corners = s2->corners();
@@ -175,11 +175,11 @@ bool collides(PolygonShape *s1, PolygonShape *s2, mssm::Graphics &g)
         pToR = true;
         for(int j = 0; j < s2Corners.size(); j++){
             if(toRight(s1Corners[i%s1Corners.size()], s1Corners[(i+1)%s1Corners.size()], s2Corners[j])){
-                g.line((s1Corners[i%s1Corners.size()] + s1Corners[(i+1)%s1Corners.size()])*.5, s2Corners[j], mssm::YELLOW);
+//                g.line((s1Corners[i%s1Corners.size()] + s1Corners[(i+1)%s1Corners.size()])*.5, s2Corners[j], mssm::YELLOW);
 //                pToR = true;
             }
             else{
-                g.line((s1Corners[i%s1Corners.size()] +s1Corners[(i+1)%s1Corners.size()])*.5, s2Corners[j], mssm::GREEN);
+//                g.line((s1Corners[i%s1Corners.size()] +s1Corners[(i+1)%s1Corners.size()])*.5, s2Corners[j], mssm::GREEN);
                 pToR = false;
                 break;
             }
@@ -190,4 +190,54 @@ bool collides(PolygonShape *s1, PolygonShape *s2, mssm::Graphics &g)
     }
 
     return true;
+}
+
+bool collides(ayin::CollisionShape *s, ayin::Circle *c){
+    ShapeType x = s->type();
+    switch(x){
+    case ShapeType::circle:
+        return collides(c, static_cast<Circle*>(s));
+    case ShapeType::rectangle:
+         return collides(c, static_cast<Rectangle*>(s));
+    case ShapeType::triangle:
+         return collides(c, static_cast<Triangle*>(s));
+    }
+}
+
+bool collides(ayin::CollisionShape *s, ayin::Rectangle *r){
+    ShapeType x = s->type();
+    switch(x){
+    case ShapeType::circle:
+        return collides(static_cast<Circle*>(s), r);
+    case ShapeType::rectangle:
+         return collides(static_cast<Rectangle*>(s), r);
+    case ShapeType::triangle:
+         return collides(static_cast<PolygonShape*>(r), static_cast<PolygonShape*>(s));
+    }
+}
+
+bool collides(ayin::CollisionShape *s, ayin::Triangle *t){
+    ShapeType x = s->type();
+    switch(x){
+    case ShapeType::circle:
+        return collides(static_cast<Circle*>(s), t);
+    case ShapeType::rectangle:
+    case ShapeType::triangle:
+         return collides(static_cast<PolygonShape*>(s), static_cast<PolygonShape*>(t));
+    }
+}
+
+
+
+bool collides(ayin::CollisionShape *s1, ayin::CollisionShape *s2)
+{
+    ShapeType x = s1->type();
+    switch(x){
+    case ShapeType::circle:
+        return collides(s2, static_cast<Circle*>(s1));
+    case ShapeType::rectangle:
+        return collides(s2, static_cast<Rectangle*>(s1));
+    case ShapeType::triangle:
+        return collides(s2, static_cast<Triangle*>(s1));
+    }
 }

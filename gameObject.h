@@ -15,15 +15,15 @@ public:
     Vec2d velocity;
     Vec2d acceleration;
     CollisionShape* hitBox;
-    function<void()> collisionEnter;
-    function<void()> collisionLeave;
-    function<void()> collisionStay;
+    function<void(GameObject*, GameObject*)> collisionEnter;
+    function<void(GameObject*, GameObject*)> collisionLeave;
+    function<void(GameObject*, GameObject*)> collisionStay;
 public:
-    GameObject(Vec2d location, CollisionShape *hitBox, function<void()> onCollisionEnter = nullptr,
-               function<void()> onCollisionLeave = nullptr, function<void()> onCollisionStay = nullptr);
-    void onCollisionEnter(GameObject HeHitMe);
-    void onCollisionLeave(GameObject HeHitMe);
-    void onCollisionStay(GameObject HeHitMe);
+    GameObject(Vec2d location, CollisionShape *hitBox, function<void (GameObject *, GameObject*)> onCollisionEnter = nullptr,
+               function<void (GameObject *, GameObject*)> onCollisionLeave = nullptr, function<void (GameObject *, GameObject*)> onCollisionStay = nullptr);
+    void onCollisionEnter(GameObject& heHitMe);
+    void onCollisionLeave(GameObject& heHitMe);
+    void onCollisionStay(GameObject& heHitMe);
     void draw(mssm::Graphics& g);
     void update(mssm::Graphics& g);
 };

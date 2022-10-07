@@ -12,6 +12,7 @@ public:
     World();
     void draw(mssm::Graphics& g);
     void update(mssm::Graphics& g);
+    void detectCollisions();
 };
 }
 
