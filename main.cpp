@@ -17,7 +17,12 @@ using namespace ayin;
 #endif
 
 void onCollision(GameObject* me, GameObject* heHitMe){
-    me->velocity = -me->velocity;
+    me->acceleration = {-1, -1};
+    while(me->acceleration.x < 0 || me->acceleration.y < 0){
+        me->acceleration.x += .1;
+         me->acceleration.y += .1;
+    }
+//    me->velocity = -me->velocity;
     cout << "NOOOOOOOOOOOOOOOOOOOOOOO " << (long long)me << " " << (long long)heHitMe << endl;
     //    heHitMe->velocity = -heHitMe->velocity;
 }

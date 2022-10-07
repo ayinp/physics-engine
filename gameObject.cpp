@@ -39,6 +39,7 @@ void GameObject::draw(mssm::Graphics &g)
 void GameObject::update(mssm::Graphics &g)
 {
     location = location + velocity;
+    velocity = velocity + acceleration;
 
     // i know this has hard coding shut up
 
