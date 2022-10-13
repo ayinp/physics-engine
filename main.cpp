@@ -17,7 +17,11 @@ using namespace ayin;
 #endif
 
 void onCollision(GameObject* me, GameObject* heHitMe){
-    me->velocity = -me->velocity;
+    me->velocity.y = -0.85 * me->velocity.y;
+
+
+    // momentum = mass*velocity
+    //
 //    me->affectedByGrav ity = false;
 }
 
@@ -35,32 +39,35 @@ int main()
 
     for(int i = 0; i < 6; i++){
         if(i%3 == 0){
-            Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
-            int width = g.randomInt(10, 100);
+            Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height() - 500)};
+            int width =  g.randomInt(10, 100);
             int height = g.randomInt(10, 100);
             GameObject obj(location, width, height, ShapeType::triangle, onCollision);
             obj.velocity = {g.randomDouble(-5, 5), g.randomDouble(-5, 5)};
             obj.affectedByGravity = true;
              obj.wrapInX = true;
+              obj.wrapInY = true;
             world.objects.push_back(obj);
         }
         else if(i%3 == 1){
-            Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
+            Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height() - 500)};
             int width = g.randomInt(10, 100);
             int height = g.randomInt(10, 100);
             GameObject obj(location, width, height, ShapeType::rectangle, onCollision);
             obj.velocity = {g.randomDouble(-5, 5), g.randomDouble(-5, 5)};
             obj.affectedByGravity = true;
             obj.wrapInX = true;
+            obj.wrapInY = true;
             world.objects.push_back(obj);
         }
         else if(i%3 == 2){
-            Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
+            Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height() - 500)};
             int width = g.randomInt(10, 100);
             GameObject obj(location, width, width, ShapeType::circle, onCollision);
             obj.velocity = {g.randomDouble(-5, 5), g.randomDouble(-5, 5)};
             obj.affectedByGravity = true;
              obj.wrapInX = true;
+             obj.wrapInY = true;
             world.objects.push_back(obj);
         }
 

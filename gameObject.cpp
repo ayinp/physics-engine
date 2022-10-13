@@ -76,18 +76,18 @@ void GameObject::update(Graphics& g, Vec2d gravity)
 
 
     if(wrapInX){
-        if(location.x - width/2 < 0){
+        if(location.x + width/2 < 0){
             location.x = g.width() + width/2;
         }
-        if(location.x + width/2 > g.width()){
+        if(location.x - width/2 > g.width()){
             location.x = 0 - width/2;
         }
     }
     if(wrapInY){
-        if(location.y - height/2 < 0){
+        if(location.y + height/2 < 0){
             location.y = g.height() + height/2;
         }
-        if(location.y + height/2 > g.height()){
+        if(location.y - height/2 > g.height()){
             location.y = 0 - height/2;
         }
     }
