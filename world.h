@@ -8,8 +8,9 @@ class World
 {
 public:
     std::vector<GameObject> objects;
+    Vec2d gravity;
 public:
-    World();
+    World(Vec2d gravity);
     void draw(mssm::Graphics& g);
     void update(mssm::Graphics& g);
     void detectCollisions();

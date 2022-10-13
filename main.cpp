@@ -17,14 +17,8 @@ using namespace ayin;
 #endif
 
 void onCollision(GameObject* me, GameObject* heHitMe){
-    me->acceleration = {-1, -1};
-    while(me->acceleration.x < 0 || me->acceleration.y < 0){
-        me->acceleration.x += .1;
-         me->acceleration.y += .1;
-    }
-//    me->velocity = -me->velocity;
-    cout << "NOOOOOOOOOOOOOOOOOOOOOOO " << (long long)me << " " << (long long)heHitMe << endl;
-    //    heHitMe->velocity = -heHitMe->velocity;
+    me->velocity = -me->velocity;
+//    me->affectedByGrav ity = false;
 }
 
 
@@ -36,35 +30,50 @@ int main()
 
 
 
-    World world;
+    World world({0, 0.5});
 
 
     for(int i = 0; i < 6; i++){
         if(i%3 == 0){
             Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
-            Triangle* t = new Triangle(location, 0, 0, g.randomInt(10, 100), g.randomInt(10, 100));
-            GameObject obj(location, t, onCollision);
+            int width = g.randomInt(10, 100);
+            int height = g.randomInt(10, 100);
+            GameObject obj(location, width, height, ShapeType::triangle, onCollision);
             obj.velocity = {g.randomDouble(-5, 5), g.randomDouble(-5, 5)};
+            obj.affectedByGravity = true;
+             obj.wrapInX = true;
             world.objects.push_back(obj);
         }
         else if(i%3 == 1){
             Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
-            Rectangle* r = new Rectangle(location, g.randomInt(10, 100), g.randomInt(10, 100));
-            GameObject obj(location, r, onCollision);
+            int width = g.randomInt(10, 100);
+            int height = g.randomInt(10, 100);
+            GameObject obj(location, width, height, ShapeType::rectangle, onCollision);
             obj.velocity = {g.randomDouble(-5, 5), g.randomDouble(-5, 5)};
+            obj.affectedByGravity = true;
+            obj.wrapInX = true;
             world.objects.push_back(obj);
         }
         else if(i%3 == 2){
             Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
-            Circle* c = new Circle(location, g.randomInt(10, 100));
-            GameObject obj(location, c, onCollision);
+            int width = g.randomInt(10, 100);
+            GameObject obj(location, width, width, ShapeType::circle, onCollision);
             obj.velocity = {g.randomDouble(-5, 5), g.randomDouble(-5, 5)};
+            obj.affectedByGravity = true;
+             obj.wrapInX = true;
             world.objects.push_back(obj);
         }
 
     }
 
     world.objects[0].velocity = {0, 0};
+    world.objects[0].affectedByGravity = false;
+
+    Vec2d location = {g.width()/2, g.height() - 50};
+    GameObject obj(location, g.width(), 50, ShapeType::rectangle, onCollision);
+    obj.velocity = {0,0};
+
+    world.objects.push_back(obj);
     while (g.draw()) {
         world.draw(g);
         world.update(g);

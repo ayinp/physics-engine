@@ -6,7 +6,8 @@
 using namespace mssm;
 using namespace ayin;
 
-World::World()
+World::World(Vec2d gravity)
+    :gravity{gravity}
 {
 
 }
@@ -23,9 +24,8 @@ void ayin::World::draw(mssm::Graphics &g)
 void ayin::World::update(mssm::Graphics &g)
 {
     for(int i = 0; i < objects.size(); i++){
-        objects[i].update(g);
+        objects[i].update(g, gravity);
     }
-    cout << "Detecting Collisions" << endl;
     detectCollisions();
 }
 
