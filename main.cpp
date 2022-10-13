@@ -19,7 +19,12 @@ using namespace ayin;
 void onCollision(GameObject* me, GameObject* heHitMe){
     me->velocity.y = -0.85 * me->velocity.y;
 
-
+    Vec2d a = me->acceleration;
+    me->acceleration = {10, 10};
+    while(me->acceleration.x > a.x + 1 && me->acceleration.y > a.y + 1){
+        me->acceleration = me->acceleration/10;
+    }
+    me->acceleration = {0,0};
     // momentum = mass*velocity
     //
 //    me->affectedByGrav ity = false;
@@ -79,6 +84,8 @@ int main()
     Vec2d location = {g.width()/2, g.height() - 50};
     GameObject obj(location, g.width(), 50, ShapeType::rectangle, onCollision);
     obj.velocity = {0,0};
+    obj.acceleration = {0,0};
+
 
     world.objects.push_back(obj);
     while (g.draw()) {
