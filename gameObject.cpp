@@ -64,15 +64,19 @@ void GameObject::draw(mssm::Graphics &g)
 
 void GameObject::update(Graphics& g, Vec2d gravity)
 {
+    lastLoc = location;
     location = location + velocity;
+
     Vec2d a = {0,0};
     if(affectedByGravity){
-        a = acceleration + gravity;
+        a = acceleration + (gravity * mass);
     }
     else{
         a = acceleration;
     }
+
     velocity = velocity + a;
+
 
 
     if(wrapInX){
@@ -94,4 +98,9 @@ void GameObject::update(Graphics& g, Vec2d gravity)
 
 
     hitBox->location = location;
+}
+
+Vec2d GameObject::momentum()
+{
+    return mass*velocity;
 }

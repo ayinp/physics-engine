@@ -10,16 +10,17 @@ class GameObject
 public:
     double width;
     double height;
-    bool isStatic;
-    Vec2d location;
-    Vec2d velocity;
-    Vec2d acceleration;
-    CollisionShape* hitBox;
-    double mass;
+    bool isStatic; 
+    double mass = 1;
     bool bouncy;
     bool affectedByGravity;
     bool wrapInX;
     bool wrapInY;
+    Vec2d location;
+    Vec2d lastLoc;
+    Vec2d velocity;
+    Vec2d acceleration;
+    CollisionShape* hitBox;
     function<void(GameObject*, GameObject*)> collisionEnter;
     function<void(GameObject*, GameObject*)> collisionLeave;
     function<void(GameObject*, GameObject*)> collisionStay;
@@ -32,6 +33,7 @@ public:
     void onCollisionStay(GameObject& heHitMe);
     void draw(mssm::Graphics& g);
     void update(mssm::Graphics &g, Vec2d gravity);
+    Vec2d momentum();
 };
 
 }
