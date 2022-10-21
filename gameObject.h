@@ -2,6 +2,7 @@
 #define OBJECT_H
 #include "collisionshape.h"
 #include <functional>
+#include "collisioninfo.h"
 
 namespace ayin {
 
@@ -21,16 +22,16 @@ public:
     Vec2d velocity;
     Vec2d acceleration;
     CollisionShape* hitBox;
-    function<void(GameObject*, GameObject*)> collisionEnter;
-    function<void(GameObject*, GameObject*)> collisionLeave;
-    function<void(GameObject*, GameObject*)> collisionStay;
+    function<void(GameObject*, GameObject*, CollisionInfo)> collisionEnter;
+    function<void(GameObject*, GameObject*, CollisionInfo)> collisionLeave;
+    function<void(GameObject*, GameObject*, CollisionInfo)> collisionStay;
 public:
-    GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void (GameObject *, GameObject*)> onCollisionEnter = nullptr,
-               function<void (GameObject *, GameObject*)> onCollisionLeave = nullptr, function<void (GameObject *, GameObject*)> onCollisionStay = nullptr);
+    GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionEnter = nullptr,
+               function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionLeave = nullptr, function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionStay = nullptr);
     void generateHitbox(ShapeType hitboxShape);
-    void onCollisionEnter(GameObject& heHitMe);
-    void onCollisionLeave(GameObject& heHitMe);
-    void onCollisionStay(GameObject& heHitMe);
+    void onCollisionEnter(GameObject& heHitMe, CollisionInfo info);
+    void onCollisionLeave(GameObject& heHitMe, CollisionInfo info);
+    void onCollisionStay(GameObject& heHitMe, CollisionInfo info);
     void draw(mssm::Graphics& g);
     void update(mssm::Graphics &g, Vec2d gravity);
     Vec2d momentum();

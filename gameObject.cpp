@@ -5,8 +5,8 @@
 using namespace ayin;
 using namespace mssm;
 
-GameObject::GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void(GameObject*, GameObject*)> onCollisionEnter,
-                       function<void(GameObject*, GameObject*)> onCollisionLeave, function<void(GameObject*, GameObject*)> onCollisionStay)
+GameObject::GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void(GameObject*, GameObject*, CollisionInfo)> onCollisionEnter,
+                       function<void(GameObject*, GameObject*, CollisionInfo)> onCollisionLeave, function<void(GameObject*, GameObject*, CollisionInfo)> onCollisionStay)
     :width{width}, height{height}, location{location}, collisionEnter{onCollisionEnter}, collisionLeave{onCollisionLeave},
       collisionStay{onCollisionStay}
 
@@ -35,25 +35,25 @@ void GameObject::generateHitbox(ShapeType hitboxShape)
     }
 }
 
-void GameObject::onCollisionEnter(GameObject& heHitMe)
+void GameObject::onCollisionEnter(GameObject& heHitMe, CollisionInfo info)
 {
     if(collisionEnter){
-        collisionEnter(this, &heHitMe);
+        collisionEnter(this, &heHitMe, info);
     }
 
 }
 
-void GameObject::onCollisionLeave(GameObject& heHitMe)
+void GameObject::onCollisionLeave(GameObject& heHitMe, CollisionInfo info)
 {
     if(collisionLeave){
-        collisionLeave(this, &heHitMe);
+        collisionLeave(this, &heHitMe, info);
     }
 }
 
-void GameObject::onCollisionStay(GameObject& heHitMe)
+void GameObject::onCollisionStay(GameObject& heHitMe, CollisionInfo info)
 {
     if(collisionStay){
-        collisionStay(this, &heHitMe);
+        collisionStay(this, &heHitMe, info);
     }
 }
 
