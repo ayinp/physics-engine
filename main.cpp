@@ -32,7 +32,7 @@ void onCollision(GameObject* me, GameObject* heHitMe, CollisionInfo info){
 //        }
 
     me->location = me->lastLoc;
-    Vec2d normal = perp(me->location - heHitMe->location) + info.collisionPoint;
+    Vec2d normal = perp(me->location - info.collisionPoint);
 
     Vec2d newX = normal * (dotProduct(normal, me->velocity)/dotProduct(normal, normal));
     Vec2d newY = me->velocity - newX;
