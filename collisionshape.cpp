@@ -1,8 +1,14 @@
 #include "collisionshape.h"
+#include "gameObject.h"
 using namespace ayin;
 
-CollisionShape::CollisionShape(Vec2d location)
-    :location{location}
+CollisionShape::CollisionShape(std::function<Vec2d()> locFunc)
+    :locFunc{locFunc}
 {
 
+}
+
+Vec2d CollisionShape::location()
+{
+    return locFunc();
 }

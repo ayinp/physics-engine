@@ -2,6 +2,8 @@
 #include "circle.h"
 #include "rectangle.h"
 #include "triangle.h"
+#include <cmath>
+#include <iostream>
 using namespace ayin;
 using namespace mssm;
 
@@ -14,21 +16,48 @@ GameObject::GameObject(Vec2d location, double width, double height, ShapeType hi
     generateHitbox(hitboxShape);
 }
 
+GameObject::GameObject(const GameObject &other)
+{
+    width = other.width;
+    height = other.height;
+    elasticity = other.elasticity;
+    mass = other.mass;
+    isStatic = other.isStatic;
+    bouncy = other.bouncy;
+    affectedByGravity = other.affectedByGravity;
+    wrapInX = other.wrapInX;
+    wrapInY = other.wrapInY;
+    location = other.location;
+    lastLoc = other.lastLoc;
+    velocity = other.velocity;
+    if(isnan(velocity.x)){
+        cout << "NOOOOOOOOOOOx" << endl;
+    }
+    if(isnan(velocity.y)){
+        cout << "NOOOOOOOOOOOy" << endl;
+    }
+    acceleration = other.acceleration;
+    hitBox = other.hitBox->clone([this](){return location;});
+    collisionEnter = other.collisionEnter;
+    collisionLeave = other.collisionLeave;
+    collisionStay = other.collisionStay;
+}
+
 void GameObject::generateHitbox(ShapeType hitboxShape)
 {
     switch(hitboxShape){
     case ShapeType::circle:{
-        Circle* c = new Circle(location, width);
+        Circle* c = new Circle([this](){return location;}, width);
         hitBox = c;
         break;
     }
     case ShapeType::rectangle: {
-        Rectangle* r = new Rectangle(location, width, height);
+        Rectangle* r = new Rectangle([this](){return location;}, width, height);
         hitBox = r;
         break;
     }
     case ShapeType::triangle:{
-        Triangle* t = new Triangle(location, 0, 0, width, height);
+        Triangle* t = new Triangle([this](){return location;}, 0, 0, width, height);
         hitBox = t;
         break;
     }
@@ -68,6 +97,12 @@ void GameObject::update(Graphics& g, Vec2d gravity)
     location = location + velocity;
 
     Vec2d a = {0,0};
+    if(isnan(velocity.x)){
+        cout << "NOOOOOOOOOOOx" << endl;
+    }
+    if(isnan(velocity.y)){
+        cout << "NOOOOOOOOOOOy" << endl;
+    }
     if(affectedByGravity){
         a = acceleration + (gravity * mass);
     }
@@ -95,9 +130,6 @@ void GameObject::update(Graphics& g, Vec2d gravity)
             location.y = 0 - height/2;
         }
     }
-
-
-    hitBox->location = location;
 }
 
 Vec2d GameObject::momentum()

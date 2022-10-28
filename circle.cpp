@@ -3,10 +3,15 @@
 using namespace ayin;
 
 using namespace mssm;
-Circle::Circle(Vec2d location, int rad)
-    :CollisionShape(location), rad{rad}
+Circle::Circle(std::function<Vec2d()> locFunc, int rad)
+    :CollisionShape(locFunc), rad{rad}
 {
 
+}
+
+CollisionShape *Circle::clone(std::function<Vec2d ()> locFunc)
+{
+    return new Circle(locFunc, rad);
 }
 
 ShapeType Circle::type()
@@ -16,11 +21,11 @@ ShapeType Circle::type()
 
 Vec2d Circle::center()
 {
-    return location;
+    return location();
 }
 
 void Circle::draw(mssm::Graphics &g, Color color)
 {
-    g.ellipse(location, rad*2, rad*2, color);
+    g.ellipse(location(), rad*2, rad*2, color);
     g.ellipse(center(), 5, 5, RED, RED);
 }

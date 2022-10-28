@@ -7,7 +7,7 @@ namespace ayin{
 class PolygonShape : public CollisionShape
 {
 public:
-    PolygonShape(Vec2d location);
+    PolygonShape(std::function<Vec2d()> locFunc);
     virtual vector<Vec2d> corners() = 0;
 };
 

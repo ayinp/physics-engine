@@ -3,10 +3,15 @@
 using namespace mssm;
 using namespace ayin;
 
-Rectangle::Rectangle(Vec2d location, int width, int height)
-    :PolygonShape(location), width{width}, height{height}
+Rectangle::Rectangle(std::function<Vec2d()> locFunc, int width, int height)
+    :PolygonShape(locFunc), width{width}, height{height}
 {
 
+}
+
+CollisionShape *Rectangle::clone(std::function<Vec2d ()> locFunc)
+{
+    return new Rectangle(locFunc, width, height);
 }
 
 ShapeType Rectangle::type()
@@ -16,7 +21,7 @@ ShapeType Rectangle::type()
 
 Vec2d Rectangle::center()
 {
-    return location;
+    return location();
 }
 
 vector<Vec2d> Rectangle::corners()
@@ -26,27 +31,27 @@ vector<Vec2d> Rectangle::corners()
 
 Vec2d Rectangle::topLeft()
 {
-    return {location.x - width/2, location.y - height/2};
+    return {location().x - width/2, location().y - height/2};
 }
 
 Vec2d Rectangle::topRight()
 {
-    return {location.x + width/2, location.y - height/2};
+    return {location().x + width/2, location().y - height/2};
 }
 
 Vec2d Rectangle::bottomLeft()
 {
-     return {location.x - width/2, location.y + height/2};
+     return {location().x - width/2, location().y + height/2};
 }
 
 Vec2d Rectangle::bottomRight()
 {
-     return {location.x + width/2, location.y + height/2};
+     return {location().x + width/2, location().y + height/2};
 }
 
 void Rectangle::draw(Graphics &g, Color color)
 {
-    g.rect({location.x-width/2, location.y-height/2}, width, height, color);
+    g.rect({location().x-width/2, location().y-height/2}, width, height, color);
     for(int i = 0; i < corners().size(); i++){
         g.ellipse(corners()[i], 5, 5, RED, RED);
     }

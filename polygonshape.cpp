@@ -1,7 +1,7 @@
 #include "polygonshape.h"
 using namespace ayin;
-PolygonShape::PolygonShape(Vec2d location)
-    :CollisionShape(location)
+PolygonShape::PolygonShape(std::function<Vec2d ()> locFunc)
+    :CollisionShape(locFunc)
 {
 
 }

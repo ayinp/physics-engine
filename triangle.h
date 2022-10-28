@@ -13,7 +13,8 @@ public:
     int height;
     int width;
 public:
-    Triangle(Vec2d location, bool isRightTriangle, bool slopeLeft, int width, int height);
+    Triangle(std::function<Vec2d()> locFunc, bool isRightTriangle, bool slopeLeft, int width, int height);
+    virtual CollisionShape* clone(std::function<Vec2d()> locFunc) override;
     virtual ShapeType type() override;
     virtual Vec2d center() override;
     virtual vector<Vec2d> corners() override;

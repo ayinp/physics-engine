@@ -11,16 +11,17 @@ class GameObject
 public:
     double width;
     double height;
-    bool isStatic; 
+    double elasticity = 1;
     double mass = 1;
+    bool isStatic;
     bool bouncy;
     bool affectedByGravity;
     bool wrapInX;
     bool wrapInY;
     Vec2d location;
     Vec2d lastLoc;
-    Vec2d velocity;
-    Vec2d acceleration;
+    Vec2d velocity = {0,0};
+    Vec2d acceleration = {0,0};
     CollisionShape* hitBox;
     function<void(GameObject*, GameObject*, CollisionInfo)> collisionEnter;
     function<void(GameObject*, GameObject*, CollisionInfo)> collisionLeave;
@@ -28,6 +29,7 @@ public:
 public:
     GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionEnter = nullptr,
                function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionLeave = nullptr, function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionStay = nullptr);
+    GameObject(const GameObject& other);
     void generateHitbox(ShapeType hitboxShape);
     void onCollisionEnter(GameObject& heHitMe, CollisionInfo info);
     void onCollisionLeave(GameObject& heHitMe, CollisionInfo info);

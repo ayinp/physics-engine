@@ -3,10 +3,15 @@
 using namespace mssm;
 using namespace ayin;
 
-Triangle::Triangle(Vec2d location, bool isRightTriangle, bool slopeLeft, int width, int height)
-    :PolygonShape(location), isRightTriangle{isRightTriangle}, slopeLeft{slopeLeft}, width{width}, height{height}
+Triangle::Triangle(std::function<Vec2d()> locFunc, bool isRightTriangle, bool slopeLeft, int width, int height)
+    :PolygonShape(locFunc), isRightTriangle{isRightTriangle}, slopeLeft{slopeLeft}, width{width}, height{height}
 {
 
+}
+
+CollisionShape *Triangle::clone(std::function<Vec2d ()> locFunc)
+{
+    return new Triangle(locFunc, isRightTriangle, slopeLeft, width, height);
 }
 
 ShapeType Triangle::type()
@@ -16,23 +21,23 @@ ShapeType Triangle::type()
 
 Vec2d Triangle::center()
 {
-    return location;
+    return location();
 }
 
 Vec2d Triangle::centerOfMass()
 {
     if(isRightTriangle){
         if(slopeLeft){
-            Vec2d bottomRight = {location.x + width/2, location.y + height/2};
+            Vec2d bottomRight = {location().x + width/2, location().y + height/2};
             return {bottomRight.x - width/3, bottomRight.y - height/3};
         }
         else{
-            Vec2d bottomLeft = {location.x - width/2, location.y + height/2};
+            Vec2d bottomLeft = {location().x - width/2, location().y + height/2};
             return {bottomLeft.x + width/3, bottomLeft.y - height/3};
         }
     }
     else{
-        Vec2d bottomCenter =  {location.x, location.y + height/2};
+        Vec2d bottomCenter =  {location().x, location().y + height/2};
         return {bottomCenter.x, bottomCenter.y - height/3};
     }
 }
@@ -45,21 +50,21 @@ vector<Vec2d> Triangle::corners()
 
     if(isRightTriangle){
         if(slopeLeft){ //right angle is on right, hypot on left
-            corner1 = {location.x + width/2, location.y - height/2};
-            corner2 = {location.x - width/2, location.y + height/2};
-            corner3 = {location.x + width/2, location.y + height/2};
+            corner1 = {location().x + width/2, location().y - height/2};
+            corner2 = {location().x - width/2, location().y + height/2};
+            corner3 = {location().x + width/2, location().y + height/2};
         }
         else{ // right angle is on left, hypot on right
-            corner1 = {location.x - width/2, location.y - height/2};
-            corner2 = {location.x - width/2, location.y + height/2};
-            corner3 = {location.x + width/2, location.y + height/2};
+            corner1 = {location().x - width/2, location().y - height/2};
+            corner2 = {location().x - width/2, location().y + height/2};
+            corner3 = {location().x + width/2, location().y + height/2};
         }
     }
     else{ //equilatoral
 
-        corner1 = {location.x, location.y - height/2};
-        corner2 = {location.x - width/2, location.y + height/2};
-        corner3 = {location.x + width/2, location.y + height/2};
+        corner1 = {location().x, location().y - height/2};
+        corner2 = {location().x - width/2, location().y + height/2};
+        corner3 = {location().x + width/2, location().y + height/2};
     }
 
     return {corner1, corner2, corner3};

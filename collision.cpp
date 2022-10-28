@@ -27,19 +27,23 @@ double distanceToSegment(Vec2d s1, Vec2d s2, Vec2d p){
 //collision functions
 bool collides(Circle *c1, Circle *c2, CollisionInfo& info)
 {
-    Vec2d v1 = c1->location - c2->location;
+    Vec2d v1 = c1->location() - c2->location();
+    if(v1.magnitude() == 0){
+        return true;
+    }
     Vec2d v2 = v1/v1.magnitude();
     Vec2d v3 = v2*c1->rad;
-    info.collisionPoint = c1->location + v3;
-    return (c1->location - c2->location).magnitude() < c1->rad + c2->rad;
+    info.collisionPoint = c1->location() + v3;
+    return (c1->location() - c2->location()).magnitude() < c1->rad + c2->rad;
 }
 
 bool collides(Rectangle *r1, Rectangle *r2, CollisionInfo& info)
 {
-    if(r1->location.x + r1->width/2 > r2->location.x - r2->width/2 &&
-       r1->location.x - r1->width/2 < r2->location.x + r2->width/2 &&
-       r1->location.y + r1->height/2 > r2->location.y - r2->height/2 &&
-       r1->location.y - r1->height/2 < r2->location.y + r2->height/2) {
+
+    if(r1->location().x + r1->width/2 > r2->location().x - r2->width/2 &&
+       r1->location().x - r1->width/2 < r2->location().x + r2->width/2 &&
+       r1->location().y + r1->height/2 > r2->location().y - r2->height/2 &&
+       r1->location().y - r1->height/2 < r2->location().y + r2->height/2) {
         return true;
     }
     return false;
@@ -47,26 +51,29 @@ bool collides(Rectangle *r1, Rectangle *r2, CollisionInfo& info)
 
 bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
 {
-    bool isAbove = c->location.y < r->topLeft().y;
-    bool isLeft = c->location.x < r->topLeft().x;
-    bool isBelow = c->location.y > r->bottomLeft().y;
-    bool isRight = c->location.x > r->bottomRight().x;
+    bool isAbove = c->location().y < r->topLeft().y;
+    bool isLeft = c->location().x < r->topLeft().x;
+    bool isBelow = c->location().y > r->bottomLeft().y;
+    bool isRight = c->location().x > r->bottomRight().x;
 
     if(isAbove){
         if(isLeft){
-            if((c->location - r->topLeft()).magnitude() < c->rad){
+            if((c->location() - r->topLeft()).magnitude() < c->rad){
+                info.collisionPoint = r->topLeft();
                 return true;
             }
             return false;
         }
         else if(isRight){
-            if((c->location - r->topRight()).magnitude() < c->rad){
+            if((c->location() - r->topRight()).magnitude() < c->rad){
+                info.collisionPoint = r->topRight();
                 return true;
             }
             return false;
         }
         else{
-            if(abs(r->location.y - c->location.y) - (c->rad + r->height/2) < 0){
+            if(abs(r->location().y - c->location().y) - (c->rad + r->height/2) < 0){
+                info.collisionPoint = {c->location().x, r->topLeft().y};
                 return true;
             }
             return false;
@@ -74,19 +81,22 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
     }
     else if(isBelow){
         if(isLeft){
-            if((c->location - r->bottomLeft()).magnitude() < c->rad){
+            if((c->location() - r->bottomLeft()).magnitude() < c->rad){
+                info.collisionPoint = r->bottomLeft();
                 return true;
             }
             return false;
         }
         else if(isRight){
-            if((c->location - r->bottomRight()).magnitude() < c->rad){
+            if((c->location() - r->bottomRight()).magnitude() < c->rad){
+                info.collisionPoint = r->bottomRight();
                 return true;
             }
             return false;
         }
         else{
-            if(abs(c->location.y - r->location.y) - (c->rad + r->height/2) < 0){
+            if(abs(c->location().y - r->location().y) - (c->rad + r->height/2) < 0){
+                info.collisionPoint = {c->location().x, r->bottomLeft().y};
                 return true;
             }
             return false;
@@ -94,18 +104,21 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
     }
     else{
         if(isLeft){
-            if(abs(c->location.x - r->location.x) - (c->rad + r->width/2) < 0){
+            if(abs(c->location().x - r->location().x) - (c->rad + r->width/2) < 0){
+                info.collisionPoint = {r->topLeft().x, c->location().y};
                 return true;
             }
             return false;
         }
         else if(isRight){
-            if(abs(r->location.x - c->location.x) - (c->rad + r->width/2) < 0){
+            if(abs(r->location().x - c->location().x) - (c->rad + r->width/2) < 0){
+                info.collisionPoint = {r->topRight().x, c->location().y};
                 return true;
             }
             return false;
         }
         else{
+            //COME BACK TO THIS
             return true;
         }
     }
@@ -117,7 +130,7 @@ bool collides(Circle *c, Triangle *t, CollisionInfo& info)
     Vec2d p1 = t->corners()[0];
     Vec2d p2 = t->corners()[1];
     Vec2d p3 = t->corners()[2];
-    Vec2d a = c->location;
+    Vec2d a = c->location();
 
     if((p2-p1).x * (a-p1).y - (p2-p1).y * (a-p1).x > 0){
         if(distanceToSegment(p1, p2, a) < c->rad){
