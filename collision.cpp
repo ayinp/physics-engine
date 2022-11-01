@@ -23,6 +23,21 @@ double distanceToSegment(Vec2d s1, Vec2d s2, Vec2d p){
     return sqrt(v2.magSquared() - l*l);
 }
 
+Vec2d closestPoint(Vec2d s1, Vec2d s2, Vec2d p){
+    Vec2d v1 = s2-s1;
+    Vec2d v2 = p-s1;
+    double v1Mag = v1.magnitude();
+    double l = dot(v1, v2)/v1Mag;
+    double t = l/v1Mag; // if <0 or > 1 then corner, else in line!!!
+    if(t <= 0){
+        return s1;
+    }
+    if(t >= 1){
+        return s2;
+    }
+    return s1 + t*(s2-s1);
+}
+
 
 //collision functions
 bool collides(Circle *c1, Circle *c2, CollisionInfo& info)
@@ -132,6 +147,7 @@ bool collides(Circle *c, Triangle *t, CollisionInfo& info)
     Vec2d p3 = t->corners()[2];
     Vec2d a = c->location();
 
+    info.collisionPoint = closestPoint(p1, p2, a);
     if((p2-p1).x * (a-p1).y - (p2-p1).y * (a-p1).x > 0){
         if(distanceToSegment(p1, p2, a) < c->rad){
             return true;
@@ -148,6 +164,7 @@ bool collides(Circle *c, Triangle *t, CollisionInfo& info)
         }
     }
     else{
+        //COME BACK TO THIS
         return true;
     }
     return false;

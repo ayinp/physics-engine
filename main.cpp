@@ -69,43 +69,58 @@ int main()
 
 
 
+//    Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
+//    GameObject myBall(g.mousePos(), 50, 50 , ShapeType::triangle, onCollision);
+//    myBall.affectedByGravity = false;
+//    myBall.velocity = {0,0};
+
+
     Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
-    GameObject myBall(g.mousePos(), 50, 50 , ShapeType::circle, onCollision);
-    myBall.affectedByGravity = false;
-    myBall.velocity = {0,0};
+    GameObject triangle(location, 50, 50 , ShapeType::triangle, onCollision);
+    triangle.affectedByGravity = true;
+    triangle.velocity = {g.randomDouble(-3,3),g.randomDouble(-3,3)};
+    triangle.wrapInX = true;
+    triangle.wrapInY = true;
 
 
-    GameObject grnd({g.width()/2, g.height()-25}, g.width(), 50, ShapeType::rectangle, onCollision);
-    grnd.affectedByGravity = false;
-    grnd.velocity = {0,0};
-    if(isnan(grnd.velocity.x)){
-        cout << "NOOOOOOOOOOOx" << endl;
+//    GameObject grnd({g.width()/2, g.height()-25}, g.width(), 50, ShapeType::rectangle, onCollision);
+//    grnd.affectedByGravity = false;
+//    grnd.velocity = {0,0};
+
+
+//    world.objects.push_back(grnd);
+world.objects.push_back(triangle);
+    for(int i = 0; i< 10; i++){
+        Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
+        GameObject ball(location, g.randomInt(10,100), g.randomInt(10,100) , ShapeType::circle, onCollision);
+        ball.affectedByGravity = false;
+        ball.velocity = {0,0};
+        world.objects.push_back(ball);
     }
-    if(isnan(grnd.velocity.y)){
-        cout << "NOOOOOOOOOOOy" << endl;
-    }
 
-    world.objects.push_back(grnd);
+
+
     while (g.draw()) {
 
         for (auto& ob :  world.objects) {
             g.cout << ob.velocity.x << " " << ob.velocity.y << endl;
         }
 
-        myBall.location = g.mousePos();
+//        myBall.location = g.mousePos();
         world.draw(g);
         world.update(g);
 
-         myBall.draw(g);
+//         myBall.draw(g);
         if(g.onMousePress(MouseButton::Left)){
-            GameObject newBall(myBall);
-            newBall.affectedByGravity = true;
-            newBall.wrapInX = true;
-            newBall.elasticity = g.randomDouble(0.5, 0.99);
-            myBall.width = g.randomInt(10, 100);
-            myBall.height = g.randomInt(10,100);
+//            GameObject newBall(myBall);
+//            newBall.affectedByGravity = true;
+//            newBall.wrapInX = true;
+//            newBall.wrapInY = true;
+//            newBall.elasticity = g.randomDouble(0.5, 0.99);
+//            myBall.width = g.randomInt(10, 100);
+//            myBall.height = g.randomInt(10,100);
 
-            world.objects.push_back(newBall);
+//            world.objects.push_back(newBall);
         }
 
     }
