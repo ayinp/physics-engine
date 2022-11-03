@@ -37,7 +37,7 @@ GameObject::GameObject(const GameObject &other)
         cout << "NOOOOOOOOOOOy" << endl;
     }
     acceleration = other.acceleration;
-    hitBox = other.hitBox->clone([this](){return location;});
+    hitBox = other.hitBox->clone([this](){return location;}, [this](){return velocity;});
     collisionEnter = other.collisionEnter;
     collisionLeave = other.collisionLeave;
     collisionStay = other.collisionStay;
@@ -47,17 +47,17 @@ void GameObject::generateHitbox(ShapeType hitboxShape)
 {
     switch(hitboxShape){
     case ShapeType::circle:{
-        Circle* c = new Circle([this](){return location;}, width);
+        Circle* c = new Circle([this](){return location;}, [this](){return velocity;}, width);
         hitBox = c;
         break;
     }
     case ShapeType::rectangle: {
-        Rectangle* r = new Rectangle([this](){return location;}, width, height);
+        Rectangle* r = new Rectangle([this](){return location;}, [this](){return velocity;}, width, height);
         hitBox = r;
         break;
     }
     case ShapeType::triangle:{
-        Triangle* t = new Triangle([this](){return location;}, 0, 0, width, height);
+        Triangle* t = new Triangle([this](){return location;}, [this](){return velocity;}, 0, 0, width, height);
         hitBox = t;
         break;
     }

@@ -3,15 +3,15 @@
 using namespace mssm;
 using namespace ayin;
 
-Rectangle::Rectangle(std::function<Vec2d()> locFunc, int width, int height)
-    :PolygonShape(locFunc), width{width}, height{height}
+Rectangle::Rectangle(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc, int width, int height)
+    :PolygonShape(locFunc, velFunc), width{width}, height{height}
 {
 
 }
 
-CollisionShape *Rectangle::clone(std::function<Vec2d ()> locFunc)
+CollisionShape *Rectangle::clone(std::function<Vec2d ()> locFunc, std::function<Vec2d()> velFunc)
 {
-    return new Rectangle(locFunc, width, height);
+    return new Rectangle(locFunc, velFunc, width, height);
 }
 
 ShapeType Rectangle::type()

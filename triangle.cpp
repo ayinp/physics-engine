@@ -3,15 +3,15 @@
 using namespace mssm;
 using namespace ayin;
 
-Triangle::Triangle(std::function<Vec2d()> locFunc, bool isRightTriangle, bool slopeLeft, int width, int height)
-    :PolygonShape(locFunc), isRightTriangle{isRightTriangle}, slopeLeft{slopeLeft}, width{width}, height{height}
+Triangle::Triangle(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc,  bool isRightTriangle, bool slopeLeft, int width, int height)
+    :PolygonShape(locFunc, velFunc), isRightTriangle{isRightTriangle}, slopeLeft{slopeLeft}, width{width}, height{height}
 {
 
 }
 
-CollisionShape *Triangle::clone(std::function<Vec2d ()> locFunc)
+CollisionShape *Triangle::clone(std::function<Vec2d ()> locFunc, std::function<Vec2d()> velFunc)
 {
-    return new Triangle(locFunc, isRightTriangle, slopeLeft, width, height);
+    return new Triangle(locFunc, velFunc, isRightTriangle, slopeLeft, width, height);
 }
 
 ShapeType Triangle::type()

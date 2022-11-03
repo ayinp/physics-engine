@@ -3,15 +3,15 @@
 using namespace ayin;
 
 using namespace mssm;
-Circle::Circle(std::function<Vec2d()> locFunc, int rad)
-    :CollisionShape(locFunc), rad{rad}
+Circle::Circle(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc, int rad)
+    :CollisionShape(locFunc, velFunc), rad{rad}
 {
 
 }
 
-CollisionShape *Circle::clone(std::function<Vec2d ()> locFunc)
+CollisionShape *Circle::clone(std::function<Vec2d ()> locFunc, std::function<Vec2d()> velFunc)
 {
-    return new Circle(locFunc, rad);
+    return new Circle(locFunc, velFunc, rad);
 }
 
 ShapeType Circle::type()

@@ -18,10 +18,12 @@ class CollisionShape
 {
 private:
     std::function<Vec2d()> locFunc;
+    std::function<Vec2d()> velFunc;
 public:
-    CollisionShape(std::function<Vec2d()> locFunc);
-    virtual CollisionShape* clone(std::function<Vec2d()> locFunc) = 0;
+    CollisionShape(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc);
+    virtual CollisionShape* clone(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc) = 0;
     Vec2d location();
+    Vec2d velocity();
     virtual ShapeType type() = 0;
     virtual Vec2d center() = 0;
     virtual void draw(mssm::Graphics& g, mssm::Color color = mssm::WHITE) = 0;

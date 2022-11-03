@@ -8,6 +8,27 @@ double dot(Vec2d v1, Vec2d v2){
     return v1.x * v2.x + v1.y * v2.y;
 }
 
+Vec2d perp1(Vec2d v)
+{
+    return {v.y, -v.x};
+}
+
+Vec2d collisionPoint(Vec2d p, Vec2d w, Vec2d a, Vec2d b)
+{
+    double xp = -crossProduct(w, b);
+
+    if (abs(xp) < 0.0000001) {
+
+        return {10,10}; // CHANGE THIS
+    }
+
+    double l = dotProduct((p-a), perp1(b)) / xp;
+
+    return p + l * w;
+}
+
+
+
 double distanceToSegment(Vec2d s1, Vec2d s2, Vec2d p){
     Vec2d v1 = s2-s1;
     Vec2d v2 = p-s1;
@@ -48,7 +69,7 @@ bool collides(Circle *c1, Circle *c2, CollisionInfo& info)
     }
     Vec2d v2 = v1/v1.magnitude();
     Vec2d v3 = v2*c1->rad;
-    info.collisionPoint = c1->location() + v3;
+    info.collisionPoint = c1->location() - v3;
     return (c1->location() - c2->location()).magnitude() < c1->rad + c2->rad;
 }
 
@@ -56,9 +77,9 @@ bool collides(Rectangle *r1, Rectangle *r2, CollisionInfo& info)
 {
 
     if(r1->location().x + r1->width/2 > r2->location().x - r2->width/2 &&
-       r1->location().x - r1->width/2 < r2->location().x + r2->width/2 &&
-       r1->location().y + r1->height/2 > r2->location().y - r2->height/2 &&
-       r1->location().y - r1->height/2 < r2->location().y + r2->height/2) {
+            r1->location().x - r1->width/2 < r2->location().x + r2->width/2 &&
+            r1->location().y + r1->height/2 > r2->location().y - r2->height/2 &&
+            r1->location().y - r1->height/2 < r2->location().y + r2->height/2) {
         return true;
     }
     return false;
@@ -147,24 +168,28 @@ bool collides(Circle *c, Triangle *t, CollisionInfo& info)
     Vec2d p3 = t->corners()[2];
     Vec2d a = c->location();
 
-    info.collisionPoint = closestPoint(p1, p2, a);
+
     if((p2-p1).x * (a-p1).y - (p2-p1).y * (a-p1).x > 0){
         if(distanceToSegment(p1, p2, a) < c->rad){
+            info.collisionPoint = closestPoint(p2, p1, a);
             return true;
         }
     }
     else if((p3-p2).x * (a-p2).y - (p3-p2).y * (a-p2).x > 0){
         if(distanceToSegment(p2, p3, a) < c->rad){
+            info.collisionPoint = closestPoint(p3, p2, a);
             return true;
         }
     }
     else if((p1-p3).x * (a-p3).y - (p1-p3).y * (a-p3).x > 0){
         if(distanceToSegment(p3, p1, a) < c->rad){
+            info.collisionPoint = closestPoint(p1, p3, a);
             return true;
         }
     }
     else{
-        //COME BACK TO THIS
+        // COME BACK TO THIS
+        info.collisionPoint = closestPoint(p1, p2, a);
         return true;
     }
     return false;
@@ -192,16 +217,20 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info)
         pToR = true;
         for(int j = 0; j < s1Corners.size(); j++){
             if(toRight(s2Corners[i%s2Corners.size()], s2Corners[(i+1)%s2Corners.size()], s1Corners[j])){
-              //  g.line((t->corners()[i%3] + t->corners()[(i+1)%3])*.5, r->corners()[j], mssm::ORANGE);
-//                pToR = true;
+
             }
             else{
+                Vec2d p = s1Corners[j] - s1->velocity();
+                Vec2d pv = s1->velocity();
+                Vec2d lp = s2Corners[i%s2Corners.size()] - s2->velocity();
+                Vec2d lv = (s2Corners[(i+1)%s2Corners.size()]-s2->velocity())-(s2Corners[i%s2Corners.size()] - s2->velocity());
+                info.collisionPoint = collisionPoint(p, pv, lp, lv);
                 pToR = false;
-             //   g.line((t->corners()[i%3] + t->corners()[(i+1)%3])*.5, r->corners()[j], mssm::BLUE);
+                break;
             }
         }
         if(pToR){  // it was always to right, so doesn't collide
-           return false;
+            return false;
         }
     }
 
@@ -209,17 +238,19 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info)
         pToR = true;
         for(int j = 0; j < s2Corners.size(); j++){
             if(toRight(s1Corners[i%s1Corners.size()], s1Corners[(i+1)%s1Corners.size()], s2Corners[j])){
-//                g.line((s1Corners[i%s1Corners.size()] + s1Corners[(i+1)%s1Corners.size()])*.5, s2Corners[j], mssm::YELLOW);
-//                pToR = true;
             }
             else{
-//                g.line((s1Corners[i%s1Corners.size()] +s1Corners[(i+1)%s1Corners.size()])*.5, s2Corners[j], mssm::GREEN);
+                Vec2d p = s1Corners[j] - s1->velocity();
+                Vec2d pv = s1->velocity();
+                Vec2d lp = s2Corners[i%s2Corners.size()] - s2->velocity();
+                Vec2d lv = (s2Corners[(i+1)%s2Corners.size()]-s2->velocity())-(s2Corners[i%s2Corners.size()] - s2->velocity());
+                info.collisionPoint = collisionPoint(p, pv, lp, lv);
                 pToR = false;
                 break;
             }
         }
         if(pToR){
-           return false;
+            return false;
         }
     }
 
@@ -232,9 +263,9 @@ bool collides(ayin::CollisionShape *s, ayin::Circle *c, CollisionInfo& info){
     case ShapeType::circle:
         return collides(c, static_cast<Circle*>(s), info);
     case ShapeType::rectangle:
-         return collides(c, static_cast<Rectangle*>(s), info);
+        return collides(c, static_cast<Rectangle*>(s), info);
     case ShapeType::triangle:
-         return collides(c, static_cast<Triangle*>(s), info);
+        return collides(c, static_cast<Triangle*>(s), info);
     }
 }
 
@@ -244,9 +275,9 @@ bool collides(ayin::CollisionShape *s, ayin::Rectangle *r, CollisionInfo& info){
     case ShapeType::circle:
         return collides(static_cast<Circle*>(s), r, info);
     case ShapeType::rectangle:
-         return collides(static_cast<Rectangle*>(s), r, info);
+        return collides(static_cast<Rectangle*>(s), r, info);
     case ShapeType::triangle:
-         return collides(static_cast<PolygonShape*>(r), static_cast<PolygonShape*>(s), info);
+        return collides(static_cast<PolygonShape*>(r), static_cast<PolygonShape*>(s), info);
     }
 }
 
@@ -257,7 +288,7 @@ bool collides(ayin::CollisionShape *s, ayin::Triangle *t, CollisionInfo& info){
         return collides(static_cast<Circle*>(s), t, info);
     case ShapeType::rectangle:
     case ShapeType::triangle:
-         return collides(static_cast<PolygonShape*>(s), static_cast<PolygonShape*>(t), info);
+        return collides(static_cast<PolygonShape*>(s), static_cast<PolygonShape*>(t), info);
     }
 }
 
