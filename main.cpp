@@ -53,10 +53,6 @@ int main()
 
 
 
-    //    Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height())};
-    //    GameObject myBall(g.mousePos(), 50, 50 , ShapeType::triangle, onCollision);
-    //    myBall.affectedByGravity = false;
-    //    myBall.velocity = {0,0};
 
 
 
@@ -64,49 +60,50 @@ int main()
     grnd.affectedByGravity = false;
     grnd.velocity = {0,0};
 
+        world.objects.push_back(grnd);
 
-    world.objects.push_back(grnd);
-    for(int i = 0; i< 9; i++){
-        if(i%3 == 0){
-            Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height()-100)};
-            GameObject ball(location, g.randomInt(10,100), g.randomInt(10,100) , ShapeType::circle, [&g](GameObject *a, GameObject *b, CollisionInfo c){onCollision(a,b,c, g);});
-            ball.affectedByGravity = true;
-            ball.wrapInX = true;
-            ball.velocity = {g.randomDouble(-3, 3), g.randomDouble(-3, 3)};
-            ball.elasticity = g.randomDouble(0.7, 0.95);
-            world.objects.push_back(ball);
+
+        for(int i = 0; i< 9; i++){
+
+             if(i%3 == 0){
+                Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height()-100)};
+                GameObject ball(location, g.randomInt(10,100), g.randomInt(10,100) , ShapeType::rectangle, [&g](GameObject *a, GameObject *b, CollisionInfo c){onCollision(a,b,c, g);});
+                ball.affectedByGravity = true;
+                ball.wrapInX = true;
+                ball.wrapInY = true;
+                ball.velocity = {g.randomDouble(-3, 3), g.randomDouble(-3, 3)};
+                ball.elasticity = g.randomDouble(0.7, 0.95);
+                world.objects.push_back(ball);
+
+            }
+            else if(i%3 == 1){
+                Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height()-100)};
+                GameObject ball(location, g.randomInt(10,100), g.randomInt(10,100) , ShapeType::triangle, [&g](GameObject *a, GameObject *b, CollisionInfo c){onCollision(a,b,c, g);});
+                ball.affectedByGravity = true;
+                ball.wrapInX = true;
+                ball.wrapInY = true;
+                ball.velocity = {g.randomDouble(-3, 3), g.randomDouble(-3, 3)};
+                ball.elasticity = g.randomDouble(0.7, 0.95);
+                world.objects.push_back(ball);
+            }
+             else if(i%3 == 2){
+                 Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height()-100)};
+                 GameObject ball(location, g.randomInt(10,100), g.randomInt(10,100) , ShapeType::circle, [&g](GameObject *a, GameObject *b, CollisionInfo c){onCollision(a,b,c, g);});
+                 ball.affectedByGravity = true;
+                 ball.wrapInX = true;
+                 ball.wrapInY = true;
+                 ball.velocity = {g.randomDouble(-3, 3), g.randomDouble(-3, 3)};
+                 ball.elasticity = g.randomDouble(0.7, 0.95);
+                 world.objects.push_back(ball);
+             }
 
         }
-        else if(i%3 == 1){
-            Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height()-100)};
-            GameObject ball(location, g.randomInt(10,100), g.randomInt(10,100) , ShapeType::rectangle, [&g](GameObject *a, GameObject *b, CollisionInfo c){onCollision(a,b,c, g);});
-            ball.affectedByGravity = true;
-            ball.wrapInX = true;
-            ball.velocity = {g.randomDouble(-3, 3), g.randomDouble(-3, 3)};
-            ball.elasticity = g.randomDouble(0.7, 0.95);
-            world.objects.push_back(ball);
-
-        }
-        else if(i%3 == 2){
-            Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height()-100)};
-            GameObject ball(location, g.randomInt(10,100), g.randomInt(10,100) , ShapeType::triangle, [&g](GameObject *a, GameObject *b, CollisionInfo c){onCollision(a,b,c, g);});
-            ball.affectedByGravity = true;
-            ball.wrapInX = true;
-            ball.velocity = {g.randomDouble(-3, 3), g.randomDouble(-3, 3)};
-            ball.elasticity = g.randomDouble(0.7, 0.95);
-            world.objects.push_back(ball);
-        }
-    }
 
 
 
     while (g.draw()) {
 
-        for (auto& ob :  world.objects) {
-            g.cout << ob.velocity.x << " " << ob.velocity.y << endl;
-        }
 
-        //        myBall.location = g.mousePos();
         world.draw(g);
         world.update(g);
 

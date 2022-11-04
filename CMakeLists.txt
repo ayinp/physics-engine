@@ -65,6 +65,8 @@ add_executable(${PROJECT_NAME} ${ADD_EX_EXTRA}
     world.cpp
     collisioninfo.h
     collisioninfo.cpp
+    clipper.h
+    clipper.cpp
 )
 
 #set(CMAKE_THREAD_PREFER_PTHREAD TRUE)

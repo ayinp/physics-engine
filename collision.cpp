@@ -1,7 +1,9 @@
 #include "collision.h"
 #include "graphics.h"
+#include "clipper.h"
 
 using namespace ayin;
+using namespace ClipperLib;
 
 //random functions
 double dot(Vec2d v1, Vec2d v2){
@@ -17,7 +19,7 @@ Vec2d collisionPoint(Vec2d p, Vec2d w, Vec2d a, Vec2d b)
 {
     double xp = -crossProduct(w, b);
 
-    if (abs(xp) < 0.0000001) {
+    if (abs(xp) < 0.0001) {
 
         return {10,10}; // CHANGE THIS
     }
@@ -73,17 +75,17 @@ bool collides(Circle *c1, Circle *c2, CollisionInfo& info)
     return (c1->location() - c2->location()).magnitude() < c1->rad + c2->rad;
 }
 
-bool collides(Rectangle *r1, Rectangle *r2, CollisionInfo& info)
-{
+//bool collides(Rectangle *r1, Rectangle *r2, CollisionInfo& info)
+//{
 
-    if(r1->location().x + r1->width/2 > r2->location().x - r2->width/2 &&
-            r1->location().x - r1->width/2 < r2->location().x + r2->width/2 &&
-            r1->location().y + r1->height/2 > r2->location().y - r2->height/2 &&
-            r1->location().y - r1->height/2 < r2->location().y + r2->height/2) {
-        return true;
-    }
-    return false;
-}
+//    if(r1->location().x + r1->width/2 > r2->location().x - r2->width/2 &&
+//            r1->location().x - r1->width/2 < r2->location().x + r2->width/2 &&
+//            r1->location().y + r1->height/2 > r2->location().y - r2->height/2 &&
+//            r1->location().y - r1->height/2 < r2->location().y + r2->height/2) {
+//        return true;
+//    }
+//    return false;
+//}
 
 bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
 {
@@ -220,13 +222,7 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info)
 
             }
             else{
-                Vec2d p = s1Corners[j] - s1->velocity();
-                Vec2d pv = s1->velocity();
-                Vec2d lp = s2Corners[i%s2Corners.size()] - s2->velocity();
-                Vec2d lv = (s2Corners[(i+1)%s2Corners.size()]-s2->velocity())-(s2Corners[i%s2Corners.size()] - s2->velocity());
-                info.collisionPoint = collisionPoint(p, pv, lp, lv);
                 pToR = false;
-                break;
             }
         }
         if(pToR){  // it was always to right, so doesn't collide
@@ -240,11 +236,6 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info)
             if(toRight(s1Corners[i%s1Corners.size()], s1Corners[(i+1)%s1Corners.size()], s2Corners[j])){
             }
             else{
-                Vec2d p = s1Corners[j] - s1->velocity();
-                Vec2d pv = s1->velocity();
-                Vec2d lp = s2Corners[i%s2Corners.size()] - s2->velocity();
-                Vec2d lv = (s2Corners[(i+1)%s2Corners.size()]-s2->velocity())-(s2Corners[i%s2Corners.size()] - s2->velocity());
-                info.collisionPoint = collisionPoint(p, pv, lp, lv);
                 pToR = false;
                 break;
             }
@@ -253,6 +244,33 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info)
             return false;
         }
     }
+
+    Path p1;
+    Path p2;
+    Paths result;
+    for(Vec2d v : s1Corners){
+        p1.push_back({static_cast<cInt>(v.x), static_cast<cInt>(v.y)});
+    }
+    for(Vec2d v : s2Corners){
+        p2.push_back({static_cast<cInt>(v.x), static_cast<cInt>(v.y)});
+    }
+
+    Clipper clip;
+    clip.AddPath(p1, PolyType::ptClip, true);
+    clip.AddPath(p2, PolyType::ptSubject, true);
+    clip.Execute(ClipType::ctIntersection, result);
+
+    Vec2d sum;
+    int counter = 0;
+
+    for(Path p : result){
+        for(IntPoint i : p){
+            sum = sum + Vec2d{i.X, i.Y};
+            counter++;
+        }
+    }
+
+    info.collisionPoint = sum/counter; // center of polygon made by collision
 
     return true;
 }
@@ -275,7 +293,7 @@ bool collides(ayin::CollisionShape *s, ayin::Rectangle *r, CollisionInfo& info){
     case ShapeType::circle:
         return collides(static_cast<Circle*>(s), r, info);
     case ShapeType::rectangle:
-        return collides(static_cast<Rectangle*>(s), r, info);
+//        return collides(static_cast<Rectangle*>(s), r, info);
     case ShapeType::triangle:
         return collides(static_cast<PolygonShape*>(r), static_cast<PolygonShape*>(s), info);
     }
