@@ -270,7 +270,13 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info)
         }
     }
 
+
+    if(counter == 0){
+        return false;
+    }
+
     info.collisionPoint = sum/counter; // center of polygon made by collision
+
 
     return true;
 }

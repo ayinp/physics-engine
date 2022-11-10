@@ -30,12 +30,6 @@ GameObject::GameObject(const GameObject &other)
     location = other.location;
     lastLoc = other.lastLoc;
     velocity = other.velocity;
-    if(isnan(velocity.x)){
-        cout << "NOOOOOOOOOOOx" << endl;
-    }
-    if(isnan(velocity.y)){
-        cout << "NOOOOOOOOOOOy" << endl;
-    }
     acceleration = other.acceleration;
     hitBox = other.hitBox->clone([this](){return location;}, [this](){return velocity;});
     collisionEnter = other.collisionEnter;

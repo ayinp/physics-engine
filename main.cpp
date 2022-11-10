@@ -32,6 +32,13 @@ void onCollision(GameObject* me, GameObject* heHitMe, CollisionInfo info, Graphi
 
     me->velocity = me->elasticity*(newX - newY);
 
+    if(isnan(me->velocity.x)){
+        cout << "NOOOOOOOOOOOx" << endl;
+    }
+    if(isnan(me->velocity.y)){
+        cout << "NOOOOOOOOOOOy" << endl;
+    }
+
     if(abs(me->velocity.x) < 0.1){
         me->velocity.x = 0;
 
