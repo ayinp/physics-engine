@@ -24,7 +24,9 @@ void onCollision(GameObject* me, GameObject* heHitMe, CollisionInfo info, Graphi
 
 
     g.ellipse(info.collisionPoint, 15,15, RED, RED);
+
     me->location = me->lastLoc;
+
     Vec2d normal = perp(me->location - info.collisionPoint).unit();
 
     Vec2d newX = normal * (dotProduct(normal, me->velocity)/dotProduct(normal, normal));
@@ -32,18 +34,12 @@ void onCollision(GameObject* me, GameObject* heHitMe, CollisionInfo info, Graphi
 
     me->velocity = me->elasticity*(newX - newY);
 
-    if(isnan(me->velocity.x)){
-        cout << "NOOOOOOOOOOOx" << endl;
-    }
-    if(isnan(me->velocity.y)){
-        cout << "NOOOOOOOOOOOy" << endl;
-    }
 
-    if(abs(me->velocity.x) < 0.1){
+    if(abs(me->velocity.x) < 0.01){
         me->velocity.x = 0;
 
     }
-    if(abs(me->velocity.y) < 0.1){
+    if(abs(me->velocity.y) < 0.01){
         me->velocity.y = 0;
     }
 
@@ -110,9 +106,8 @@ int main()
 
     while (g.draw()) {
 
-
-        world.draw(g);
         world.update(g);
+        world.draw(g);
 
         //         myBall.draw(g);
         if(g.onMousePress(MouseButton::Left)){

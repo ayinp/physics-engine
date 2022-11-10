@@ -82,21 +82,17 @@ void GameObject::onCollisionStay(GameObject& heHitMe, CollisionInfo info)
 
 void GameObject::draw(mssm::Graphics &g)
 {
+    g.line(location, location + 100*velocity, YELLOW);
     hitBox->draw(g);
 }
 
 void GameObject::update(Graphics& g, Vec2d gravity)
 {
+
     lastLoc = location;
-    location = location + velocity;
 
     Vec2d a = {0,0};
-    if(isnan(velocity.x)){
-        cout << "NOOOOOOOOOOOx" << endl;
-    }
-    if(isnan(velocity.y)){
-        cout << "NOOOOOOOOOOOy" << endl;
-    }
+
     if(affectedByGravity){
         a = acceleration + (gravity * mass);
     }
@@ -105,7 +101,9 @@ void GameObject::update(Graphics& g, Vec2d gravity)
     }
 
     velocity = velocity + a;
+    location = location + velocity;
 
+     g.line(location, location + 100*velocity, PURPLE);
 
 
     if(wrapInX){
