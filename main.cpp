@@ -20,11 +20,19 @@ Vec2d perp(Vec2d v){
     return {v.y, -v.x};
 }
 
+//TO DO
+// make normal vector as field in collision info
+// set when I set collision point
+// make sure objects are like
+// traveling towards eachother
+// not away
+// because away they arent colliding lol
+
 void onCollision(GameObject* me, GameObject* heHitMe, CollisionInfo info, Graphics& g){
 
 
     g.ellipse(info.collisionPoint, 15,15, RED, RED);
-
+//    me->draw(g);
     me->location = me->lastLoc;
 
     Vec2d normal = perp(me->location - info.collisionPoint).unit();
@@ -76,7 +84,9 @@ int main()
                 ball.wrapInY = true;
                 ball.velocity = {g.randomDouble(-3, 3), g.randomDouble(-3, 3)};
                 ball.elasticity = g.randomDouble(0.7, 0.95);
+                ball.mass = g.randomDouble(0.5, 5);
                 world.objects.push_back(ball);
+
 
             }
             else if(i%3 == 1){
@@ -87,6 +97,7 @@ int main()
                 ball.wrapInY = true;
                 ball.velocity = {g.randomDouble(-3, 3), g.randomDouble(-3, 3)};
                 ball.elasticity = g.randomDouble(0.7, 0.95);
+                ball.mass = g.randomDouble(0.5, 5);
                 world.objects.push_back(ball);
             }
              else if(i%3 == 2){
@@ -97,6 +108,7 @@ int main()
                  ball.wrapInY = true;
                  ball.velocity = {g.randomDouble(-3, 3), g.randomDouble(-3, 3)};
                  ball.elasticity = g.randomDouble(0.7, 0.95);
+                 ball.mass = g.randomDouble(0.5, 5);
                  world.objects.push_back(ball);
              }
 
