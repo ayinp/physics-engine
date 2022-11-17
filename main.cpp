@@ -109,7 +109,8 @@ int main(){
             world.objects.emplace_back(move(e));
         }
 
-        //GUNS
+        //GUNS ->this currently doesnt work
+
         if(g.onKeyPress(MouseButton::Left)){
             Vec2d direction = (player->location-g.mousePos()).unit();
             Vec2d velocity = direction*5;
