@@ -23,7 +23,6 @@ GameObject::GameObject(const GameObject &other)
     elasticity = other.elasticity;
     mass = other.mass;
     isStatic = other.isStatic;
-    bouncy = other.bouncy;
     affectedByGravity = other.affectedByGravity;
     wrapInX = other.wrapInX;
     wrapInY = other.wrapInY;
@@ -62,6 +61,26 @@ void GameObject::onCollisionEnter(GameObject& heHitMe, CollisionInfo info)
 {
     if(collisionEnter){
         collisionEnter(this, &heHitMe, info);
+    }
+    else{
+        location = lastLoc;
+
+        Vec2d normal = perp(location - info.collisionPoint).unit();
+
+        Vec2d newX = normal * (dotProduct(normal, velocity)/dotProduct(normal, normal));
+        Vec2d newY = velocity - newX;
+
+        velocity = (newX - elasticity*newY);
+
+
+        if(abs(velocity.x) < 0.01){
+            velocity.x = 0;
+
+        }
+        if(abs(velocity.y) < 0.01){
+            velocity.y = 0;
+        }
+
     }
 
 }

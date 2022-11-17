@@ -16,10 +16,6 @@ using namespace ayin;
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #endif
 
-Vec2d perp(Vec2d v){
-    return {v.y, -v.x};
-}
-
 //TO DO
 // make normal vector as field in collision info
 // set when I set collision point
@@ -28,115 +24,116 @@ Vec2d perp(Vec2d v){
 // not away
 // because away they arent colliding lol
 
-void onCollision(GameObject* me, GameObject* heHitMe, CollisionInfo info, Graphics& g){
-
-
-    g.ellipse(info.collisionPoint, 15,15, RED, RED);
-//    me->draw(g);
-    me->location = me->lastLoc;
-
-    Vec2d normal = perp(me->location - info.collisionPoint).unit();
-
-    Vec2d newX = normal * (dotProduct(normal, me->velocity)/dotProduct(normal, normal));
-    Vec2d newY = me->velocity - newX;
-
-    me->velocity = me->elasticity*(newX - newY);
-
-
-    if(abs(me->velocity.x) < 0.01){
-        me->velocity.x = 0;
-
-    }
-    if(abs(me->velocity.y) < 0.01){
-        me->velocity.y = 0;
-    }
-
+void enemyCollision(GameObject* me, GameObject* heHitMe, CollisionInfo info){
+ heHitMe->dead = true;
 }
 
+//things I find out I need to do to make this better
+//-make it so I can add sprites, and animations!
+//-include world as a parametar in the on-collision in case I want to like effect the world when things collide
+//-make some destinction in type of game object --> if a bullet hits the player, something different will happen than a tree.
+//-a better way of referrnig to player other than world.objects[number]
+//-distinguish between in-contact and colliding so no hops!
+//-game object should have a property "dead" and then world should erase all the dead guys
 
+int main(){
+    Graphics g("mini-platformer", 1024, 768);
 
-int main()
-{
-    //   Paths::findAsset("skull.png");
-    Graphics g("Test", 1024, 768);
+    World world({0, 0.3});
 
-    World world({0, 0.5});
+    unique_ptr<GameObject> p = make_unique<GameObject>(Vec2d{g.width()/2, g.height()/2}, 50, 100, ShapeType::triangle);
+    p->affectedByGravity = true;
+    p->elasticity = 0.2;
+    world.objects.emplace_back(move(p));
 
+    unique_ptr<GameObject> grnd = make_unique<GameObject>(Vec2d{g.width()/2, g.height()-25}, g.width()+200, 50, ShapeType::rectangle);
+    grnd->velocity = {0,0};
+    world.objects.emplace_back(move(grnd));
 
-
-
-
-
-    GameObject grnd({g.width()/2, g.height()-25}, g.width(), 50, ShapeType::rectangle, [&g](GameObject *a, GameObject *b, CollisionInfo c){onCollision(a,b,c, g);});
-    grnd.affectedByGravity = false;
-    grnd.velocity = {0,0};
-
-        world.objects.push_back(grnd);
-
-
-        for(int i = 0; i< 9; i++){
-
-             if(i%3 == 0){
-                Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height()-100)};
-                GameObject ball(location, g.randomInt(10,100), g.randomInt(10,100) , ShapeType::rectangle, [&g](GameObject *a, GameObject *b, CollisionInfo c){onCollision(a,b,c, g);});
-                ball.affectedByGravity = true;
-                ball.wrapInX = true;
-                ball.wrapInY = true;
-                ball.velocity = {g.randomDouble(-3, 3), g.randomDouble(-3, 3)};
-                ball.elasticity = g.randomDouble(0.7, 0.95);
-                ball.mass = g.randomDouble(0.5, 5);
-                world.objects.push_back(ball);
-
-
-            }
-            else if(i%3 == 1){
-                Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height()-100)};
-                GameObject ball(location, g.randomInt(10,100), g.randomInt(10,100) , ShapeType::triangle, [&g](GameObject *a, GameObject *b, CollisionInfo c){onCollision(a,b,c, g);});
-                ball.affectedByGravity = true;
-                ball.wrapInX = true;
-                ball.wrapInY = true;
-                ball.velocity = {g.randomDouble(-3, 3), g.randomDouble(-3, 3)};
-                ball.elasticity = g.randomDouble(0.7, 0.95);
-                ball.mass = g.randomDouble(0.5, 5);
-                world.objects.push_back(ball);
-            }
-             else if(i%3 == 2){
-                 Vec2d location = {g.randomDouble(0, g.width()), g.randomDouble(0, g.height()-100)};
-                 GameObject ball(location, g.randomInt(10,100), g.randomInt(10,100) , ShapeType::circle, [&g](GameObject *a, GameObject *b, CollisionInfo c){onCollision(a,b,c, g);});
-                 ball.affectedByGravity = true;
-                 ball.wrapInX = true;
-                 ball.wrapInY = true;
-                 ball.velocity = {g.randomDouble(-3, 3), g.randomDouble(-3, 3)};
-                 ball.elasticity = g.randomDouble(0.7, 0.95);
-                 ball.mass = g.randomDouble(0.5, 5);
-                 world.objects.push_back(ball);
-             }
-
-        }
-
-
+    GameObject* player = world.objects[0].get();
 
     while (g.draw()) {
 
         world.update(g);
         world.draw(g);
 
-        //         myBall.draw(g);
-        if(g.onMousePress(MouseButton::Left)){
-            //            GameObject newBall(myBall);
-            //            newBall.affectedByGravity = true;
-            //            newBall.wrapInX = true;
-            //            newBall.wrapInY = true;
-            //            newBall.elasticity = g.randomDouble(0.5, 0.99);
-            //            myBall.width = g.randomInt(10, 100);
-            //            myBall.height = g.randomInt(10,100);
+        //player movement
+        if(g.isKeyPressed('D') || g.isKeyPressed(Key::Right)){
+            player->acceleration.x = 0.5;
+            if(player->velocity.x >= 10){
+                player->acceleration.x = 0;
+            }
+        }
+        else if(g.isKeyPressed('A') || g.isKeyPressed(Key::Left)){
+            player->acceleration.x = -0.5;
+            if(player->velocity.x <= -10){
+                player->acceleration.x = 0;
+            }
+        }
+        else{
+            if(player->velocity.x > 0.1){
+                player->acceleration.x = -0.5;
+            }
+            else if(player->velocity.x < 0.1){
+                player->acceleration.x = 0.5;
+            }
+            else{
+                player->velocity.x = 0;
+                player->acceleration.x = 0;
+            }
+        }
+        // player jumpin
+        if(g.onKeyPress('W')||g.onKeyPress(Key::Up) || g.onKeyPress(Key::Space)){
+            player->velocity = {0, -10};
+        }
 
-            //            world.objects.push_back(newBall);
+        // new guy spawn moment
+        double emySpawnRate = 0.01;
+        bool enemy = g.randomTrue(emySpawnRate);
+        if(enemy){
+            int x = g.randomInt(0,1);
+            Vec2d location;
+            Vec2d velocity;
+            if(x == 0){
+                location = {-100, g.height()-100};
+                velocity = {5,0};
+            }
+            else if(x == 1){
+                location = {g.width()+100, g.height()-100};
+                velocity = {-5,0};
+            }
+            unique_ptr<GameObject> e = make_unique<GameObject>(location, 50, 100, ShapeType::rectangle, enemyCollision);
+            e->affectedByGravity = false;
+            e->elasticity = 0;
+            e->velocity = velocity;
+            world.objects.emplace_back(move(e));
+        }
+
+        //GUNS
+        if(g.onKeyPress(MouseButton::Left)){
+            Vec2d direction = (player->location-g.mousePos()).unit();
+            Vec2d velocity = direction*5;
+            unique_ptr<GameObject> e = make_unique<GameObject>(player->location + velocity*10, 10, 10, ShapeType::circle, enemyCollision);
+            e->affectedByGravity = false;
+            e->elasticity = 1;
+            e->velocity = velocity;
+            world.objects.emplace_back(move(e));
         }
 
     }
 
     return 0;
+
 }
+
+
+
+
+
+
+
+
+
+
 
 

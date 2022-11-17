@@ -14,10 +14,10 @@ public:
     double elasticity = 1;
     double mass = 1;
     bool isStatic;
-    bool bouncy;
-    bool affectedByGravity;
-    bool wrapInX;
-    bool wrapInY;
+    bool affectedByGravity = false;
+    bool wrapInX = false;
+    bool wrapInY = false;
+    bool dead = false;
     Vec2d location;
     Vec2d lastLoc;
     Vec2d velocity = {0,0};
@@ -36,6 +36,7 @@ public:
     void onCollisionStay(GameObject& heHitMe, CollisionInfo info);
     void draw(mssm::Graphics& g);
     void update(mssm::Graphics &g, Vec2d gravity);
+    bool isDead() const {return dead;};
     Vec2d momentum();
 };
 

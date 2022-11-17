@@ -130,6 +130,11 @@ constexpr double dotProduct(const Vec2base<T>& a, const Vec2base<T>& b)
     return a.x*b.x+b.y*a.y;
 }
 template<typename T>
+constexpr Vec2base<T> perp(const Vec2base<T>& v)
+{
+    return {v.y, -v.x};
+}
+template<typename T>
 std::string Vec2base<T>::toIntString() const
 {
     return "(" + std::to_string(int(x)) + ", " + std::to_string(int(y)) +")";
