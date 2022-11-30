@@ -8,9 +8,10 @@ using namespace ayin;
 using namespace mssm;
 
 GameObject::GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void(GameObject*, GameObject*, CollisionInfo)> onCollisionEnter,
-                       function<void(GameObject*, GameObject*, CollisionInfo)> onCollisionLeave, function<void(GameObject*, GameObject*, CollisionInfo)> onCollisionStay)
+                       function<void(GameObject*, GameObject*, CollisionInfo)> onCollisionLeave, function<void(GameObject*, GameObject*, CollisionInfo)> onCollisionStay,
+                       function<void(GameObject*, mssm::Graphics &g)> addUpdate)
     :width{width}, height{height}, location{location}, collisionEnter{onCollisionEnter}, collisionLeave{onCollisionLeave},
-      collisionStay{onCollisionStay}
+      collisionStay{onCollisionStay}, addUpdate{addUpdate}
 
 {
     generateHitbox(hitboxShape);
@@ -139,6 +140,10 @@ void GameObject::update(Graphics& g, Vec2d gravity)
         if(location.y - height/2 > g.height()){
             location.y = 0 - height/2;
         }
+    }
+
+    if(addUpdate){
+        addUpdate(this, g);
     }
 }
 

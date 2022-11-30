@@ -27,9 +27,11 @@ public:
     function<void(GameObject*, GameObject*, CollisionInfo)> collisionEnter;
     function<void(GameObject*, GameObject*, CollisionInfo)> collisionLeave;
     function<void(GameObject*, GameObject*, CollisionInfo)> collisionStay;
+    function<void(GameObject*, mssm::Graphics &g)> addUpdate;
 public:
     GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionEnter = nullptr,
-               function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionLeave = nullptr, function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionStay = nullptr);
+               function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionLeave = nullptr, function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionStay = nullptr,
+               function<void(GameObject*, mssm::Graphics &g)> addUpdate = nullptr);
     GameObject(const GameObject& other);
     void generateHitbox(ShapeType hitboxShape);
     void onCollisionEnter(GameObject& heHitMe, CollisionInfo info);
@@ -47,7 +49,9 @@ public:
     void setMass(double x){mass = x;};
     void kill(){dead = true;};
     bool isDead(){return dead;};
-    CollisionShape* getHitbox() const {return hitBox;}
+    CollisionShape* getHitbox() const {return hitBox;};
+    double getWidth() const {return width;};
+    double getHeight() const {return height;};
 };
 
 }
