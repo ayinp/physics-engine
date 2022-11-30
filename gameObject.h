@@ -8,21 +8,22 @@ namespace ayin {
 
 class GameObject
 {
-public:
+private:
     double width;
     double height;
     double elasticity = 1;
     double mass = 1;
-    bool isStatic;
+    bool dead = false;
+    vector<string> tags;
+    CollisionShape* hitBox;
+    Vec2d lastLoc;
+public:
     bool affectedByGravity = false;
     bool wrapInX = false;
     bool wrapInY = false;
-    bool dead = false;
     Vec2d location;
-    Vec2d lastLoc;
     Vec2d velocity = {0,0};
     Vec2d acceleration = {0,0};
-    CollisionShape* hitBox;
     function<void(GameObject*, GameObject*, CollisionInfo)> collisionEnter;
     function<void(GameObject*, GameObject*, CollisionInfo)> collisionLeave;
     function<void(GameObject*, GameObject*, CollisionInfo)> collisionStay;
@@ -38,6 +39,15 @@ public:
     void update(mssm::Graphics &g, Vec2d gravity);
     bool isDead() const {return dead;};
     Vec2d momentum();
+    void addTag(string tag){tags.push_back(tag);};
+    bool hasTag(string tag){
+        return find(tags.begin(), tags.end(), tag) != tags.end();
+    };
+    void setElasticity(double x){elasticity = x;};
+    void setMass(double x){mass = x;};
+    void kill(){dead = true;};
+    bool isDead(){return dead;};
+    CollisionShape* getHitbox() const {return hitBox;}
 };
 
 }

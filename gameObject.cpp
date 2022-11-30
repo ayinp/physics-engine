@@ -22,7 +22,6 @@ GameObject::GameObject(const GameObject &other)
     height = other.height;
     elasticity = other.elasticity;
     mass = other.mass;
-    isStatic = other.isStatic;
     affectedByGravity = other.affectedByGravity;
     wrapInX = other.wrapInX;
     wrapInY = other.wrapInY;

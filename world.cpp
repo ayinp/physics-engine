@@ -47,7 +47,7 @@ void World::detectCollisions()
     for(int i = 0; i < objects.size(); i++){
         for(int j = i+1; j < objects.size(); j++){
             CollisionInfo info;
-            if(collides(objects[i]->hitBox, objects[j]->hitBox, info)){
+            if(collides(objects[i]->getHitbox(), objects[j]->getHitbox(), info)){
                 objects[i]->onCollisionEnter(*objects[j], info);
                 objects[j]->onCollisionEnter(*objects[i], info);
             }

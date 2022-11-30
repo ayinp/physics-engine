@@ -25,16 +25,14 @@ using namespace ayin;
 // because away they arent colliding lol
 
 void enemyCollision(GameObject* me, GameObject* heHitMe, CollisionInfo info){
- heHitMe->dead = true;
+    heHitMe->kill();
 }
 
 //things I find out I need to do to make this better
 //-make it so I can add sprites, and animations!
-//-include world as a parametar in the on-collision in case I want to like effect the world when things collide
 //-make some destinction in type of game object --> if a bullet hits the player, something different will happen than a tree.
-//-a better way of referrnig to player other than world.objects[number]
 //-distinguish between in-contact and colliding so no hops!
-//-game object should have a property "dead" and then world should erase all the dead guys
+//-make another lambda function thing for updates (I want the enimes dead when they exit the screen)
 
 int main(){
     Graphics g("mini-platformer", 1024, 768);
@@ -43,7 +41,7 @@ int main(){
 
     unique_ptr<GameObject> p = make_unique<GameObject>(Vec2d{g.width()/2, g.height()/2}, 50, 100, ShapeType::triangle);
     p->affectedByGravity = true;
-    p->elasticity = 0.2;
+    p->setElasticity(0.2);
     world.objects.emplace_back(move(p));
 
     unique_ptr<GameObject> grnd = make_unique<GameObject>(Vec2d{g.width()/2, g.height()-25}, g.width()+200, 50, ShapeType::rectangle);
@@ -104,19 +102,21 @@ int main(){
             }
             unique_ptr<GameObject> e = make_unique<GameObject>(location, 50, 100, ShapeType::rectangle, enemyCollision);
             e->affectedByGravity = false;
-            e->elasticity = 0;
+            e->setElasticity(0);
             e->velocity = velocity;
             world.objects.emplace_back(move(e));
         }
 
-        //GUNS ->this currently doesnt work
+        //GUNS -> this currently doesnt work
 
-        if(g.onKeyPress(MouseButton::Left)){
-            Vec2d direction = (player->location-g.mousePos()).unit();
+
+        if(g.onMousePress(MouseButton::Left)){
+            g.cerr << "SHOT" << endl;
+            Vec2d direction = (g.mousePos()-player->location).unit();
             Vec2d velocity = direction*5;
-            unique_ptr<GameObject> e = make_unique<GameObject>(player->location + velocity*10, 10, 10, ShapeType::circle, enemyCollision);
+            unique_ptr<GameObject> e = make_unique<GameObject>(player->location + velocity*15, 10, 10, ShapeType::circle, enemyCollision);
             e->affectedByGravity = false;
-            e->elasticity = 1;
+            e->setElasticity(1);
             e->velocity = velocity;
             world.objects.emplace_back(move(e));
         }
