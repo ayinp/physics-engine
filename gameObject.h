@@ -3,7 +3,7 @@
 #include "collisionshape.h"
 #include <functional>
 #include "collisioninfo.h"
-
+#include "component.h"
 namespace ayin {
 
 class GameObject
@@ -15,6 +15,7 @@ private:
     double mass = 1;
     bool dead = false;
     vector<string> tags;
+    vector<unique_ptr<Component>> components;
     CollisionShape* hitBox;
     Vec2d lastLoc;
 public:
@@ -52,6 +53,7 @@ public:
     CollisionShape* getHitbox() const {return hitBox;};
     double getWidth() const {return width;};
     double getHeight() const {return height;};
+    void addComponent(unique_ptr<Component> c){components.push_back(c);};
 };
 
 }

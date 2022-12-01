@@ -16,14 +16,6 @@ using namespace ayin;
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #endif
 
-//TO DO
-// make normal vector as field in collision info
-// set when I set collision point
-// make sure objects are like
-// traveling towards eachother
-// not away
-// because away they arent colliding lol
-
 void enemyCollision(GameObject* me, GameObject* he, CollisionInfo info){
     if(me->hasTag("enemy") && he->hasTag("player")){
         he->kill();
@@ -67,8 +59,8 @@ void weaponUpdate(GameObject* me, Graphics& g){
 //things I find out I need to do to make this better
 //-make it so I can add sprites, and animations!
 //-distinguish between in-contact and colliding so no hops!
-//-it would be cool to have a method that can report the number of objects with a certain tag in the world
 //-add camera
+//-rotation probably would be good
 
 
 int main(){
@@ -128,7 +120,7 @@ int main(){
         // new guy spawn moment
         double emySpawnRate = 0.01;
         bool enemy = g.randomTrue(emySpawnRate);
-        if(enemy){
+        if(enemy && world.whoHasTag("enemy").size() < 10){
             int x = g.randomInt(0,1);
             Vec2d location;
             Vec2d velocity;

@@ -1,5 +1,6 @@
 #ifndef WORLD_H
 #define WORLD_H
+
 #include "gameObject.h"
 
 namespace ayin{
@@ -14,6 +15,7 @@ public:
     void draw(mssm::Graphics& g);
     void update(mssm::Graphics& g);
     void detectCollisions();
+    std::vector<GameObject*> whoHasTag(string tag);
 };
 }
 

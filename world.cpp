@@ -55,4 +55,15 @@ void World::detectCollisions()
     }
 }
 
+std::vector<GameObject*> World::whoHasTag(string tag)
+{
+    vector<GameObject*> guys;
+    for(int i = 0; i < objects.size(); i++){
+        if(objects[i]->hasTag(tag)){
+            guys.push_back(objects[i].get());
+        }
+    }
+    return guys;
+}
+
 
