@@ -151,3 +151,4 @@ Vec2d GameObject::momentum()
 {
     return mass*velocity;
 }
+

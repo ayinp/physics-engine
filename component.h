@@ -3,37 +3,21 @@
 
 #include <string>
 
-
-
-class GameObject{};
-
 namespace ayin{
+class GameObject;
 
 class Component
 {
 public:
     GameObject* owner;
+    std:: string name;
 public:
+    Component(GameObject* owner, std::string name);
     virtual void update() = 0;
 };
 
+
+}
+
+
 #endif // COMPONENT_H
-}
-
-
-
-class Counter : ayin::Component
-{
-public:
-    int num;
-    std::string name;
-public:
-    Counter(int num, std::string name);
-    virtual void update() override {};
-};
-
-Counter::Counter(int num, std::string name)
-    :num{num}, name{name}
-{
-
-}

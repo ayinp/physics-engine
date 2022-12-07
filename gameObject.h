@@ -53,9 +53,29 @@ public:
     CollisionShape* getHitbox() const {return hitBox;};
     double getWidth() const {return width;};
     double getHeight() const {return height;};
-    void addComponent(unique_ptr<Component> c){components.push_back(c);};
+    void addComponent(unique_ptr<Component> c){components.push_back(std::move(c));};
+    template<typename T>
+    T* getComponent(string name);
 };
 
+template<typename T>
+T *GameObject::getComponent(string name)
+{
+    for(int i = 0; i < components.size(); i++){
+        if(components[i]->name == name){
+            return dynamic_cast<T*>(components[i].get());
+        }
+    }
+    //at somepoint I should make them not able to have the same name but that isnt important rn
+    return nullptr;
 }
+
+
+}
+
+
+
+
+
 
 #endif // OBJECT_H

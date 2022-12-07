@@ -6,6 +6,7 @@
 #include "vec2d.h"
 #include "collision.h"
 #include "world.h"
+
 //#include "paths.h"
 
 using namespace std;
@@ -15,6 +16,25 @@ using namespace ayin;
 #ifndef _MSC_VER
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #endif
+
+
+class Counter : public ayin::Component
+{
+public:
+    int num;
+public:
+    Counter(GameObject* owner, std::string name, int num);
+    virtual void update() override {};
+    void addCount(int n){num = num + n;};
+    //add draw
+};
+
+Counter::Counter(GameObject* owner, std::string name, int num)
+    :Component(owner, name), num{num}
+{
+
+}
+
 
 void enemyCollision(GameObject* me, GameObject* he, CollisionInfo info){
     if(me->hasTag("enemy") && he->hasTag("player")){
@@ -54,8 +74,6 @@ void weaponUpdate(GameObject* me, Graphics& g){
     }
 }
 
-
-
 //things I find out I need to do to make this better
 //-make it so I can add sprites, and animations!
 //-distinguish between in-contact and colliding so no hops!
@@ -73,6 +91,7 @@ int main(){
     p->setElasticity(0.2);
     p->addTag("player");
     p->addTag("test");
+    p->addComponent(make_unique<Counter>(p.get(), "jumps", 0));
     world.objects.emplace_back(move(p));
 
     unique_ptr<GameObject> grnd = make_unique<GameObject>(Vec2d{g.width()/2, g.height()-25}, g.width()+200, 50, ShapeType::rectangle);
@@ -113,8 +132,9 @@ int main(){
             }
         }
         // player jumpin
-        if(g.onKeyPress('W')||g.onKeyPress(Key::Up) || g.onKeyPress(Key::Space)){
+        if(player->getComponent<Counter>("jumps")->num < 5 && (g.onKeyPress('W')|| g.onKeyPress(Key::Up) || g.onKeyPress(Key::Space))){
             player->velocity = {0, -10};
+            player->getComponent<Counter>("jumps")->addCount(1);
         }
 
         // new guy spawn moment
