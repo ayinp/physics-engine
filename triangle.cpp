@@ -70,14 +70,14 @@ vector<Vec2d> Triangle::corners()
     return {corner1, corner2, corner3};
 }
 
-void Triangle::draw(mssm::Graphics &g, Color color)
+void Triangle::draw(Camera& c, Color color)
 {
-    g.polygon(corners(), color);
+    c.polygon(corners(), color);
 
-    g.ellipse(corners()[0], 5, 5, RED, RED);
-    g.ellipse(corners()[1], 5, 5, GREEN, GREEN);
-    g.ellipse(corners()[2], 5, 5, YELLOW, YELLOW);
+    c.ellipse(corners()[0], 5, 5, RED, RED);
+    c.ellipse(corners()[1], 5, 5, GREEN, GREEN);
+    c.ellipse(corners()[2], 5, 5, YELLOW, YELLOW);
 
-    g.ellipse(center(), 5, 5, RED, RED);
-    g.ellipse(centerOfMass(), 5, 5, BLUE, BLUE);
+    c.ellipse(center(), 5, 5, RED, RED);
+    c.ellipse(centerOfMass(), 5, 5, BLUE, BLUE);
 }

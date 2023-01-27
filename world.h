@@ -12,10 +12,11 @@ public:
     Vec2d gravity;
 public:
     World(Vec2d gravity);
-    void draw(mssm::Graphics& g);
-    void update(mssm::Graphics& g);
+    void draw(Camera& c);
+    void update(Camera& c);
     void detectCollisions();
     std::vector<GameObject*> whoHasTag(string tag);
+    GameObject *getFirstTag(string tag);
 };
 }
 

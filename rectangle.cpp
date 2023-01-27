@@ -49,11 +49,11 @@ Vec2d Rectangle::bottomRight()
      return {location().x + width/2, location().y + height/2};
 }
 
-void Rectangle::draw(Graphics &g, Color color)
+void Rectangle::draw(Camera& c, Color color)
 {
-    g.rect({location().x-width/2, location().y-height/2}, width, height, color);
+    c.rect({location().x-width/2, location().y-height/2}, width, height, color);
     for(int i = 0; i < corners().size(); i++){
-        g.ellipse(corners()[i], 5, 5, RED, RED);
+        c.ellipse(corners()[i], 5, 5, RED, RED);
     }
-    g.ellipse(center(), 5, 5, RED, RED);
+    c.ellipse(center(), 5, 5, RED, RED);
 }

@@ -386,7 +386,7 @@ void Image::save(const string &pngFileName)
     //    pixmap->save(&file, "PNG");
 }
 
-Image::Image(Graphics &g)
+Image::Image(Graphics& g)
     : vg{g.vgContext()}
 {
 }
@@ -1055,7 +1055,7 @@ std::chrono::milliseconds::rep Graphics::time()
 
 void Graphics::test()
 {
-    Graphics &g = *this; // this is so the code below can
+    Graphics& g = *this; // this is so the code below can
     // be easily copy/pasted into main
 
     double a = 0;

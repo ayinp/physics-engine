@@ -1,6 +1,7 @@
 #ifndef COLLISIONSHAPE_H
 #define COLLISIONSHAPE_H
 
+#include "camera.h"
 #include "graphics.h"
 #include <functional>
 
@@ -26,7 +27,7 @@ public:
     Vec2d velocity();
     virtual ShapeType type() = 0;
     virtual Vec2d center() = 0;
-    virtual void draw(mssm::Graphics& g, mssm::Color color = mssm::WHITE) = 0;
+    virtual void draw(Camera& c, mssm::Color color = mssm::WHITE) = 0;
 };
 
 }

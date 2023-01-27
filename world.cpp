@@ -12,16 +12,16 @@ World::World(Vec2d gravity)
 
 }
 
-void ayin::World::draw(mssm::Graphics &g)
+void ayin::World::draw(Camera& c)
 {
     for(int i = 0; i < objects.size(); i++){
-        objects[i]->draw(g);
+        objects[i]->draw(c);
     }
 
 
 }
 
-void ayin::World::update(mssm::Graphics &g)
+void ayin::World::update(Camera& c)
 {
 
     erase_if(objects, [](const auto& obj){return obj->isDead();});
@@ -37,7 +37,7 @@ void ayin::World::update(mssm::Graphics &g)
 
 
     for(int i = 0; i < objects.size(); i++){
-        objects[i]->update(g, gravity);
+        objects[i]->update(c, gravity);
     }
     detectCollisions();
 }
@@ -64,6 +64,16 @@ std::vector<GameObject*> World::whoHasTag(string tag)
         }
     }
     return guys;
+}
+
+GameObject *World::getFirstTag(string tag)
+{
+    for(int i = 0; i < objects.size(); i++){
+        if(objects[i]->hasTag(tag)){
+            return objects[i].get();
+        }
+    }
+    return nullptr;
 }
 
 

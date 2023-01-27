@@ -16,7 +16,7 @@ public:
     virtual ShapeType type() override;
     virtual Vec2d center() override;
     virtual vector<Vec2d> corners() override;
-    virtual void draw(mssm::Graphics& g,  mssm::Color color = mssm::WHITE) override;
+    virtual void draw(Camera& c,  mssm::Color color = mssm::WHITE) override;
     Vec2d topLeft();
     Vec2d topRight();
     Vec2d bottomLeft();

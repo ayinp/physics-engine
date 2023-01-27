@@ -28,21 +28,21 @@ public:
     function<void(GameObject*, GameObject*, CollisionInfo)> collisionEnter;
     function<void(GameObject*, GameObject*, CollisionInfo)> collisionLeave;
     function<void(GameObject*, GameObject*, CollisionInfo)> collisionStay;
-    function<void(GameObject*, mssm::Graphics &g)> addUpdate;
+    function<void(GameObject*, Camera& c)> addUpdate;
 public:
     GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionEnter = nullptr,
                function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionLeave = nullptr, function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionStay = nullptr,
-               function<void(GameObject*, mssm::Graphics &g)> addUpdate = nullptr);
+               function<void(GameObject*, Camera& c)> addUpdate = nullptr);
     GameObject(const GameObject& other);
     void generateHitbox(ShapeType hitboxShape);
     void onCollisionEnter(GameObject& heHitMe, CollisionInfo info);
     void onCollisionLeave(GameObject& heHitMe, CollisionInfo info);
     void onCollisionStay(GameObject& heHitMe, CollisionInfo info);
-    void draw(mssm::Graphics& g);
-    void update(mssm::Graphics &g, Vec2d gravity);
+    void draw(Camera& c);
+    void update(Camera& c, Vec2d gravity);
     bool isDead() const {return dead;};
     Vec2d momentum();
-    void addTag(string tag){tags.push_back(tag);};
+    void addTag(string tag ){tags.push_back(tag);};
     bool hasTag(string tag){
         return find(tags.begin(), tags.end(), tag) != tags.end();
     };
@@ -56,6 +56,9 @@ public:
     void addComponent(unique_ptr<Component> c){components.push_back(std::move(c));};
     template<typename T>
     T* getComponent(string name);
+    double getElasticity() const {return elasticity;};
+    void setLastLoc(Vec2d l){lastLoc = l;};
+    Vec2d getLastLoc(){return lastLoc;};
 };
 
 template<typename T>

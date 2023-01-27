@@ -24,8 +24,8 @@ Vec2d Circle::center()
     return location();
 }
 
-void Circle::draw(mssm::Graphics &g, Color color)
+void Circle::draw(Camera& c, Color color)
 {
-    g.ellipse(location(), rad*2, rad*2, color);
-    g.ellipse(center(), 5, 5, RED, RED);
+    c.ellipse(location(), rad*2, rad*2, color);
+    c.ellipse(center(), 5, 5, RED, RED);
 }

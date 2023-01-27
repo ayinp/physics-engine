@@ -1,6 +1,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
-
+#include "camera.h"
+#include "graphics.h"
 #include <string>
 
 namespace ayin{
@@ -14,6 +15,7 @@ public:
 public:
     Component(GameObject* owner, std::string name);
     virtual void update() = 0;
+    virtual void draw(Camera& c) = 0;
 };
 
 

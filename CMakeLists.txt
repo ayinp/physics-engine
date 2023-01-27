@@ -69,6 +69,9 @@ add_executable(${PROJECT_NAME} ${ADD_EX_EXTRA}
     clipper.cpp
     component.h
     component.cpp
+    camera.h
+    camera.cpp
+
 )
 
 #set(CMAKE_THREAD_PREFER_PTHREAD TRUE)

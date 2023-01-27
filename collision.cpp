@@ -2,6 +2,11 @@
 #include "graphics.h"
 #include "clipper.h"
 
+#pragma warning( disable : 4244 )
+#ifndef _MSC_VER
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif
+
 using namespace ayin;
 using namespace ClipperLib;
 
@@ -219,7 +224,6 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info)
         pToR = true;
         for(int j = 0; j < s1Corners.size(); j++){
             if(toRight(s2Corners[i%s2Corners.size()], s2Corners[(i+1)%s2Corners.size()], s1Corners[j])){
-
             }
             else{
                 pToR = false;
@@ -315,8 +319,6 @@ bool collides(ayin::CollisionShape *s, ayin::Triangle *t, CollisionInfo& info){
         return collides(static_cast<PolygonShape*>(s), static_cast<PolygonShape*>(t), info);
     }
 }
-
-
 
 bool collides(ayin::CollisionShape *s1, ayin::CollisionShape *s2, CollisionInfo& info)
 {
