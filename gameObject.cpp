@@ -57,21 +57,22 @@ void GameObject::generateHitbox(ShapeType hitboxShape)
     }
 }
 
-void GameObject::onCollisionEnter(GameObject& heHitMe, CollisionInfo info)
+void GameObject::onCollisionEnter(GameObject& he, CollisionInfo info)
 {
+    colR = he.location.x > location.x ? true : false;
+    colL = he.location.x < location.x ? true : false;
+    colT= he.location.y < location.y ? true : false;
+    colB = he.location.y > location.y ? true : false;
+
     if(collisionEnter){
-        collisionEnter(this, &heHitMe, info);
+        collisionEnter(this, &he, info);
     }
     else{
         location = lastLoc;
-
         Vec2d normal = perp(location - info.collisionPoint).unit();
-
         Vec2d newX = normal * (dotProduct(normal, velocity)/dotProduct(normal, normal));
         Vec2d newY = velocity - newX;
-
         velocity = (newX - elasticity*newY);
-
 
         if(abs(velocity.x) < 0.01){
             velocity.x = 0;
@@ -81,15 +82,37 @@ void GameObject::onCollisionEnter(GameObject& heHitMe, CollisionInfo info)
             velocity.y = 0;
         }
 
+        if(colR && inContactR){
+            return;
+        }
+        else if(colL && inContactL){
+            return;
+        }
+        else if(colT && inContactT){
+            return;
+        }
+        else if(colB && inContactB){
+            return;
+        }
+
+
     }
+    //will this cause issues with multiple objects in one frame?
+    //how can I reset these each frame but not between object collisions ?
+    inContactR = he.location.x > location.x ? true : false;
+    inContactL = he.location.x < location.x ? true : false;
+    inContactT = he.location.y < location.y ? true : false;
+    inContactB = he.location.y > location.y ? true : false;
 
 }
 
-void GameObject::onCollisionLeave(GameObject& heHitMe, CollisionInfo info)
+void GameObject::onCollisionLeave(GameObject& he, CollisionInfo info)
 {
+
     if(collisionLeave){
-        collisionLeave(this, &heHitMe, info);
+        collisionLeave(this, &he, info);
     }
+
 }
 
 void GameObject::onCollisionStay(GameObject& heHitMe, CollisionInfo info)
@@ -157,4 +180,39 @@ Vec2d GameObject::momentum()
 {
     return mass*velocity;
 }
+
+void GameObject::topCollision()
+{
+    if(velocity.y <= 0){
+        velocity.y = 0;
+        inContactT = true;
+    }
+}
+
+void GameObject::bottomCollision()
+{
+    if(velocity.y >= 0){
+        velocity.y = 0;
+        inContactB = true;
+    }
+}
+
+void GameObject::leftCollision()
+{
+
+    cout << "wall" << endl;
+    velocity.x = std::abs(velocity.x);
+
+    inContactL = true;
+}
+
+void GameObject::rightCollision()
+{
+    cout << "wall" << endl;
+    velocity.x = -std::abs(velocity.x);
+    inContactR = true;
+
+}
+
+
 

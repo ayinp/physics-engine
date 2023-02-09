@@ -9,6 +9,17 @@
 
 //#include "paths.h"
 
+
+// how to differenciate between the world vs screen coordinates??
+// everything should still be drawn in world coords
+// camera should simply change where in the world were looking
+// should world store the camera coorinates??
+// how tf does this work
+
+
+
+
+
 using namespace std;
 using namespace mssm;
 using namespace ayin;
@@ -36,22 +47,22 @@ Counter::Counter(GameObject* owner, std::string name, int num)
 }
 
 
-void enemyCollision(GameObject* me, GameObject* he, CollisionInfo info){
-    if(me->hasTag("enemy") && he->hasTag("player")){
-        he->kill();
-    }
-}
-void enemyUpdate(GameObject* me, Camera& c){
-    //I want them to somehow tell if theyre gonna walk off a clif and turn around
-    //for now tho ill jus make them turn around on screen
-    if(me->location.x + me->getWidth()/2 < 0){
-        me->velocity.x = -me->velocity.x;
-    }
-    if(me->location.x - me->getWidth()/2 > c.width()){
-        me->velocity.x = -me->velocity.x;
-    }
+//void enemyCollision(GameObject* me, GameObject* he, CollisionInfo info){
+//    if(me->hasTag("enemy") && he->hasTag("player")){
+//        he->kill();
+//    }
+//}
+//void enemyUpdate(GameObject* me, Camera& c){
+//    //I want them to somehow tell if theyre gonna walk off a clif and turn around
+//    //for now tho ill jus make them turn around on screen
+//    if(me->location.x + me->getWidth()/2 < 0){
+//        me->velocity.x = -me->velocity.x;
+//    }
+//    if(me->location.x - me->getWidth()/2 > c.width()){
+//        me->velocity.x = -me->velocity.x;
+//    }
 
-}
+//}
 void weaponCollision(GameObject* me, GameObject* he, CollisionInfo info){
     if(me->hasTag("weapon") && he->hasTag("enemy")){
         me->kill();
@@ -78,6 +89,13 @@ void weaponCollision(GameObject* me, GameObject* he, CollisionInfo info){
         me->velocity.y = 0;
     }
 }
+
+bool fallingDown(GameObject* me, GameObject* he){
+    if(me->location.x - me->getWidth()/2){
+
+    }
+}
+
 void weaponUpdate(GameObject* me, Camera& c){
     if(me->location.x + me->getWidth()/2 < 0){
         me->kill();
@@ -113,7 +131,9 @@ int main(){
     p->addComponent(make_unique<Counter>(p.get(), "jumps", 0));
     world.objects.emplace_back(move(p));
 
-    unique_ptr<GameObject> grnd = make_unique<GameObject>(Vec2d{c.width()/2, c.height()-25}, c.width()+200, 50, ShapeType::rectangle);
+
+
+    unique_ptr<GameObject> grnd = make_unique<GameObject>(Vec2d{g.width()/2, g.height()-25}, g.width()+200, 50, ShapeType::rectangle);
     grnd->velocity = {0,0};
     grnd->addTag("ground");
     world.objects.emplace_back(move(grnd));
@@ -125,7 +145,7 @@ int main(){
         world.draw(c);
 
         GameObject* player = world.getFirstTag("player");
-
+        c.offset = Vec2d{g.width()/2, 3*g.height()/5} - (player->location);
 
         if(player){
             //player movement
@@ -161,38 +181,38 @@ int main(){
                 }
             }
             g.cout << "Jumps: " << player->getComponent<Counter>("jumps")->num << endl;
-            // new guy spawn moment
-            double emySpawnRate = 0.01;
-            bool enemy = g.randomTrue(emySpawnRate);
-            if(enemy && world.whoHasTag("enemy").size() < 10){
-                int x = g.randomInt(0,1);
-                Vec2d location;
-                Vec2d velocity;
-                if(x == 0){
-                    location = {0, c.height()-100};
-                    velocity = {5,0};
-                }
-                else if(x == 1){
-                    location = {c.width(), c.height()-100};
-                    velocity = {-5,0};
-                }
-                unique_ptr<GameObject> e = make_unique<GameObject>(location, 50, 100, ShapeType::rectangle, enemyCollision, nullptr, nullptr, enemyUpdate);
-                e->affectedByGravity = false;
-                e->setElasticity(0);
-                e->velocity = velocity;
-                e->addTag("enemy");
-                world.objects.emplace_back(move(e));
-            }
+//            // new guy spawn moment
+//            double emySpawnRate = 0.01;
+//            bool enemy = g.randomTrue(emySpawnRate);
+//            if(enemy && world.whoHasTag("enemy").size() < 10){
+//                int x = g.randomInt(0,1);
+//                Vec2d location;
+//                Vec2d velocity;
+//                if(x == 0){
+//                    location = {0, c.height()-100};
+//                    velocity = {5,0};
+//                }
+//                else if(x == 1){
+//                    location = {c.width(), c.height()-100};
+//                    velocity = {-5,0};
+//                }
+//                unique_ptr<GameObject> e = make_unique<GameObject>(location, 50, 100, ShapeType::rectangle, enemyCollision, nullptr, nullptr, enemyUpdate);
+//                e->affectedByGravity = false;
+//                e->setElasticity(0);
+//                e->velocity = velocity;
+//                e->addTag("enemy");
+//                world.objects.emplace_back(move(e));
+//            }
 
-            if(g.onMousePress(MouseButton::Left)){
-                Vec2d direction = (g.mousePos()-player->location).unit();
-                Vec2d velocity = direction*5;
-                unique_ptr<GameObject> e = make_unique<GameObject>(player->location + velocity*15, 10, 10, ShapeType::circle, weaponCollision, nullptr, nullptr, weaponUpdate);
-                e->affectedByGravity = false;
-                e->velocity = velocity;
-                e->addTag("weapon");
-                world.objects.emplace_back(move(e));
-            }
+//            if(g.onMousePress(MouseButton::Left)){
+//                Vec2d direction = (g.mousePos()-player->location).unit();
+//                Vec2d velocity = direction*5;
+//                unique_ptr<GameObject> e = make_unique<GameObject>(player->location + velocity*15, 10, 10, ShapeType::circle, weaponCollision, nullptr, nullptr, weaponUpdate);
+//                e->affectedByGravity = false;
+//                e->velocity = velocity;
+//                e->addTag("weapon");
+//                world.objects.emplace_back(move(e));
+//            }
         }
         else{
 

@@ -18,6 +18,14 @@ private:
     vector<unique_ptr<Component>> components;
     CollisionShape* hitBox;
     Vec2d lastLoc;
+    bool inContactT = false;
+    bool inContactB = false;
+    bool inContactL = false;
+    bool inContactR = false;
+    bool colT = false;
+    bool colB = false;
+    bool colL = false;
+    bool colR = false;
 public:
     bool affectedByGravity = false;
     bool wrapInX = false;
@@ -59,6 +67,12 @@ public:
     double getElasticity() const {return elasticity;};
     void setLastLoc(Vec2d l){lastLoc = l;};
     Vec2d getLastLoc(){return lastLoc;};
+
+    //potentially deal with these as if all shapes are squares?
+    void topCollision();
+    void bottomCollision();
+    void leftCollision();
+    void rightCollision();
 };
 
 template<typename T>
