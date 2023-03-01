@@ -1,23 +1,25 @@
 #include <iostream>
 #include "graphics.h"
-#include "rectangle.h"
-#include "circle.h"
-#include "triangle.h"
 #include "vec2d.h"
-#include "collision.h"
 #include "world.h"
 
 //#include "paths.h"
 
-
-// how to differenciate between the world vs screen coordinates??
-// everything should still be drawn in world coords
-// camera should simply change where in the world were looking
-// should world store the camera coorinates??
-// how tf does this work
-
-
-
+//TO DO
+// - fix normal on poly poly colision function in colision.cpp
+//    this will help get direction of colision
+//    which will help reduce the hopping
+// - distinguish between in-contact and colliding so no hops!
+// - impliment adding sprites, and animations
+// - figure out when to call onColisionLeave and onColisionStay
+//    they arent currently ever being called lmao, but they would also
+//    be useful for getting rid of the hops. maybe the solution.
+// - eventually I really need to consider rotation too
+// - make triangles less wonky, and potentially just make them polygons
+//    we should probably impliment polygons in general
+// - revisit "come back to this" in circle triangle and circle rectangle colisionin colision.cpp
+// - revisit "change this" in colision point function in colision.cpp
+// - finish falling down function in main
 
 
 using namespace std;
@@ -45,7 +47,6 @@ Counter::Counter(GameObject* owner, std::string name, int num)
 {
 
 }
-
 
 //void enemyCollision(GameObject* me, GameObject* he, CollisionInfo info){
 //    if(me->hasTag("enemy") && he->hasTag("player")){
@@ -92,8 +93,9 @@ void weaponCollision(GameObject* me, GameObject* he, CollisionInfo info){
 
 bool fallingDown(GameObject* me, GameObject* he){
     if(me->location.x - me->getWidth()/2){
-
+        retrun true;
     }
+    return false;
 }
 
 void weaponUpdate(GameObject* me, Camera& c){
@@ -110,13 +112,6 @@ void weaponUpdate(GameObject* me, Camera& c){
         me->kill();
     }
 }
-
-//things I find out I need to do to make this better
-//-make it so I can add sprites, and animations!
-//-distinguish between in-contact and colliding so no hops!
-//-add camera
-//-rotation probably would be good
-
 
 int main(){
     Graphics g("mini-platformer", 1024, 768);

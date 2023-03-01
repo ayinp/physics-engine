@@ -10,6 +10,7 @@ class CollisionInfo
 {
 public:
     Vec2d collisionPoint;
+    Vec2d normal;
 };
 
 }

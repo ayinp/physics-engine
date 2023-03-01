@@ -23,29 +23,22 @@ void ayin::World::draw(Camera& c)
 
 void ayin::World::update(Camera& c)
 {
-
+    //erase dead game objects
     erase_if(objects, [](const auto& obj){return obj->isDead();});
-
-//    erase_if(objects, [](const unique_ptr<GameObject>& obj)-> bool
-//    { return obj->isDead() == true; });
-
-//    //removes every element in list that returned true in line 9
-//    objects.erase(std::remove_if(objects.begin(), objects.end(),
-//                                 [&](const unique_ptr<GameObject>& obj)-> bool
-//    { return obj->isDead() == true; }), //any condition
-//                  objects.end());
-
-
+    //update objects
     for(int i = 0; i < objects.size(); i++){
         objects[i]->update(c, gravity);
     }
+    //look for colisions
     detectCollisions();
 }
 
 void World::detectCollisions()
 {
+    //loop over the objects
     for(int i = 0; i < objects.size(); i++){
         for(int j = i+1; j < objects.size(); j++){
+            //establish an info object
             CollisionInfo info;
             if(collides(objects[i]->getHitbox(), objects[j]->getHitbox(), info)){
                 objects[i]->onCollisionEnter(*objects[j], info);
