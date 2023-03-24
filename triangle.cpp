@@ -70,6 +70,9 @@ vector<Vec2d> Triangle::corners()
     return {corner1, corner2, corner3};
 }
 
+vector<Vec2d> expand(vector<Vec2d>, double);
+
+
 void Triangle::draw(Camera& c, Color color)
 {
     c.polygon(corners(), color);
@@ -80,4 +83,6 @@ void Triangle::draw(Camera& c, Color color)
 
     c.ellipse(center(), 5, 5, RED, RED);
     c.ellipse(centerOfMass(), 5, 5, BLUE, BLUE);
+
+    c.polygon(expand(corners(), 10), PURPLE);
 }

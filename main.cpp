@@ -20,6 +20,7 @@
 // - revisit "come back to this" in circle triangle and circle rectangle colisionin colision.cpp
 // - revisit "change this" in colision point function in colision.cpp
 // - finish falling down function in main
+// - tags method on game objects
 
 
 using namespace std;
@@ -48,16 +49,76 @@ Counter::Counter(GameObject* owner, std::string name, int num)
 
 }
 
+void playerColEnter(CollisionInfo info){
+
+ cout << "ENTER " << info.obj1->hasTag("player") << endl;
+    if(info.obj1->hasTag("player") && info.obj2->hasTag("ground")){
+        info.obj1->location = info.obj1->getLastLoc();
+        Vec2d normal = perp(info.obj1->location - info.collisionPoint).unit();
+        Vec2d newX = normal * (dotProduct(normal, info.obj1->velocity)/dotProduct(normal, normal));
+        Vec2d newY = info.obj1->velocity - newX;
+        info.obj1->velocity = (newX - info.obj1->getElasticity()*newY);
+
+        if(abs(info.obj1->velocity.x) < 0.01){
+            info.obj1->velocity.x = 0;
+        }
+        if(abs(info.obj1->velocity.y) < 0.01){
+            info.obj1->velocity.y = 0;
+        }
+        info.obj1->affectedByGravity = false;
+        cout << "no more gravity" << endl;
+    }
+    else if(info.obj2->hasTag("player") && info.obj1->hasTag("ground")){
+            info.obj2->location = info.obj2->getLastLoc();
+            Vec2d normal = perp(info.obj2->location - info.collisionPoint).unit();
+            Vec2d newX = normal * (dotProduct(normal, info.obj2->velocity)/dotProduct(normal, normal));
+            Vec2d newY = info.obj2->velocity - newX;
+            info.obj2->velocity = (newX - info.obj2->getElasticity()*newY);
+
+            if(abs(info.obj2->velocity.x) < 0.01){
+                info.obj2->velocity.x = 0;
+
+            }
+            if(abs(info.obj2->velocity.y) < 0.01){
+                info.obj2->velocity.y = 0;
+            }
+        info.obj2->affectedByGravity = false;
+        cout << "no more gravity" << endl;
+    }
+}
+
+void playerColStay(CollisionInfo info){
+    cout << "STAY" << endl;
+}
+
+void playerColLeave(CollisionInfo info){
+    cout << "LEAVE " << info.obj1->hasTag("player") << endl;
+    if(info.obj1->hasTag("player")){
+        if(info.obj2->hasTag("ground")){
+            info.obj1->affectedByGravity = true;
+            cout << "gravity" << endl;
+        }
+    }
+    else if(info.obj2->hasTag("player")){
+        if(info.obj1->hasTag("ground")){
+            info.obj1->affectedByGravity = true;
+            cout << "gravity" << endl;
+        }
+    }
+}
+
 int main(){
     Graphics g("mini-platformer", 1024, 768);
     Camera c(g);
     World world({0, 0.3});
 
     unique_ptr<GameObject> p = make_unique<GameObject>(Vec2d{c.width()/2, c.height()/2}, 50, 100, ShapeType::triangle);
+    p->collisionStay = playerColStay;
+    p->collisionLeave = playerColLeave;
+    p->collisionEnter = playerColEnter;
     p->affectedByGravity = true;
     p->setElasticity(0.2);
     p->addTag("player");
-    p->addTag("test");
     p->addComponent(make_unique<Counter>(p.get(), "jumps", 0));
     world.objects.emplace_back(move(p));
 

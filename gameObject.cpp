@@ -7,6 +7,8 @@
 using namespace ayin;
 using namespace mssm;
 
+
+
 GameObject::GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void(CollisionInfo)> onCollisionEnter,
                        function<void(CollisionInfo)> onCollisionLeave, function<void(CollisionInfo)> onCollisionStay,
                        function<void(GameObject*, Camera& c)> addUpdate)
@@ -102,6 +104,7 @@ void GameObject::draw(Camera& c)
 {
     c.line(location, location + 100*velocity, YELLOW);
     hitBox->draw(c);
+    c.text(Vec2d{10,10}+location, 50, to_string(collisionInfos.size()));
     for(int i = 0; i < components.size(); i++){
         components[i]->draw(c);
     }

@@ -75,11 +75,20 @@ bool toRight(Vec2d p1, Vec2d p2, Vec2d a){
     return cross(v1, v2) > 0;
 }
 
+vector<Vec2d> expand(vector<Vec2d>points, double val){
+    vector<Vec2d> returnList;
+    for(int i = 0; i < points.size(); i++){
+        Vec2d line = (points[i] - points[(i+1)%points.size()]);
+        returnList.push_back(perp1(line).unit()*val+points[i]);
+        returnList.push_back(perp1(line).unit()*val+points[(i+1)%points.size()]);
+    }
+    return returnList;
+}
 
 //collision functions ----------------------------------------------------------------------------------------
 
 //Circle Circle
-bool collides(Circle *c1, Circle *c2, CollisionInfo& info)
+bool collides(Circle *c1, Circle *c2, CollisionInfo& info, double minDistance)
 {
     Vec2d v1 = c1->location() - c2->location();
     if(v1.magnitude() == 0){
@@ -90,11 +99,11 @@ bool collides(Circle *c1, Circle *c2, CollisionInfo& info)
     info.collisionPoint = c1->location() - v3;
     //gives a vector where if you add to c2 you will get to c1
     info.normal = c1->location()-c2->location();
-    return (c1->location() - c2->location()).magnitude() < c1->rad + c2->rad;
+    return (c1->location() - c2->location()).magnitude() < c1->rad + c2->rad + minDistance;
 }
 
 // Circle Rectangle
-bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
+bool collides(Circle *c, Rectangle *r, CollisionInfo& info, double minDistance)
 {
     bool isAbove = c->location().y < r->topLeft().y;
     bool isLeft = c->location().x < r->topLeft().x;
@@ -104,7 +113,7 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
     if(isAbove){
         //top left corner
         if(isLeft){
-            if((c->location() - r->topLeft()).magnitude() < c->rad){
+            if((c->location() - r->topLeft()).magnitude() < c->rad + minDistance){
                 info.collisionPoint = r->topLeft();
                 info.normal = c->location()-r->topLeft();
                 return true;
@@ -113,7 +122,7 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
         }
         //top right corner
         else if(isRight){
-            if((c->location() - r->topRight()).magnitude() < c->rad){
+            if((c->location() - r->topRight()).magnitude() < c->rad + minDistance){
                 info.collisionPoint = r->topRight();
                 info.normal = c->location()-r->topRight();
                 return true;
@@ -122,7 +131,7 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
         }
         //top side
         else{
-            if(abs(r->location().y - c->location().y) - (c->rad + r->height/2) < 0){
+            if(abs(r->location().y - c->location().y) - (c->rad + r->height/2) < minDistance){
                 info.collisionPoint = {c->location().x, r->topLeft().y};
                 info.normal = c->location()-info.collisionPoint;
                 return true;
@@ -133,7 +142,7 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
     else if(isBelow){
         //bottom left corner
         if(isLeft){
-            if((c->location() - r->bottomLeft()).magnitude() < c->rad){
+            if((c->location() - r->bottomLeft()).magnitude() < c->rad + minDistance){
                 info.collisionPoint = r->bottomLeft();
                 info.normal = c->location()-r->bottomLeft();
                 return true;
@@ -142,7 +151,7 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
         }
         //bottom right corner
         else if(isRight){
-            if((c->location() - r->bottomRight()).magnitude() < c->rad){
+            if((c->location() - r->bottomRight()).magnitude() < c->rad + minDistance){
                 info.collisionPoint = r->bottomRight();
                 info.normal = c->location()-r->bottomRight();
                 return true;
@@ -151,7 +160,7 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
         }
         //bottom side
         else{
-            if(abs(c->location().y - r->location().y) - (c->rad + r->height/2) < 0){
+            if(abs(c->location().y - r->location().y) - (c->rad + r->height/2) < minDistance){
                 info.collisionPoint = {c->location().x, r->bottomLeft().y};
                 info.normal = c->location()-info.collisionPoint;
                 return true;
@@ -162,7 +171,7 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
     else{
         //left side
         if(isLeft){
-            if(abs(c->location().x - r->location().x) - (c->rad + r->width/2) < 0){
+            if(abs(c->location().x - r->location().x) - (c->rad + r->width/2) < minDistance){
                 info.collisionPoint = {r->topLeft().x, c->location().y};
                 info.normal = c->location()-info.collisionPoint;
                 return true;
@@ -171,7 +180,7 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
         }
         //right side
         else if(isRight){
-            if(abs(r->location().x - c->location().x) - (c->rad + r->width/2) < 0){
+            if(abs(r->location().x - c->location().x) - (c->rad + r->width/2) < minDistance){
                 info.collisionPoint = {r->topRight().x, c->location().y};
                 info.normal = c->location()-info.collisionPoint;
                 return true;
@@ -187,7 +196,7 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info)
 }
 
 // Circle Triangle
-bool collides(Circle *c, Triangle *t, CollisionInfo& info)
+bool collides(Circle *c, Triangle *t, CollisionInfo& info, double minDistance)
 {
     Vec2d p1 = t->corners()[0];
     Vec2d p2 = t->corners()[1];
@@ -196,21 +205,21 @@ bool collides(Circle *c, Triangle *t, CollisionInfo& info)
 
     //
     if((p2-p1).x * (a-p1).y - (p2-p1).y * (a-p1).x > 0){
-        if(distanceToSegment(p1, p2, a) < c->rad){
+        if(distanceToSegment(p1, p2, a) < c->rad + minDistance){
             info.collisionPoint = closestPoint(p2, p1, a);
             info.normal = c->location()-info.collisionPoint;
             return true;
         }
     }
     else if((p3-p2).x * (a-p2).y - (p3-p2).y * (a-p2).x > 0){
-        if(distanceToSegment(p2, p3, a) < c->rad){
+        if(distanceToSegment(p2, p3, a) < c->rad + minDistance){
             info.collisionPoint = closestPoint(p3, p2, a);
             info.normal = c->location()-info.collisionPoint;
             return true;
         }
     }
     else if((p1-p3).x * (a-p3).y - (p1-p3).y * (a-p3).x > 0){
-        if(distanceToSegment(p3, p1, a) < c->rad){
+        if(distanceToSegment(p3, p1, a) < c->rad + minDistance){
             info.collisionPoint = closestPoint(p1, p3, a);
             info.normal = c->location()-info.collisionPoint;
             return true;
@@ -229,10 +238,10 @@ bool collides(Circle *c, Triangle *t, CollisionInfo& info)
 }
 
 // Polygon Polygon
-bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info)
+bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info, double minDistance)
 {
-    vector<Vec2d> s1Corners = s1->corners();
-    vector<Vec2d> s2Corners = s2->corners();
+    vector<Vec2d> s1Corners = minDistance != 0 ? expand(s1->corners(), minDistance/2): s1->corners();
+    vector<Vec2d> s2Corners = minDistance != 0 ? expand(s2->corners(), minDistance/2): s2->corners();
     bool pToR = true;
     for(int i = 1; i <= s2Corners.size(); i++){
         pToR = true;
@@ -302,49 +311,49 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info)
 
 // double dispatching :) ---------------------------------------------------------------------------------
 
-bool collides(ayin::CollisionShape *s, ayin::Circle *c, CollisionInfo& info){
+bool collides(ayin::CollisionShape *s, ayin::Circle *c, CollisionInfo& info, double minDistance){
     ShapeType x = s->type();
     switch(x){
     case ShapeType::circle:
-        return collides(c, static_cast<Circle*>(s), info);
+        return collides(c, static_cast<Circle*>(s), info, minDistance);
     case ShapeType::rectangle:
-        return collides(c, static_cast<Rectangle*>(s), info);
+        return collides(c, static_cast<Rectangle*>(s), info, minDistance);
     case ShapeType::triangle:
-        return collides(c, static_cast<Triangle*>(s), info);
+        return collides(c, static_cast<Triangle*>(s), info, minDistance);
     }
 }
 
-bool collides(ayin::CollisionShape *s, ayin::Rectangle *r, CollisionInfo& info){
+bool collides(ayin::CollisionShape *s, ayin::Rectangle *r, CollisionInfo& info, double minDistance){
     ShapeType x = s->type();
     switch(x){
     case ShapeType::circle:
-        return collides(static_cast<Circle*>(s), r, info);
+        return collides(static_cast<Circle*>(s), r, info, minDistance);
     case ShapeType::rectangle:
     case ShapeType::triangle:
-        return collides(static_cast<PolygonShape*>(r), static_cast<PolygonShape*>(s), info);
+        return collides(static_cast<PolygonShape*>(r), static_cast<PolygonShape*>(s), info, minDistance);
     }
 }
 
-bool collides(ayin::CollisionShape *s, ayin::Triangle *t, CollisionInfo& info){
+bool collides(ayin::CollisionShape *s, ayin::Triangle *t, CollisionInfo& info, double , double minDistance){
     ShapeType x = s->type();
     switch(x){
     case ShapeType::circle:
-        return collides(static_cast<Circle*>(s), t, info);
+        return collides(static_cast<Circle*>(s), t, info, minDistance);
     case ShapeType::rectangle:
     case ShapeType::triangle:
-        return collides(static_cast<PolygonShape*>(s), static_cast<PolygonShape*>(t), info);
+        return collides(static_cast<PolygonShape*>(s), static_cast<PolygonShape*>(t), info, minDistance);
     }
 }
 
-bool collides(ayin::CollisionShape *s1, ayin::CollisionShape *s2, CollisionInfo& info)
+bool collides(ayin::CollisionShape *s1, ayin::CollisionShape *s2, CollisionInfo& info, double minDistance)
 {
     ShapeType x = s1->type();
     switch(x){
     case ShapeType::circle:
-        return collides(s2, static_cast<Circle*>(s1), info);
+        return collides(s2, static_cast<Circle*>(s1), info, minDistance);
     case ShapeType::rectangle:
-        return collides(s2, static_cast<Rectangle*>(s1), info);
+        return collides(s2, static_cast<Rectangle*>(s1), info, minDistance);
     case ShapeType::triangle:
-        return collides(s2, static_cast<Triangle*>(s1), info);
+        return collides(s2, static_cast<Triangle*>(s1), info, minDistance);
     }
 }

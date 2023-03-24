@@ -35,18 +35,16 @@ void ayin::World::update(Camera& c)
 
 void World::detectCollisions()
 {
-    //loop over the objects
     for(int i = 0; i < objects.size(); i++){
         for(int j = 0; j < objects[i]->collisionInfos.size(); j++){
             objects[i]->collisionInfos[j].dead = true;
         }
     }
-
     for(int i = 0; i < objects.size(); i++){
         for(int j = i+1; j < objects.size(); j++){
             //establish an info object
             CollisionInfo info;
-            if(collides(objects[i]->getHitbox(), objects[j]->getHitbox(), info)){
+            if(collides(objects[i]->getHitbox(), objects[j]->getHitbox(), info, 10)){
                 info.obj1 = objects[i].get();
                 info.obj2 = objects[j].get();
                 bool alreadyColiding = false;
@@ -68,10 +66,10 @@ void World::detectCollisions()
             }
         }
     }
-
-    //this is probably wrong
     for(int i = 0; i < objects.size(); i++){
-        erase_if(objects[i]->collisionInfos, [](const auto& info){return info.dead;});
+        erase_if(objects[i]->collisionInfos, [this, i](const auto& info){
+            objects[i]->onCollisionLeave(info);
+            return info.dead;});
     }
 }
 
