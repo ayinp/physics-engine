@@ -84,5 +84,5 @@ void Triangle::draw(Camera& c, Color color)
     c.ellipse(center(), 5, 5, RED, RED);
     c.ellipse(centerOfMass(), 5, 5, BLUE, BLUE);
 
-    c.polygon(expand(corners(), 20), PURPLE);
+    c.polygon(expand(corners(), 2), PURPLE);
 }

@@ -117,7 +117,7 @@ int main(){
     p->collisionLeave = playerColLeave;
     p->collisionEnter = playerColEnter;
     p->affectedByGravity = true;
-    p->setElasticity(0.2);
+    p->setElasticity(0.5);
     p->addTag("player");
     p->addComponent(make_unique<Counter>(p.get(), "jumps", 0));
     world.objects.emplace_back(move(p));

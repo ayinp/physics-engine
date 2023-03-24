@@ -102,8 +102,15 @@ void GameObject::onCollisionStay(CollisionInfo info)
 
 void GameObject::draw(Camera& c)
 {
+
     c.line(location, location + 100*velocity, YELLOW);
-    hitBox->draw(c);
+    c.line(location, location + 100*velocity, RED);
+    if(affectedByGravity){
+        hitBox->draw(c, WHITE);
+    }
+    else{
+        hitBox->draw(c, RED);
+    }
     c.text(Vec2d{10,10}+location, 50, to_string(collisionInfos.size()));
     for(int i = 0; i < components.size(); i++){
         components[i]->draw(c);
@@ -130,7 +137,7 @@ void GameObject::update(Camera& c, Vec2d gravity)
     velocity = velocity + a;
     location = location + velocity;
 
-     c.line(location, location + 100*velocity, PURPLE);
+    c.line(location, location + 100*velocity, PURPLE);
 
 
     if(wrapInX){

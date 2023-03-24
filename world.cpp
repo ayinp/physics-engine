@@ -38,7 +38,7 @@ void World::detectCollisions()
     for(int i = 0; i < objects.size(); i++){
         for(int j = 0; j < objects[i]->collisionInfos.size(); j++){
             CollisionInfo &info = objects[i]->collisionInfos[j];
-            if(collides(info.obj1->getHitbox(), info.obj2->getHitbox(), info, 20)){
+            if(collides(info.obj1->getHitbox(), info.obj2->getHitbox(), info, 2)){
                 //still collidin
                 info.dead = false;
                 info.obj1->onCollisionStay(info);
@@ -68,7 +68,9 @@ void World::detectCollisions()
     }
     for(int i = 0; i < objects.size(); i++){
         erase_if(objects[i]->collisionInfos, [this, i](const auto& info){
+            if(info.dead){
             objects[i]->onCollisionLeave(info);
+            }
             return info.dead;});
     }
 }
