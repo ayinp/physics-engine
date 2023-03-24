@@ -56,14 +56,17 @@ void playerColEnter(CollisionInfo info){
  cout << "ENTER " << info.obj1->hasTag("player") << endl;
         info.obj1->location = info.obj1->getLastLoc();
         Vec2d normal = perp(info.obj1->location - info.collisionPoint).unit();
+
+        cout << "NORMALLL_________________________________" << endl;
+        cout << normal << endl;
         Vec2d newX = normal * (dotProduct(normal, info.obj1->velocity)/dotProduct(normal, normal));
         Vec2d newY = info.obj1->velocity - newX;
         info.obj1->velocity = (newX - info.obj1->getElasticity()*newY);
 
-        if(abs(info.obj1->velocity.x) < 0.5){
+        if(abs(info.obj1->velocity.x) < 1){
             info.obj1->velocity.x = 0;
         }
-        if(abs(info.obj1->velocity.y) < 0.5){
+        if(abs(info.obj1->velocity.y) < 1){
             info.obj1->velocity.y = 0;
         }
         info.obj1->affectedByGravity = false;
@@ -93,14 +96,15 @@ void playerColLeave(CollisionInfo info){
 int main(){
     Graphics g("mini-platformer", 1024, 768);
     Camera c(g);
-    World world({0, 0.05});
+    World world({0, 0.1});
 
     unique_ptr<GameObject> p = make_unique<GameObject>(Vec2d{c.width()/2, c.height()/2}, 50, 100, ShapeType::triangle);
+
     p->collisionStay = playerColStay;
     p->collisionLeave = playerColLeave;
     p->collisionEnter = playerColEnter;
     p->affectedByGravity = true;
-    p->setElasticity(0.5);
+    p->setElasticity(0.2);
     p->addTag("player");
     p->addComponent(make_unique<Counter>(p.get(), "jumps", 0));
     world.objects.emplace_back(move(p));
@@ -137,10 +141,10 @@ int main(){
             }
             else{
                 if(player->velocity.x > 0.1){
-                    player->acceleration.x = -0.5;
+                    player->acceleration.x = max(-0.1,-player->velocity.x);
                 }
-                else if(player->velocity.x < 0.1){
-                    player->acceleration.x = 0.5;
+                else if(player->velocity.x < -0.1){
+                    player->acceleration.x = min(0.1,-player->velocity.x);
                 }
                 else{
                     player->velocity.x = 0;
@@ -150,7 +154,7 @@ int main(){
             // player jumpin
             if(!player->isDead()){
                 if((g.onKeyPress('W')|| g.onKeyPress(Key::Up) || g.onKeyPress(Key::Space))){
-                    player->velocity = {0, -10};
+                    player->velocity = {player->velocity.x, -5};
                     player->getComponent<Counter>("jumps")->addCount(1);
                 }
             }
