@@ -21,6 +21,8 @@
 // - revisit "change this" in colision point function in colision.cpp
 // - finish falling down function in main
 // - tags method on game objects
+// - collisionInfo.normal is not being set for polygon-polygon collision
+// - if gameobject is deleted, we'll need to cleanup collisioninfo from other objects that it is in contact with.
 
 
 using namespace std;
@@ -52,39 +54,20 @@ Counter::Counter(GameObject* owner, std::string name, int num)
 void playerColEnter(CollisionInfo info){
 
  cout << "ENTER " << info.obj1->hasTag("player") << endl;
-    if(info.obj1->hasTag("player") && info.obj2->hasTag("ground")){
         info.obj1->location = info.obj1->getLastLoc();
         Vec2d normal = perp(info.obj1->location - info.collisionPoint).unit();
         Vec2d newX = normal * (dotProduct(normal, info.obj1->velocity)/dotProduct(normal, normal));
         Vec2d newY = info.obj1->velocity - newX;
         info.obj1->velocity = (newX - info.obj1->getElasticity()*newY);
 
-        if(abs(info.obj1->velocity.x) < 0.01){
+        if(abs(info.obj1->velocity.x) < 0.5){
             info.obj1->velocity.x = 0;
         }
-        if(abs(info.obj1->velocity.y) < 0.01){
+        if(abs(info.obj1->velocity.y) < 0.5){
             info.obj1->velocity.y = 0;
         }
         info.obj1->affectedByGravity = false;
         cout << "no more gravity" << endl;
-    }
-    else if(info.obj2->hasTag("player") && info.obj1->hasTag("ground")){
-            info.obj2->location = info.obj2->getLastLoc();
-            Vec2d normal = perp(info.obj2->location - info.collisionPoint).unit();
-            Vec2d newX = normal * (dotProduct(normal, info.obj2->velocity)/dotProduct(normal, normal));
-            Vec2d newY = info.obj2->velocity - newX;
-            info.obj2->velocity = (newX - info.obj2->getElasticity()*newY);
-
-            if(abs(info.obj2->velocity.x) < 0.01){
-                info.obj2->velocity.x = 0;
-
-            }
-            if(abs(info.obj2->velocity.y) < 0.01){
-                info.obj2->velocity.y = 0;
-            }
-        info.obj2->affectedByGravity = false;
-        cout << "no more gravity" << endl;
-    }
 }
 
 void playerColStay(CollisionInfo info){

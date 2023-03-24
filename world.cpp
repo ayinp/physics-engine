@@ -58,10 +58,13 @@ void World::detectCollisions()
                 info.obj2 = objects[j].get();
                 CollisionInfo* existing = info.obj1->getCollisionInfo(info.obj2);
                 if(!existing){
+                    CollisionInfo info2 = info;
+                    info2.reverse();
+
                     info.obj1->collisionInfos.push_back(info);
-                    info.obj2->collisionInfos.push_back(info);
+                    info.obj2->collisionInfos.push_back(info2);
                     info.obj1->onCollisionEnter(info);
-                    info.obj2->onCollisionEnter(info);
+                    info.obj2->onCollisionEnter(info2);
                 }
             }
         }
@@ -69,7 +72,7 @@ void World::detectCollisions()
     for(int i = 0; i < objects.size(); i++){
         erase_if(objects[i]->collisionInfos, [this, i](const auto& info){
             if(info.dead){
-            objects[i]->onCollisionLeave(info);
+                objects[i]->onCollisionLeave(info);
             }
             return info.dead;});
     }

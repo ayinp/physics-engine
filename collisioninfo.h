@@ -17,6 +17,9 @@ public:
     GameObject* obj1;
     GameObject* obj2;
     bool dead = false;
+public:
+    void reverse();
+
 };
 
 }
