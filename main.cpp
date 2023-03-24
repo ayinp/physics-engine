@@ -110,7 +110,7 @@ void playerColLeave(CollisionInfo info){
 int main(){
     Graphics g("mini-platformer", 1024, 768);
     Camera c(g);
-    World world({0, 0.3});
+    World world({0, 0.05});
 
     unique_ptr<GameObject> p = make_unique<GameObject>(Vec2d{c.width()/2, c.height()/2}, 50, 100, ShapeType::triangle);
     p->collisionStay = playerColStay;

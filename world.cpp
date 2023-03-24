@@ -37,27 +37,27 @@ void World::detectCollisions()
 {
     for(int i = 0; i < objects.size(); i++){
         for(int j = 0; j < objects[i]->collisionInfos.size(); j++){
-            objects[i]->collisionInfos[j].dead = true;
+            CollisionInfo &info = objects[i]->collisionInfos[j];
+            if(collides(info.obj1->getHitbox(), info.obj2->getHitbox(), info, 20)){
+                //still collidin
+                info.dead = false;
+                info.obj1->onCollisionStay(info);
+            }
+            else{
+                info.dead = true;
+            }
+
         }
     }
     for(int i = 0; i < objects.size(); i++){
         for(int j = i+1; j < objects.size(); j++){
             //establish an info object
             CollisionInfo info;
-            if(collides(objects[i]->getHitbox(), objects[j]->getHitbox(), info, 10)){
+            if(collides(objects[i]->getHitbox(), objects[j]->getHitbox(), info, 0)){
                 info.obj1 = objects[i].get();
                 info.obj2 = objects[j].get();
-                bool alreadyColiding = false;
                 CollisionInfo* existing = info.obj1->getCollisionInfo(info.obj2);
-                if(existing){
-                    info.obj1->onCollisionStay(info);
-                    info.obj2->onCollisionStay(info);
-                    alreadyColiding = true;
-                    existing->dead = false;
-                    info.obj2->getCollisionInfo(info.obj1)->dead = false;
-                    break;
-                }
-                if(!alreadyColiding){
+                if(!existing){
                     info.obj1->collisionInfos.push_back(info);
                     info.obj2->collisionInfos.push_back(info);
                     info.obj1->onCollisionEnter(info);
