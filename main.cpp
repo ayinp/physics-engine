@@ -48,71 +48,6 @@ Counter::Counter(GameObject* owner, std::string name, int num)
 
 }
 
-//void enemyCollision(GameObject* me, GameObject* he, CollisionInfo info){
-//    if(me->hasTag("enemy") && he->hasTag("player")){
-//        he->kill();
-//    }
-//}
-//void enemyUpdate(GameObject* me, Camera& c){
-//    //I want them to somehow tell if theyre gonna walk off a clif and turn around
-//    //for now tho ill jus make them turn around on screen
-//    if(me->location.x + me->getWidth()/2 < 0){
-//        me->velocity.x = -me->velocity.x;
-//    }
-//    if(me->location.x - me->getWidth()/2 > c.width()){
-//        me->velocity.x = -me->velocity.x;
-//    }
-
-//}
-void weaponCollision(GameObject* me, GameObject* he, CollisionInfo info){
-    if(me->hasTag("weapon") && he->hasTag("enemy")){
-        me->kill();
-        he->kill();
-
-    }
-    else if(me->hasTag("weapon") && he->hasTag("ground")){
-
-        me->location = me->getLastLoc();
-
-        Vec2d normal = perp(me->location - info.collisionPoint).unit();
-
-        Vec2d newX = normal * (dotProduct(normal, me->velocity)/dotProduct(normal, normal));
-        Vec2d newY = me->velocity - newX;
-
-        me->velocity = (newX - me->getElasticity()*newY);
-    }
-
-    if(abs(me->velocity.x) < 0.01){
-        me->velocity.x = 0;
-
-    }
-    if(abs(me->velocity.y) < 0.01){
-        me->velocity.y = 0;
-    }
-}
-
-bool fallingDown(GameObject* me, GameObject* he){
-    if(me->location.x - me->getWidth()/2){
-        retrun true;
-    }
-    return false;
-}
-
-void weaponUpdate(GameObject* me, Camera& c){
-    if(me->location.x + me->getWidth()/2 < 0){
-        me->kill();
-    }
-    if(me->location.x - me->getWidth()/2 > c.width()){
-        me->kill();
-    }
-    if(me->location.y +  me->getHeight()/2 < 0){
-        me->kill();
-    }
-    if(me->location.y -  me->getHeight()/2 > c.height()){
-        me->kill();
-    }
-}
-
 int main(){
     Graphics g("mini-platformer", 1024, 768);
     Camera c(g);
@@ -176,38 +111,6 @@ int main(){
                 }
             }
             g.cout << "Jumps: " << player->getComponent<Counter>("jumps")->num << endl;
-//            // new guy spawn moment
-//            double emySpawnRate = 0.01;
-//            bool enemy = g.randomTrue(emySpawnRate);
-//            if(enemy && world.whoHasTag("enemy").size() < 10){
-//                int x = g.randomInt(0,1);
-//                Vec2d location;
-//                Vec2d velocity;
-//                if(x == 0){
-//                    location = {0, c.height()-100};
-//                    velocity = {5,0};
-//                }
-//                else if(x == 1){
-//                    location = {c.width(), c.height()-100};
-//                    velocity = {-5,0};
-//                }
-//                unique_ptr<GameObject> e = make_unique<GameObject>(location, 50, 100, ShapeType::rectangle, enemyCollision, nullptr, nullptr, enemyUpdate);
-//                e->affectedByGravity = false;
-//                e->setElasticity(0);
-//                e->velocity = velocity;
-//                e->addTag("enemy");
-//                world.objects.emplace_back(move(e));
-//            }
-
-//            if(g.onMousePress(MouseButton::Left)){
-//                Vec2d direction = (g.mousePos()-player->location).unit();
-//                Vec2d velocity = direction*5;
-//                unique_ptr<GameObject> e = make_unique<GameObject>(player->location + velocity*15, 10, 10, ShapeType::circle, weaponCollision, nullptr, nullptr, weaponUpdate);
-//                e->affectedByGravity = false;
-//                e->velocity = velocity;
-//                e->addTag("weapon");
-//                world.objects.emplace_back(move(e));
-//            }
         }
         else{
 

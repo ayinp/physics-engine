@@ -7,8 +7,8 @@
 using namespace ayin;
 using namespace mssm;
 
-GameObject::GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void(GameObject*, GameObject*, CollisionInfo)> onCollisionEnter,
-                       function<void(GameObject*, GameObject*, CollisionInfo)> onCollisionLeave, function<void(GameObject*, GameObject*, CollisionInfo)> onCollisionStay,
+GameObject::GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void(CollisionInfo)> onCollisionEnter,
+                       function<void(CollisionInfo)> onCollisionLeave, function<void(CollisionInfo)> onCollisionStay,
                        function<void(GameObject*, Camera& c)> addUpdate)
     :width{width}, height{height}, location{location}, collisionEnter{onCollisionEnter}, collisionLeave{onCollisionLeave},
       collisionStay{onCollisionStay}, addUpdate{addUpdate}
@@ -57,17 +57,14 @@ void GameObject::generateHitbox(ShapeType hitboxShape)
     }
 }
 
-void GameObject::onCollisionEnter(GameObject& he, CollisionInfo info)
+void GameObject::onCollisionEnter(CollisionInfo info)
 {
-    colR = he.location.x > location.x ? true : false;
-    colL = he.location.x < location.x ? true : false;
-    colT= he.location.y < location.y ? true : false;
-    colB = he.location.y > location.y ? true : false;
 
     if(collisionEnter){
-        collisionEnter(this, &he, info);
+        collisionEnter(info);
     }
     else{
+
         location = lastLoc;
         Vec2d normal = perp(location - info.collisionPoint).unit();
         Vec2d newX = normal * (dotProduct(normal, velocity)/dotProduct(normal, normal));
@@ -81,44 +78,23 @@ void GameObject::onCollisionEnter(GameObject& he, CollisionInfo info)
         if(abs(velocity.y) < 0.01){
             velocity.y = 0;
         }
-
-        if(colR && inContactR){
-            return;
-        }
-        else if(colL && inContactL){
-            return;
-        }
-        else if(colT && inContactT){
-            return;
-        }
-        else if(colB && inContactB){
-            return;
-        }
-
-
     }
-    //will this cause issues with multiple objects in one frame?
-    //how can I reset these each frame but not between object collisions ?
-    inContactR = he.location.x > location.x ? true : false;
-    inContactL = he.location.x < location.x ? true : false;
-    inContactT = he.location.y < location.y ? true : false;
-    inContactB = he.location.y > location.y ? true : false;
 
 }
 
-void GameObject::onCollisionLeave(GameObject& he, CollisionInfo info)
+void GameObject::onCollisionLeave(CollisionInfo info)
 {
 
     if(collisionLeave){
-        collisionLeave(this, &he, info);
+        collisionLeave(info);
     }
 
 }
 
-void GameObject::onCollisionStay(GameObject& heHitMe, CollisionInfo info)
+void GameObject::onCollisionStay(CollisionInfo info)
 {
     if(collisionStay){
-        collisionStay(this, &heHitMe, info);
+        collisionStay(info);
     }
 }
 
@@ -181,38 +157,16 @@ Vec2d GameObject::momentum()
     return mass*velocity;
 }
 
-void GameObject::topCollision()
+CollisionInfo *GameObject::getCollisionInfo(GameObject *him)
 {
-    if(velocity.y <= 0){
-        velocity.y = 0;
-        inContactT = true;
+    for(int i = 0; i < collisionInfos.size(); i++){
+        if(him == collisionInfos[i].obj1||him == collisionInfos[i].obj2){
+            return &collisionInfos[i];
+        }
     }
+    return nullptr;
 }
 
-void GameObject::bottomCollision()
-{
-    if(velocity.y >= 0){
-        velocity.y = 0;
-        inContactB = true;
-    }
-}
-
-void GameObject::leftCollision()
-{
-
-    cout << "wall" << endl;
-    velocity.x = std::abs(velocity.x);
-
-    inContactL = true;
-}
-
-void GameObject::rightCollision()
-{
-    cout << "wall" << endl;
-    velocity.x = -std::abs(velocity.x);
-    inContactR = true;
-
-}
 
 
 

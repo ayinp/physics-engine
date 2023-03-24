@@ -18,14 +18,6 @@ private:
     vector<unique_ptr<Component>> components;
     CollisionShape* hitBox;
     Vec2d lastLoc;
-    bool inContactT = false;
-    bool inContactB = false;
-    bool inContactL = false;
-    bool inContactR = false;
-    bool colT = false;
-    bool colB = false;
-    bool colL = false;
-    bool colR = false;
 public:
     bool affectedByGravity = false;
     bool wrapInX = false;
@@ -33,19 +25,20 @@ public:
     Vec2d location;
     Vec2d velocity = {0,0};
     Vec2d acceleration = {0,0};
-    function<void(GameObject*, GameObject*, CollisionInfo)> collisionEnter;
-    function<void(GameObject*, GameObject*, CollisionInfo)> collisionLeave;
-    function<void(GameObject*, GameObject*, CollisionInfo)> collisionStay;
+    vector<CollisionInfo> collisionInfos;
+    function<void(CollisionInfo)> collisionEnter;
+    function<void(CollisionInfo)> collisionLeave;
+    function<void(CollisionInfo)> collisionStay;
     function<void(GameObject*, Camera& c)> addUpdate;
 public:
-    GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionEnter = nullptr,
-               function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionLeave = nullptr, function<void (GameObject *, GameObject *, CollisionInfo)> onCollisionStay = nullptr,
+    GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void (CollisionInfo)> onCollisionEnter = nullptr,
+               function<void (CollisionInfo)> onCollisionLeave = nullptr, function<void (CollisionInfo)> onCollisionStay = nullptr,
                function<void(GameObject*, Camera& c)> addUpdate = nullptr);
     GameObject(const GameObject& other);
     void generateHitbox(ShapeType hitboxShape);
-    void onCollisionEnter(GameObject& heHitMe, CollisionInfo info);
-    void onCollisionLeave(GameObject& heHitMe, CollisionInfo info);
-    void onCollisionStay(GameObject& heHitMe, CollisionInfo info);
+    void onCollisionEnter(CollisionInfo info);
+    void onCollisionLeave(CollisionInfo info);
+    void onCollisionStay(CollisionInfo info);
     void draw(Camera& c);
     void update(Camera& c, Vec2d gravity);
     bool isDead() const {return dead;};
@@ -67,12 +60,7 @@ public:
     double getElasticity() const {return elasticity;};
     void setLastLoc(Vec2d l){lastLoc = l;};
     Vec2d getLastLoc(){return lastLoc;};
-
-    //potentially deal with these as if all shapes are squares?
-    void topCollision();
-    void bottomCollision();
-    void leftCollision();
-    void rightCollision();
+    CollisionInfo* getCollisionInfo(GameObject* him);
 };
 
 template<typename T>
@@ -86,7 +74,6 @@ T *GameObject::getComponent(string name)
     //at somepoint I should make them not able to have the same name but that isnt important rn
     return nullptr;
 }
-
 
 }
 

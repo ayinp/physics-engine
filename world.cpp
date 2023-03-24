@@ -37,14 +37,41 @@ void World::detectCollisions()
 {
     //loop over the objects
     for(int i = 0; i < objects.size(); i++){
+        for(int j = 0; j < objects[i]->collisionInfos.size(); j++){
+            objects[i]->collisionInfos[j].dead = true;
+        }
+    }
+
+    for(int i = 0; i < objects.size(); i++){
         for(int j = i+1; j < objects.size(); j++){
             //establish an info object
             CollisionInfo info;
             if(collides(objects[i]->getHitbox(), objects[j]->getHitbox(), info)){
-                objects[i]->onCollisionEnter(*objects[j], info);
-                objects[j]->onCollisionEnter(*objects[i], info);
+                info.obj1 = objects[i].get();
+                info.obj2 = objects[j].get();
+                bool alreadyColiding = false;
+                CollisionInfo* existing = info.obj1->getCollisionInfo(info.obj2);
+                if(existing){
+                    info.obj1->onCollisionStay(info);
+                    info.obj2->onCollisionStay(info);
+                    alreadyColiding = true;
+                    existing->dead = false;
+                    info.obj2->getCollisionInfo(info.obj1)->dead = false;
+                    break;
+                }
+                if(!alreadyColiding){
+                    info.obj1->collisionInfos.push_back(info);
+                    info.obj2->collisionInfos.push_back(info);
+                    info.obj1->onCollisionEnter(info);
+                    info.obj2->onCollisionEnter(info);
+                }
             }
         }
+    }
+
+    //this is probably wrong
+    for(int i = 0; i < objects.size(); i++){
+        erase_if(objects[i]->collisionInfos, [](const auto& info){return info.dead;});
     }
 }
 
