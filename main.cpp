@@ -33,7 +33,6 @@ using namespace ayin;
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #endif
 
-
 class Counter : public ayin::Component
 {
 public:
@@ -53,43 +52,30 @@ Counter::Counter(GameObject* owner, std::string name, int num)
 
 void playerColEnter(CollisionInfo info){
 
- cout << "ENTER " << info.obj1->hasTag("player") << endl;
-        info.obj1->location = info.obj1->getLastLoc();
-        Vec2d normal = perp(info.obj1->location - info.collisionPoint).unit();
+    cout << "ENTER " << info.obj1->hasTag("player") << endl;
+    info.obj1->location = info.obj1->getLastLoc();
+    Vec2d normal = perp(info.obj1->location - info.collisionPoint).unit();
+    ;
+    cout << normal << endl;
+    Vec2d newX = normal * (dotProduct(normal, info.obj1->velocity)/dotProduct(normal, normal));
+    Vec2d newY = info.obj1->velocity - newX;
+    info.obj1->velocity = (newX - info.obj1->getElasticity()*newY);
 
-        cout << "NORMALLL_________________________________" << endl;
-        cout << normal << endl;
-        Vec2d newX = normal * (dotProduct(normal, info.obj1->velocity)/dotProduct(normal, normal));
-        Vec2d newY = info.obj1->velocity - newX;
-        info.obj1->velocity = (newX - info.obj1->getElasticity()*newY);
-
-        if(abs(info.obj1->velocity.x) < 1){
-            info.obj1->velocity.x = 0;
-        }
-        if(abs(info.obj1->velocity.y) < 1){
-            info.obj1->velocity.y = 0;
-        }
-        info.obj1->affectedByGravity = false;
-        cout << "no more gravity" << endl;
-}
-
-void playerColStay(CollisionInfo info){
-    cout << "STAY" << endl;
+    if(abs(info.obj1->velocity.x) < 1){
+        info.obj1->velocity.x = 0;
+    }
+    if(abs(info.obj1->velocity.y) < 1){
+        info.obj1->velocity.y = 0;
+    }
+    info.obj1->affectedByGravity = false;
 }
 
 void playerColLeave(CollisionInfo info){
-    cout << "LEAVE " << info.obj1->hasTag("player") << endl;
-    if(info.obj1->hasTag("player")){
-        if(info.obj2->hasTag("ground")){
-            info.obj1->affectedByGravity = true;
-            cout << "gravity" << endl;
-        }
+    if(info.obj1->hasTag("player") && info.obj2->hasTag("ground")){
+        info.obj1->affectedByGravity = true;
     }
-    else if(info.obj2->hasTag("player")){
-        if(info.obj1->hasTag("ground")){
-            info.obj1->affectedByGravity = true;
-            cout << "gravity" << endl;
-        }
+    else if(info.obj2->hasTag("player") && info.obj1->hasTag("ground")){
+        info.obj1->affectedByGravity = true;
     }
 }
 
@@ -98,9 +84,7 @@ int main(){
     Camera c(g);
     World world({0, 0.1});
 
-    unique_ptr<GameObject> p = make_unique<GameObject>(Vec2d{c.width()/2, c.height()/2}, 50, 100, ShapeType::triangle);
-
-    p->collisionStay = playerColStay;
+    unique_ptr<GameObject> p = make_unique<GameObject>(Vec2d{c.width()/2, c.height()/2}, 50, 100, ShapeType::rectangle);
     p->collisionLeave = playerColLeave;
     p->collisionEnter = playerColEnter;
     p->affectedByGravity = true;
@@ -116,10 +100,22 @@ int main(){
     grnd->addTag("ground");
     world.objects.emplace_back(move(grnd));
 
+    bool debug = false;
 
     while (g.draw()) {
 
-        world.update(c);
+
+        if(g.isKeyPressed('T')){
+            debug = !debug;
+        }
+        if(debug){
+            if(g.isKeyPressed('P')){
+                world.update(c);
+            }
+        }
+        else{
+            world.update(c);
+        }
         world.draw(c);
 
         GameObject* player = world.getFirstTag("player");
