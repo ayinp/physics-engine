@@ -1,23 +1,14 @@
 #ifndef WORLD_H
 #define WORLD_H
-
-#include "gameObject.h"
+#include "scene.h"
 
 namespace ayin{
-
 class World
 {
 public:
-    std::vector<std::unique_ptr<GameObject>> objects;
-    Vec2d gravity;
+    std::vector<Scene> scenes;
 public:
-    World(Vec2d gravity);
-    void draw(Camera& c);
-    void update(Camera& c);
-    void detectCollisions();
-    std::vector<GameObject*> whoHasTag(string tag);
-    GameObject *getFirstTag(string tag);
+    World();
 };
 }
-
 #endif // WORLD_H

@@ -1,8 +1,8 @@
 #include <iostream>
 #include "graphics.h"
 #include "vec2d.h"
-#include "world.h"
-
+#include "scene.h"
+#include "playerFunctions.h"
 //#include "paths.h"
 
 //TO DO
@@ -33,131 +33,65 @@ using namespace ayin;
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #endif
 
-class Counter : public ayin::Component
-{
-public:
-    int num;
-public:
-    Counter(GameObject* owner, std::string name, int num);
-    virtual void update() override {};
-    void addCount(int n){num = num + n;};
-    virtual void draw(Camera& c) override {};
-};
+bool playing = false;
 
-Counter::Counter(GameObject* owner, std::string name, int num)
-    :Component(owner, name), num{num}
-{
-
+void enterScreen(Graphics& g){
+    g.cout << "press space to play" << endl;
+    if(g.isKeyPressed(' ')){
+        playing = true;
+        return;
+    }
+    return;
 }
 
-void playerColEnter(CollisionInfo info){
-
-    cout << "ENTER " << info.obj1->hasTag("player") << endl;
-    info.obj1->location = info.obj1->getLastLoc();
-    Vec2d normal = perp(info.obj1->location - info.collisionPoint).unit();
-    ;
-    cout << normal << endl;
-    Vec2d newX = normal * (dotProduct(normal, info.obj1->velocity)/dotProduct(normal, normal));
-    Vec2d newY = info.obj1->velocity - newX;
-    info.obj1->velocity = (newX - info.obj1->getElasticity()*newY);
-
-    if(abs(info.obj1->velocity.x) < 1){
-        info.obj1->velocity.x = 0;
+void game(Graphics& g, Camera& c, Scene& scene, bool& debug){
+    if(g.isKeyPressed('T')){
+        debug = !debug;
     }
-    if(abs(info.obj1->velocity.y) < 1){
-        info.obj1->velocity.y = 0;
-    }
-    info.obj1->affectedByGravity = false;
-}
 
-void playerColLeave(CollisionInfo info){
-    if(info.obj1->hasTag("player") && info.obj2->hasTag("ground")){
-        info.obj1->affectedByGravity = true;
+    if(debug){
+        if(g.isKeyPressed('P')){
+            scene.update(c);
+        }
     }
-    else if(info.obj2->hasTag("player") && info.obj1->hasTag("ground")){
-        info.obj1->affectedByGravity = true;
+    else{
+        scene.update(c);
+    }
+    scene.draw(c);
+
+    GameObject* player = scene.getFirstTag("player");
+    c.offset = Vec2d{g.width()/2, 3*g.height()/5} - (player->location);
+
+    if(player){
+        //player movement
+        playerMovement(g, player);
+        g.cout << "Jumps: " << player->getComponent<Counter>("jumps")->num << endl;
+    }
+    else{
+        playing = false;
     }
 }
 
 int main(){
     Graphics g("mini-platformer", 1024, 768);
     Camera c(g);
-    World world({0, 0.1});
+    Scene scene({0, 0.1});
 
-    unique_ptr<GameObject> p = make_unique<GameObject>(Vec2d{c.width()/2, c.height()/2}, 50, 100, ShapeType::rectangle);
-    p->collisionLeave = playerColLeave;
-    p->collisionEnter = playerColEnter;
-    p->affectedByGravity = true;
-    p->setElasticity(0.2);
-    p->addTag("player");
-    p->addComponent(make_unique<Counter>(p.get(), "jumps", 0));
-    world.objects.emplace_back(move(p));
-
-
+    playerInitialization(c, scene);
 
     unique_ptr<GameObject> grnd = make_unique<GameObject>(Vec2d{g.width()/2, g.height()-25}, g.width()+200, 50, ShapeType::rectangle);
     grnd->velocity = {0,0};
     grnd->addTag("ground");
-    world.objects.emplace_back(move(grnd));
+    scene.objects.emplace_back(move(grnd));
 
     bool debug = false;
 
     while (g.draw()) {
-
-
-        if(g.isKeyPressed('T')){
-            debug = !debug;
-        }
-        if(debug){
-            if(g.isKeyPressed('P')){
-                world.update(c);
-            }
+        if(!playing){
+            enterScreen(g);
         }
         else{
-            world.update(c);
-        }
-        world.draw(c);
-
-        GameObject* player = world.getFirstTag("player");
-        c.offset = Vec2d{g.width()/2, 3*g.height()/5} - (player->location);
-
-        if(player){
-            //player movement
-            if(g.isKeyPressed('D') || g.isKeyPressed(Key::Right)){
-                player->acceleration.x = 0.5;
-                if(player->velocity.x >= 10){
-                    player->acceleration.x = 0;
-                }
-            }
-            else if(g.isKeyPressed('A') || g.isKeyPressed(Key::Left)){
-                player->acceleration.x = -0.5;
-                if(player->velocity.x <= -10){
-                    player->acceleration.x = 0;
-                }
-            }
-            else{
-                if(player->velocity.x > 0.1){
-                    player->acceleration.x = max(-0.1,-player->velocity.x);
-                }
-                else if(player->velocity.x < -0.1){
-                    player->acceleration.x = min(0.1,-player->velocity.x);
-                }
-                else{
-                    player->velocity.x = 0;
-                    player->acceleration.x = 0;
-                }
-            }
-            // player jumpin
-            if(!player->isDead()){
-                if((g.onKeyPress('W')|| g.onKeyPress(Key::Up) || g.onKeyPress(Key::Space))){
-                    player->velocity = {player->velocity.x, -5};
-                    player->getComponent<Counter>("jumps")->addCount(1);
-                }
-            }
-            g.cout << "Jumps: " << player->getComponent<Counter>("jumps")->num << endl;
-        }
-        else{
-
+            game(g, c, scene, debug);
         }
     }
 

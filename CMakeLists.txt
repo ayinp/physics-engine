@@ -71,7 +71,10 @@ add_executable(${PROJECT_NAME} ${ADD_EX_EXTRA}
     component.cpp
     camera.h
     camera.cpp
-
+    playerFunctions.h
+    playerFunctions.cpp
+    scene.h
+    scene.cpp
 )
 
 #set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
