@@ -3,6 +3,7 @@
 #include "vec2d.h"
 #include "scene.h"
 #include "playerFunctions.h"
+#include "world.h"
 //#include "paths.h"
 
 //TO DO
@@ -24,6 +25,7 @@
 // - collisionInfo.normal is not being set for polygon-polygon collision
 // - if gameobject is deleted, we'll need to cleanup collisioninfo from other objects that it is in contact with.
 
+// - make scenes more versatile --> scene components??
 
 using namespace std;
 using namespace mssm;
@@ -75,14 +77,15 @@ void game(Graphics& g, Camera& c, Scene& scene, bool& debug){
 int main(){
     Graphics g("mini-platformer", 1024, 768);
     Camera c(g);
-    Scene scene({0, 0.1});
+    World world;
+    Scene scene0({0, 0.1});
 
-    playerInitialization(c, scene);
+    playerInitialization(c, scene0);
 
     unique_ptr<GameObject> grnd = make_unique<GameObject>(Vec2d{g.width()/2, g.height()-25}, g.width()+200, 50, ShapeType::rectangle);
     grnd->velocity = {0,0};
     grnd->addTag("ground");
-    scene.objects.emplace_back(move(grnd));
+    scene0.objects.emplace_back(move(grnd));
 
     bool debug = false;
 
@@ -91,7 +94,7 @@ int main(){
             enterScreen(g);
         }
         else{
-            game(g, c, scene, debug);
+            game(g, c, scene0, debug);
         }
     }
 

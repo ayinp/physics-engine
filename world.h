@@ -8,7 +8,7 @@ class World
 public:
     std::vector<Scene> scenes;
 public:
-    World();
+    World(std::vector<Scene> scenes = {});
 };
 }
 #endif // WORLD_H

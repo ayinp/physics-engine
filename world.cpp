@@ -1,6 +1,9 @@
 #include "world.h"
 
-ayin::World::World()
+using namespace ayin;
+using namespace std;
+
+World::World(vector<Scene> scenes)
 {
 
 }
