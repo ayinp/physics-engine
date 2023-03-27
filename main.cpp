@@ -46,22 +46,21 @@ void enterScreen(Graphics& g){
     return;
 }
 
-void game(Graphics& g, Camera& c, Scene& scene, bool& debug){
+void game(Graphics& g, Camera& c, World& world , bool& debug){
     if(g.isKeyPressed('T')){
         debug = !debug;
     }
-
     if(debug){
         if(g.isKeyPressed('P')){
-            scene.update(c);
+            world.update(c);
         }
     }
     else{
-        scene.update(c);
+        world.update(c);
     }
-    scene.draw(c);
+    world.draw(c);
 
-    GameObject* player = scene.getFirstTag("player");
+    GameObject* player = world.getCurrentScene().getFirstTag("player");
     c.offset = Vec2d{g.width()/2, 3*g.height()/5} - (player->location);
 
     if(player){
@@ -77,7 +76,6 @@ void game(Graphics& g, Camera& c, Scene& scene, bool& debug){
 int main(){
     Graphics g("mini-platformer", 1024, 768);
     Camera c(g);
-    World world;
     Scene scene0({0, 0.1});
 
     playerInitialization(c, scene0);
@@ -87,6 +85,8 @@ int main(){
     grnd->addTag("ground");
     scene0.objects.emplace_back(move(grnd));
 
+    World world({move(scene0)});
+
     bool debug = false;
 
     while (g.draw()) {
@@ -94,7 +94,7 @@ int main(){
             enterScreen(g);
         }
         else{
-            game(g, c, scene0, debug);
+            game(g, c, world, debug);
         }
     }
 

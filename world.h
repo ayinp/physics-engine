@@ -7,8 +7,12 @@ class World
 {
 public:
     std::vector<Scene> scenes;
+    int currentSceneIndx = 0;
 public:
     World(std::vector<Scene> scenes = {});
+    void update(Camera& c);
+    void draw(Camera& c);
+    Scene getCurrentScene();
 };
 }
 #endif // WORLD_H

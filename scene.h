@@ -7,7 +7,7 @@ namespace ayin{
 class Scene
 {
 public:
-    std::vector<std::unique_ptr<GameObject>> objects;
+//    std::vector<std::unique_ptr<GameObject>> objects;
     Vec2d gravity;
 public:
     Scene(Vec2d gravity);
