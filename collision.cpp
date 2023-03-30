@@ -10,10 +10,6 @@ using namespace ClipperLib;
 
 //random functions -------------------------------------------------------------------------------------------
 
-double dot(Vec2d v1, Vec2d v2){
-    return v1.x * v2.x + v1.y * v2.y;
-}
-
 Vec2d perp1(Vec2d v)
 {
     return {v.y, -v.x};
@@ -272,6 +268,22 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info, double mi
         }
     }
 
+    double closest = numeric_limits<double>::max();
+    for(int i = 0; i <= s2Corners.size(); i++){
+        for(int j = 0; j < s1Corners.size(); j++){
+            double distance = distanceToSegment(s2Corners[(i+1)%s1Corners.size()], s2Corners[i], s1Corners[i]);
+            if(distance < closest){
+                closest = distance;
+                //need to store which guys gave me the smallest
+            }
+        }
+    }
+    for(int i = 0; i <= s1Corners.size(); i++){
+        for(int j = 0; j < s2Corners.size(); j++){
+
+        }
+    }
+
     Path p1;
     Path p2;
     Paths result;
@@ -296,15 +308,11 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info, double mi
             counter++;
         }
     }
-
-
     if(counter == 0){
         return false;
     }
-
     info.collisionPoint = sum/counter; // center of polygon made by collision
-
-
+    info.normal = (s1->location()-info.collisionPoint).unit();
     return true;
 }
 

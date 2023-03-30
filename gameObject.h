@@ -61,6 +61,7 @@ public:
     void setLastLoc(Vec2d l){lastLoc = l;};
     Vec2d getLastLoc(){return lastLoc;};
     CollisionInfo* getCollisionInfo(GameObject* him);
+    bool canMove(Vec2d vel);
 };
 
 template<typename T>

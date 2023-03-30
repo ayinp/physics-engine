@@ -75,6 +75,8 @@ add_executable(${PROJECT_NAME} ${ADD_EX_EXTRA}
     playerFunctions.cpp
     scene.h
     scene.cpp
+    staticobjfunctions.h
+    staticobjfunctions.cpp
 )
 
 #set(CMAKE_THREAD_PREFER_PTHREAD TRUE)

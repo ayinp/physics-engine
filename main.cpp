@@ -3,6 +3,7 @@
 #include "vec2d.h"
 #include "scene.h"
 #include "playerFunctions.h"
+#include "staticobjfunctions.h"
 #include "world.h"
 //#include "paths.h"
 
@@ -47,11 +48,11 @@ void enterScreen(Graphics& g){
 }
 
 void game(Graphics& g, Camera& c, World& world , bool& debug){
-    if(g.isKeyPressed('T')){
+    if(g.onKeyPress('T')){
         debug = !debug;
     }
     if(debug){
-        if(g.isKeyPressed('P')){
+        if(g.onKeyPress('P') || (g.isKeyPressed('P') && g.isCtrlKeyPressed())){
             world.update(c);
         }
     }
@@ -60,7 +61,7 @@ void game(Graphics& g, Camera& c, World& world , bool& debug){
     }
     world.draw(c);
 
-    GameObject* player = world.getCurrentScene().getFirstTag("player");
+    GameObject* player = world.getCurrentScene()->getFirstTag("player");
     c.offset = Vec2d{g.width()/2, 3*g.height()/5} - (player->location);
 
     if(player){
@@ -79,14 +80,12 @@ int main(){
     Scene scene0({0, 0.1});
 
     playerInitialization(c, scene0);
+    groundInitialization(scene0, Vec2d{g.width()/2, g.height()-25},  g.width()+200, 50, ShapeType::rectangle);
+    wallInitialization(scene0, Vec2d{0, g.height()/2}, 50, g.height(), ShapeType::rectangle);
+    obstacleiInitialization(scene0, Vec2d{g.width()/2+50, 500}, 100, 100, ShapeType::triangle);
 
-    unique_ptr<GameObject> grnd = make_unique<GameObject>(Vec2d{g.width()/2, g.height()-25}, g.width()+200, 50, ShapeType::rectangle);
-    grnd->velocity = {0,0};
-    grnd->addTag("ground");
-    scene0.objects.emplace_back(move(grnd));
 
-    World world({move(scene0)});
-
+    World world({move(&scene0)});
     bool debug = false;
 
     while (g.draw()) {

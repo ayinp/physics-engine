@@ -144,4 +144,9 @@ std::string Vec2base<T>::toString() const
 {
     return "(" + std::to_string(x) + ", " + std::to_string(y) +")";
 }
+template<typename T>
+double dot(Vec2base<T> v1, Vec2base<T> v2){
+    return v1.x * v2.x + v1.y * v2.y;
+}
+
 #endif // VEC2D_H

@@ -177,6 +177,13 @@ CollisionInfo *GameObject::getCollisionInfo(GameObject *him)
     return nullptr;
 }
 
+bool GameObject::canMove(Vec2d vel)
+{
+    //returns true if you can move in the direction of vel
+    return any_of(collisionInfos.begin(), collisionInfos.end(), [vel](auto& info){return dot(vel, info.normal) <= 0;});
+
+}
+
 
 
 

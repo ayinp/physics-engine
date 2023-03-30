@@ -11,9 +11,12 @@ public:
     Counter(ayin::GameObject* owner, std::string name, int num);
     virtual void update() override {};
     void addCount(int n){num = num + n;};
-    virtual void draw(Camera& c) override {};
+    virtual void draw(ayin::Camera& c) override {};
 };
+
+
+
 void playerColEnter(ayin::CollisionInfo info);
 void playerColLeave(ayin::CollisionInfo info);
-void playerInitialization(Camera& c, ayin::Scene& scene);
+void playerInitialization(ayin::Camera& c, ayin::Scene& scene);
 void playerMovement(mssm::Graphics& g, ayin::GameObject* player);

@@ -2,6 +2,8 @@
 #define CAMERA_H
 #include "graphics.h"
 
+namespace ayin{
+
 class Camera
 {
 public:
@@ -43,5 +45,5 @@ public:
     Vec2d worldToScreen(Vec2d pt);
     Vec2d screenToWorld(Vec2d pt);
 };
-
+}
 #endif // CAMERA_H

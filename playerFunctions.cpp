@@ -28,16 +28,24 @@ void playerColEnter(CollisionInfo info){
     if(abs(info.obj1->velocity.y) < 0.5){
         info.obj1->velocity.y = 0;
     }
-    if(info.obj2->hasTag("ground")){
+
+    //cases
+    if((info.obj2->hasTag("ground") || info.obj2->hasTag("obs")) && info.collisionPoint.y > info.obj1->location.y){
         info.obj1->affectedByGravity = false;
         info.obj1->getComponent<Counter>("jumps")->num = 0;
     }
+    if(info.obj2->hasTag("wall") || info.obj2->hasTag("obs")){
+            info.obj1->acceleration.x = 0;
+            info.obj1->velocity.x = 0;
+    }
 }
+
+
 void playerColLeave(CollisionInfo info){
-    if(info.obj1->hasTag("player") && info.obj2->hasTag("ground")){
+    if((info.obj1->hasTag("player") && info.obj2->hasTag("ground")) || (info.obj1->hasTag("player") && info.obj2->hasTag("obs"))){
         info.obj1->affectedByGravity = true;
     }
-    else if(info.obj2->hasTag("player") && info.obj1->hasTag("ground")){
+    else if((info.obj2->hasTag("player") && info.obj1->hasTag("ground")) || (info.obj2->hasTag("player") && info.obj1->hasTag("ground"))){
         info.obj1->affectedByGravity = true;
     }
 }
@@ -55,23 +63,27 @@ void playerInitialization(Camera& c, Scene& scene){
 
 //PLAYER MOVEMENT
 void playerMovement(Graphics& g, GameObject* player){
-    if(g.isKeyPressed('D') || g.isKeyPressed(Key::Right)){
-        player->acceleration.x = 0.5;
+    if(player->canMove({10,0}) && (g.isKeyPressed('D') || g.isKeyPressed(Key::Right))){
         if(player->velocity.x >= 10){
             player->acceleration.x = 0;
         }
+        else{
+            player->acceleration.x = 0.5;
+        }
     }
-    else if(g.isKeyPressed('A') || g.isKeyPressed(Key::Left)){
-        player->acceleration.x = -0.5;
+    else if(player->canMove({-10,0}) && (g.isKeyPressed('A') || g.isKeyPressed(Key::Left))){
         if(player->velocity.x <= -10){
             player->acceleration.x = 0;
         }
+        else{
+            player->acceleration.x = -0.5;
+        }
     }
     else{
-        if(player->velocity.x > 0.1){
+        if(player->canMove({0.3,0}) && player->velocity.x > 0.1){
             player->acceleration.x = max(-0.3,-player->velocity.x);
         }
-        else if(player->velocity.x < -0.1){
+        else if(player->canMove({-0.3,0}) && player->velocity.x < -0.1){
             player->acceleration.x = min(0.3,-player->velocity.x);
         }
         else{

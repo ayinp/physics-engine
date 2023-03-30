@@ -6,13 +6,13 @@ namespace ayin{
 class World
 {
 public:
-    std::vector<Scene> scenes;
+    std::vector<Scene*> scenes;
     int currentSceneIndx = 0;
 public:
-    World(std::vector<Scene> scenes = {});
+    World(std::vector<Scene*> scenes = {});
     void update(Camera& c);
     void draw(Camera& c);
-    Scene getCurrentScene();
+    Scene *getCurrentScene();
 };
 }
 #endif // WORLD_H

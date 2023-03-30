@@ -2,6 +2,7 @@
 #pragma GCC diagnostic ignored "-Wsign-compare"
 using namespace mssm;
 using namespace std;
+using namespace ayin;
 
 Camera::Camera(Graphics& g)
     :g{g}
