@@ -35,8 +35,8 @@ void playerColEnter(CollisionInfo info){
         info.obj1->getComponent<Counter>("jumps")->num = 0;
     }
     if(info.obj2->hasTag("wall") || info.obj2->hasTag("obs")){
-            info.obj1->acceleration.x = 0;
-            info.obj1->velocity.x = 0;
+        info.obj1->acceleration.x = 0;
+        info.obj1->velocity.x = 0;
     }
 }
 
@@ -62,28 +62,41 @@ void playerInitialization(Camera& c, Scene& scene){
 }
 
 //PLAYER MOVEMENT
-void playerMovement(Graphics& g, GameObject* player){
-    if(player->canMove({10,0}) && (g.isKeyPressed('D') || g.isKeyPressed(Key::Right))){
-        if(player->velocity.x >= 10){
-            player->acceleration.x = 0;
+void playerMovement(Graphics& g, Camera& c, GameObject* player){
+    if(g.isKeyPressed('D') || g.isKeyPressed(Key::Right)){
+        if(player->canMove(g,c,{1,0}) ){
+            if(player->velocity.x >= 10){
+                player->acceleration.x = 0;
+            }
+            else{
+                player->acceleration.x = 0.5;
+            }
         }
         else{
-            player->acceleration.x = 0.5;
+            player->canMove(g, c, {1,0});
+            g.cout << "CAN'T MOVE RIGHT" << endl;
+
         }
     }
-    else if(player->canMove({-10,0}) && (g.isKeyPressed('A') || g.isKeyPressed(Key::Left))){
-        if(player->velocity.x <= -10){
-            player->acceleration.x = 0;
+    else if(g.isKeyPressed('A') || g.isKeyPressed(Key::Left)){
+        if(player->canMove(g,c, {-1,0})){
+            if(player->velocity.x <= -10){
+                player->acceleration.x = 0;
+            }
+            else{
+                player->acceleration.x = -0.5;
+            }
         }
         else{
-            player->acceleration.x = -0.5;
+            player->canMove(g, c, {-1,0});
+            g.cout<< "CAN'T MOVE LEFT" << endl;
         }
     }
     else{
-        if(player->canMove({0.3,0}) && player->velocity.x > 0.1){
+        if(player->canMove(g, c, {1,0}) && player->velocity.x > 0.1){
             player->acceleration.x = max(-0.3,-player->velocity.x);
         }
-        else if(player->canMove({-0.3,0}) && player->velocity.x < -0.1){
+        else if(player->canMove(g, c, {-1,0}) && player->velocity.x < -0.1){
             player->acceleration.x = min(0.3,-player->velocity.x);
         }
         else{
@@ -92,7 +105,7 @@ void playerMovement(Graphics& g, GameObject* player){
         }
     }
     if(((g.onKeyPress('W')|| g.onKeyPress(Key::Up) || g.onKeyPress(Key::Space))
-             && player->getComponent<Counter>("jumps")->num < 1)){
+        && player->getComponent<Counter>("jumps")->num < 1)){
 
         player->velocity = {player->velocity.x, -5};
         player->getComponent<Counter>("jumps")->addCount(1);

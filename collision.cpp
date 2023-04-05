@@ -268,21 +268,33 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info, double mi
         }
     }
 
+    Vec2d norm = {0,0};
+    Vec2d cp1 = {0,0};
+    Vec2d cp2 = {0,0};
     double closest = numeric_limits<double>::max();
     for(int i = 0; i <= s2Corners.size(); i++){
         for(int j = 0; j < s1Corners.size(); j++){
-            double distance = distanceToSegment(s2Corners[(i+1)%s1Corners.size()], s2Corners[i], s1Corners[i]);
+            double distance = distanceToSegment(s2Corners[(i+1)%s2Corners.size()], s2Corners[i], s1Corners[j]);
             if(distance < closest){
                 closest = distance;
-                //need to store which guys gave me the smallest
+                cp1 = s2Corners[(i+1)%s1Corners.size()];
+                cp2 = s2Corners[i];
+                norm = perp(cp1-cp2).unit();
             }
         }
     }
     for(int i = 0; i <= s1Corners.size(); i++){
         for(int j = 0; j < s2Corners.size(); j++){
-
+            double distance = distanceToSegment(s1Corners[(i+1)%s1Corners.size()], s1Corners[i], s2Corners[j]);
+            if(distance < closest){
+                closest = distance;
+                cp1 = s1Corners[(i+1)%s1Corners.size()];
+                cp2 = s1Corners[i];
+                norm = perp(cp2-cp1).unit();
+            }
         }
     }
+
 
     Path p1;
     Path p2;
@@ -312,7 +324,8 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info, double mi
         return false;
     }
     info.collisionPoint = sum/counter; // center of polygon made by collision
-    info.normal = (s1->location()-info.collisionPoint).unit();
+    info.normal = norm;
+    cout<<info.normal<<endl;
     return true;
 }
 
@@ -335,7 +348,13 @@ bool collides(ayin::CollisionShape *s, ayin::Rectangle *r, CollisionInfo& info, 
     ShapeType x = s->type();
     switch(x){
     case ShapeType::circle:
-        return collides(static_cast<Circle*>(s), r, info, minDistance);
+    {
+        bool returnVal = collides(static_cast<Circle*>(s), r, info, minDistance);
+        if(returnVal){
+            info.normal = -info.normal;
+        }
+        return returnVal;
+    }
     case ShapeType::rectangle:
     case ShapeType::triangle:
         return collides(static_cast<PolygonShape*>(r), static_cast<PolygonShape*>(s), info, minDistance);
@@ -346,7 +365,13 @@ bool collides(ayin::CollisionShape *s, ayin::Triangle *t, CollisionInfo& info, d
     ShapeType x = s->type();
     switch(x){
     case ShapeType::circle:
-        return collides(static_cast<Circle*>(s), t, info, minDistance);
+    {
+        bool returnVal = collides(static_cast<Circle*>(s), t, info, minDistance);
+        if(returnVal){
+            info.normal = -info.normal;
+        }
+        return returnVal;
+    }
     case ShapeType::rectangle:
     case ShapeType::triangle:
         return collides(static_cast<PolygonShape*>(s), static_cast<PolygonShape*>(t), info, minDistance);

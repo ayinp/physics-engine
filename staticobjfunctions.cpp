@@ -18,7 +18,7 @@ void wallInitialization(ayin::Scene &scene, Vec2d location, double width, double
 }
 
 
-void obstacleiInitialization(ayin::Scene &scene, Vec2d location, double width, double height, ayin::ShapeType shape)
+void obstacleInitialization(ayin::Scene &scene, Vec2d location, double width, double height, ayin::ShapeType shape)
 {
     unique_ptr<GameObject> obs = make_unique<GameObject>(location, width, height, shape);
     obs->velocity = {0,0};

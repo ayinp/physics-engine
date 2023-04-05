@@ -103,8 +103,11 @@ void GameObject::onCollisionStay(CollisionInfo info)
 void GameObject::draw(Camera& c)
 {
 
-    c.line(location, location + 100*velocity, YELLOW);
-    c.line(location, location + 100*velocity, RED);
+//    c.line(location, location + 100*velocity, YELLOW);
+//    c.line(location, location + 100*velocity, RED);
+    for(int i = 0; i < collisionInfos.size(); i++){
+        c.line(location, location +collisionInfos[i].normal*50, ORANGE);
+    }
     if(affectedByGravity){
         hitBox->draw(c, WHITE);
     }
@@ -115,6 +118,7 @@ void GameObject::draw(Camera& c)
     for(int i = 0; i < components.size(); i++){
         components[i]->draw(c);
     }
+    c.ellipse(location, 20, 20, PURPLE, PURPLE);
 }
 
 void GameObject::update(Camera& c, Vec2d gravity)
@@ -177,10 +181,18 @@ CollisionInfo *GameObject::getCollisionInfo(GameObject *him)
     return nullptr;
 }
 
-bool GameObject::canMove(Vec2d vel)
+bool GameObject::canMove(Graphics& g, Camera& c, Vec2d vel)
 {
     //returns true if you can move in the direction of vel
-    return any_of(collisionInfos.begin(), collisionInfos.end(), [vel](auto& info){return dot(vel, info.normal) <= 0;});
+    return all_of(collisionInfos.begin(), collisionInfos.end(), [this, vel, &c, &g](auto& info)
+    {
+        if(dot(vel.unit(), info.normal) <= 0.015){
+            return true;
+        }
+        g.cout<<dot(vel.unit(), info.normal)<<endl;
+        c.line(location, location + info.normal*75, YELLOW);
+        return false;
+    });
 
 }
 
