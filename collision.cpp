@@ -338,9 +338,21 @@ bool collides(ayin::CollisionShape *s, ayin::Circle *c, CollisionInfo& info, dou
     case ShapeType::circle:
         return collides(c, static_cast<Circle*>(s), info, minDistance);
     case ShapeType::rectangle:
-        return collides(c, static_cast<Rectangle*>(s), info, minDistance);
+    {
+        bool returnVal = collides(c, static_cast<Rectangle*>(s), info, minDistance);
+        if(returnVal){
+            info.normal = -info.normal;
+        }
+        return returnVal;
+    }
     case ShapeType::triangle:
-        return collides(c, static_cast<Triangle*>(s), info, minDistance);
+    {
+        bool returnVal = collides(c, static_cast<Triangle*>(s), info, minDistance);
+        if(returnVal){
+            info.normal = -info.normal;
+        }
+        return returnVal;
+    }
     }
 }
 
@@ -348,13 +360,7 @@ bool collides(ayin::CollisionShape *s, ayin::Rectangle *r, CollisionInfo& info, 
     ShapeType x = s->type();
     switch(x){
     case ShapeType::circle:
-    {
-        bool returnVal = collides(static_cast<Circle*>(s), r, info, minDistance);
-        if(returnVal){
-            info.normal = -info.normal;
-        }
-        return returnVal;
-    }
+        return collides(static_cast<Circle*>(s), r, info, minDistance);
     case ShapeType::rectangle:
     case ShapeType::triangle:
         return collides(static_cast<PolygonShape*>(r), static_cast<PolygonShape*>(s), info, minDistance);
@@ -365,13 +371,7 @@ bool collides(ayin::CollisionShape *s, ayin::Triangle *t, CollisionInfo& info, d
     ShapeType x = s->type();
     switch(x){
     case ShapeType::circle:
-    {
-        bool returnVal = collides(static_cast<Circle*>(s), t, info, minDistance);
-        if(returnVal){
-            info.normal = -info.normal;
-        }
-        return returnVal;
-    }
+        return collides(static_cast<Circle*>(s), t, info, minDistance);
     case ShapeType::rectangle:
     case ShapeType::triangle:
         return collides(static_cast<PolygonShape*>(s), static_cast<PolygonShape*>(t), info, minDistance);

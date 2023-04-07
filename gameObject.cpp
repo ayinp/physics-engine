@@ -95,9 +95,12 @@ void GameObject::onCollisionLeave(CollisionInfo info)
 
 void GameObject::onCollisionStay(CollisionInfo info)
 {
+    affectedByGravity = false;
     if(collisionStay){
         collisionStay(info);
     }
+
+
 }
 
 void GameObject::draw(Camera& c)
@@ -119,6 +122,7 @@ void GameObject::draw(Camera& c)
         components[i]->draw(c);
     }
     c.ellipse(location, 20, 20, PURPLE, PURPLE);
+    c.line(location, location + 100*velocity, PURPLE);
 }
 
 void GameObject::update(Camera& c, Vec2d gravity)
@@ -129,7 +133,7 @@ void GameObject::update(Camera& c, Vec2d gravity)
 
     lastLoc = location;
 
-    Vec2d a = {0,0};
+    Vec2d a = {acceleration.x,0};
 
     if(affectedByGravity){
         a = acceleration + (gravity * mass);
@@ -140,8 +144,6 @@ void GameObject::update(Camera& c, Vec2d gravity)
 
     velocity = velocity + a;
     location = location + velocity;
-
-    c.line(location, location + 100*velocity, PURPLE);
 
 
     if(wrapInX){

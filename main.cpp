@@ -81,10 +81,10 @@ int main(){
 
     playerInitialization(c, scene0);
     groundInitialization(scene0, Vec2d{g.width()/2, g.height()-25},  g.width()+200, 50, ShapeType::rectangle);
-    wallInitialization(scene0, Vec2d{0, g.height()/2}, 50, g.height(), ShapeType::rectangle);
+//    wallInitialization(scene0, Vec2d{0, g.height()/2 - 50}, 50, g.height(), ShapeType::rectangle);
     obstacleInitialization(scene0, Vec2d{g.width()/2+50, 500}, 100, 100, ShapeType::triangle);
-    obstacleInitialization(scene0, Vec2d{800, 400}, 50,50,ShapeType::circle);
-    obstacleInitialization(scene0, Vec2d{900, 400}, 50,50,ShapeType::circle);
+//    obstacleInitialization(scene0, Vec2d{800, 400}, 50,50,ShapeType::circle);
+//    obstacleInitialization(scene0, Vec2d{900, 400}, 50,50,ShapeType::circle);
 
     World world({move(&scene0)});
     bool debug = false;
