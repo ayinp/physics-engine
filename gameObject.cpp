@@ -4,6 +4,7 @@
 #include "triangle.h"
 #include <cmath>
 #include <iostream>
+#include "playerFunctions.h"
 using namespace ayin;
 using namespace mssm;
 
@@ -68,7 +69,7 @@ void GameObject::onCollisionEnter(CollisionInfo info)
     else{
 
         location = lastLoc;
-        Vec2d normal = perp(location - info.collisionPoint).unit();
+        Vec2d normal = -info.normal;
         Vec2d newX = normal * (dotProduct(normal, velocity)/dotProduct(normal, normal));
         Vec2d newY = velocity - newX;
         velocity = (newX - elasticity*newY);
@@ -95,9 +96,11 @@ void GameObject::onCollisionLeave(CollisionInfo info)
 
 void GameObject::onCollisionStay(CollisionInfo info)
 {
-    affectedByGravity = false;
+//    affectedByGravity = false;
     if(collisionStay){
         collisionStay(info);
+    }
+    else{
     }
 
 
@@ -123,49 +126,49 @@ void GameObject::draw(Camera& c)
     }
     c.ellipse(location, 20, 20, PURPLE, PURPLE);
     c.line(location, location + 100*velocity, PURPLE);
+
 }
 
-void GameObject::update(Camera& c, Vec2d gravity)
+void GameObject::update(Graphics &g, Vec2d gravity)
 {
+    netForce = {0,0};
     for(int i = 0; i < components.size(); i++){
         components[i]->update();
     }
-
     lastLoc = location;
 
-    Vec2d a = {acceleration.x,0};
 
     if(affectedByGravity){
-        a = acceleration + (gravity * mass);
+        netForce += gravity;
     }
-    else{
-        a = acceleration;
-    }
+    playerMovement(g, this);
 
-    velocity = velocity + a;
+    normalCalcs();
+    acceleration = netForce/mass;
+    velocity = velocity + acceleration;
     location = location + velocity;
 
 
     if(wrapInX){
         if(location.x + width/2 < 0){
-            location.x = c.width() + width/2;
+            location.x = g.width() + width/2;
         }
-        if(location.x - width/2 > c.width()){
+        if(location.x - width/2 > g.width()){
             location.x = 0 - width/2;
         }
     }
     if(wrapInY){
         if(location.y + height/2 < 0){
-            location.y = c.height() + height/2;
+            location.y = g.height() + height/2;
         }
-        if(location.y - height/2 > c.height()){
+        if(location.y - height/2 > g.height()){
             location.y = 0 - height/2;
         }
     }
 
-    if(addUpdate){
-        addUpdate(this, c);
-    }
+//    if(addUpdate){
+//        addUpdate(this, g);
+//    }
 }
 
 Vec2d GameObject::momentum()
@@ -196,6 +199,15 @@ bool GameObject::canMove(Graphics& g, Camera& c, Vec2d vel)
         return false;
     });
 
+}
+
+void GameObject::normalCalcs()
+{
+    for(int i = 0; i < collisionInfos.size(); i++){
+        Vec2d n = collisionInfos[i].normal.unit();
+        double d = dot(n, netForce);
+        netForce -= d*n;
+    }
 }
 
 

@@ -19,4 +19,4 @@ public:
 void playerColEnter(ayin::CollisionInfo info);
 void playerColLeave(ayin::CollisionInfo info);
 void playerInitialization(ayin::Camera& c, ayin::Scene& scene);
-void playerMovement(mssm::Graphics& g, ayin::Camera &c, ayin::GameObject* player);
+void playerMovement(mssm::Graphics& g, ayin::GameObject* player);

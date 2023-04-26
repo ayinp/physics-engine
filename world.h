@@ -10,7 +10,7 @@ public:
     int currentSceneIndx = 0;
 public:
     World(std::vector<Scene*> scenes = {});
-    void update(Camera& c);
+    void update(mssm::Graphics &g);
     void draw(Camera& c);
     Scene *getCurrentScene();
 };

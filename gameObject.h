@@ -25,6 +25,7 @@ public:
     Vec2d location;
     Vec2d velocity = {0,0};
     Vec2d acceleration = {0,0};
+    Vec2d netForce = {0,0};
     vector<CollisionInfo> collisionInfos;
     function<void(CollisionInfo)> collisionEnter;
     function<void(CollisionInfo)> collisionLeave;
@@ -40,7 +41,7 @@ public:
     void onCollisionLeave(CollisionInfo info);
     void onCollisionStay(CollisionInfo info);
     void draw(Camera& c);
-    void update(Camera& c, Vec2d gravity);
+    void update(mssm::Graphics& g, Vec2d gravity);
     bool isDead() const {return dead;};
     Vec2d momentum();
     void addTag(string tag ){tags.push_back(tag);};
@@ -62,6 +63,7 @@ public:
     Vec2d getLastLoc(){return lastLoc;};
     CollisionInfo* getCollisionInfo(GameObject* him);
     bool canMove(mssm::Graphics& g, Camera &c, Vec2d vel);
+    void normalCalcs();
 };
 
 template<typename T>

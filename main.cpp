@@ -53,11 +53,11 @@ void game(Graphics& g, Camera& c, World& world , bool& debug){
     }
     if(debug){
         if(g.onKeyPress('P') || (g.isKeyPressed('P') && g.isCtrlKeyPressed())){
-            world.update(c);
+            world.update(g);
         }
     }
     else{
-        world.update(c);
+        world.update(g);
     }
     world.draw(c);
 
@@ -66,7 +66,6 @@ void game(Graphics& g, Camera& c, World& world , bool& debug){
 
     if(player){
         //player movement
-        playerMovement(g, c, player);
         g.cout << "Jumps: " << player->getComponent<Counter>("jumps")->num << endl;
     }
     else{

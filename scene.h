@@ -12,7 +12,7 @@ public:
 public:
     Scene(Vec2d gravity);
     void draw(Camera& c);
-    void update(Camera& c);
+    void update(mssm::Graphics &g);
     void detectCollisions();
     std::vector<GameObject*> whoHasTag(string tag);
     GameObject *getFirstTag(string tag);
