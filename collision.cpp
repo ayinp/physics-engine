@@ -31,18 +31,21 @@ Vec2d collisionPoint(Vec2d p, Vec2d w, Vec2d a, Vec2d b)
 
 
 
-double distanceToSegment(Vec2d s1, Vec2d s2, Vec2d p){
+double distanceToSegment(Vec2d s1, Vec2d s2, Vec2d p, Vec2d &norm){
     Vec2d v1 = s2-s1;
     Vec2d v2 = p-s1;
     double v1Mag = v1.magnitude();
     double l = dot(v1, v2)/v1Mag;
     double t = l/v1Mag; // if <0 or > 1 then corner, else in line!!!
     if(t <= 0){
+        norm = (s1-p).unit();
         return (s1-p).magnitude();
     }
     if(t >= 1){
+        norm = (s2-p).unit();
         return (s2-p).magnitude();
     }
+    norm = perp(s1-s2).unit();
     return sqrt(v2.magSquared() - l*l);
 }
 
@@ -92,9 +95,9 @@ bool collides(Circle *c1, Circle *c2, CollisionInfo& info, double minDistance)
     }
     Vec2d v2 = v1/v1.magnitude();
     Vec2d v3 = v2*c1->rad;
-    info.collisionPoint = c1->location() - v3;
+    info.setColPoint(c1->location() - v3);
     //gives a vector where if you add to c2 you will get to c1
-    info.normal = c1->location()-c2->location();
+    info.setNormal((c1->location()-c2->location()).unit());
     return (c1->location() - c2->location()).magnitude() < c1->rad + c2->rad + minDistance;
 }
 
@@ -110,8 +113,8 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info, double minDistance)
         //top left corner
         if(isLeft){
             if((c->location() - r->topLeft()).magnitude() < c->rad + minDistance){
-                info.collisionPoint = r->topLeft();
-                info.normal = c->location()-r->topLeft();
+                info.setColPoint(r->topLeft());
+                info.setNormal((c->location()-r->topLeft()).unit());
                 return true;
             }
             return false;
@@ -119,8 +122,8 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info, double minDistance)
         //top right corner
         else if(isRight){
             if((c->location() - r->topRight()).magnitude() < c->rad + minDistance){
-                info.collisionPoint = r->topRight();
-                info.normal = c->location()-r->topRight();
+                info.setColPoint(r->topRight());
+                info.setNormal((c->location()-r->topRight()).unit());
                 return true;
             }
             return false;
@@ -128,8 +131,8 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info, double minDistance)
         //top side
         else{
             if(abs(r->location().y - c->location().y) - (c->rad + r->height/2) < minDistance){
-                info.collisionPoint = {c->location().x, r->topLeft().y};
-                info.normal = c->location()-info.collisionPoint;
+                info.setColPoint({c->location().x, r->topLeft().y});
+                info.setNormal((c->location()-info.getColPoint()).unit());
                 return true;
             }
             return false;
@@ -139,8 +142,8 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info, double minDistance)
         //bottom left corner
         if(isLeft){
             if((c->location() - r->bottomLeft()).magnitude() < c->rad + minDistance){
-                info.collisionPoint = r->bottomLeft();
-                info.normal = c->location()-r->bottomLeft();
+                info.setColPoint(r->bottomLeft());
+                info.setNormal((c->location()-r->bottomLeft()).unit());
                 return true;
             }
             return false;
@@ -148,8 +151,8 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info, double minDistance)
         //bottom right corner
         else if(isRight){
             if((c->location() - r->bottomRight()).magnitude() < c->rad + minDistance){
-                info.collisionPoint = r->bottomRight();
-                info.normal = c->location()-r->bottomRight();
+                info.setColPoint(r->bottomRight());
+                info.setNormal((c->location()-r->bottomRight()).unit());
                 return true;
             }
             return false;
@@ -157,8 +160,8 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info, double minDistance)
         //bottom side
         else{
             if(abs(c->location().y - r->location().y) - (c->rad + r->height/2) < minDistance){
-                info.collisionPoint = {c->location().x, r->bottomLeft().y};
-                info.normal = c->location()-info.collisionPoint;
+                info.setColPoint({c->location().x, r->bottomLeft().y});
+                info.setNormal((c->location()-info.getColPoint()).unit());
                 return true;
             }
             return false;
@@ -168,8 +171,8 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info, double minDistance)
         //left side
         if(isLeft){
             if(abs(c->location().x - r->location().x) - (c->rad + r->width/2) < minDistance){
-                info.collisionPoint = {r->topLeft().x, c->location().y};
-                info.normal = c->location()-info.collisionPoint;
+                info.setColPoint({r->topLeft().x, c->location().y});
+                info.setNormal((c->location()-info.getColPoint()).unit());
                 return true;
             }
             return false;
@@ -177,8 +180,8 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info, double minDistance)
         //right side
         else if(isRight){
             if(abs(r->location().x - c->location().x) - (c->rad + r->width/2) < minDistance){
-                info.collisionPoint = {r->topRight().x, c->location().y};
-                info.normal = c->location()-info.collisionPoint;
+                info.setColPoint({r->topRight().x, c->location().y});
+                info.setNormal((c->location()-info.getColPoint()).unit());
                 return true;
             }
             return false;
@@ -201,30 +204,33 @@ bool collides(Circle *c, Triangle *t, CollisionInfo& info, double minDistance)
 
     //
     if((p2-p1).x * (a-p1).y - (p2-p1).y * (a-p1).x > 0){
-        if(distanceToSegment(p1, p2, a) < c->rad + minDistance){
-            info.collisionPoint = closestPoint(p2, p1, a);
-            info.normal = c->location()-info.collisionPoint;
+        Vec2d norm = {0,0};
+        if(distanceToSegment(p1, p2, a, norm) < c->rad + minDistance){
+            info.setColPoint(closestPoint(p2, p1, a));
+            info.setNormal(norm);
             return true;
         }
     }
     else if((p3-p2).x * (a-p2).y - (p3-p2).y * (a-p2).x > 0){
-        if(distanceToSegment(p2, p3, a) < c->rad + minDistance){
-            info.collisionPoint = closestPoint(p3, p2, a);
-            info.normal = c->location()-info.collisionPoint;
+        Vec2d norm = {0,0};
+        if(distanceToSegment(p2, p3, a, norm) < c->rad + minDistance){
+            info.setColPoint(closestPoint(p3, p2, a));
+            info.setNormal(norm);
             return true;
         }
     }
     else if((p1-p3).x * (a-p3).y - (p1-p3).y * (a-p3).x > 0){
-        if(distanceToSegment(p3, p1, a) < c->rad + minDistance){
-            info.collisionPoint = closestPoint(p1, p3, a);
-            info.normal = c->location()-info.collisionPoint;
+        Vec2d norm = {0,0};
+        if(distanceToSegment(p3, p1, a, norm) < c->rad + minDistance){
+            info.setColPoint(closestPoint(p1, p3, a));
+            info.setNormal(norm);
             return true;
         }
     }
     else{
         // COME BACK TO THIS
-        info.collisionPoint = closestPoint(p1, p2, a);
-        info.normal = c->location()-info.collisionPoint;
+        info.setColPoint(closestPoint(p1, p2, a));
+        info.setNormal((c->center()-info.getColPoint()).unit());
         return true;
     }
     return false;
@@ -269,28 +275,24 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info, double mi
     }
 
     Vec2d norm = {0,0};
-    Vec2d cp1 = {0,0};
-    Vec2d cp2 = {0,0};
     double closest = numeric_limits<double>::max();
     for(int i = 0; i <= s2Corners.size(); i++){
         for(int j = 0; j < s1Corners.size(); j++){
-            double distance = distanceToSegment(s2Corners[(i+1)%s2Corners.size()], s2Corners[i], s1Corners[j]);
+            Vec2d norm1;
+            double distance = distanceToSegment(s2Corners[(i+1)%s2Corners.size()], s2Corners[i], s1Corners[j], norm1);
             if(distance < closest){
                 closest = distance;
-                cp1 = s2Corners[(i+1)%s1Corners.size()];
-                cp2 = s2Corners[i];
-                norm = perp(cp1-cp2).unit();
+                norm = norm1;
             }
         }
     }
     for(int i = 0; i <= s1Corners.size(); i++){
         for(int j = 0; j < s2Corners.size(); j++){
-            double distance = distanceToSegment(s1Corners[(i+1)%s1Corners.size()], s1Corners[i], s2Corners[j]);
+            Vec2d norm1;
+            double distance = distanceToSegment(s1Corners[(i+1)%s1Corners.size()], s1Corners[i], s2Corners[j], norm1);
             if(distance < closest){
                 closest = distance;
-                cp1 = s1Corners[(i+1)%s1Corners.size()];
-                cp2 = s1Corners[i];
-                norm = perp(cp2-cp1).unit();
+                norm = norm1;
             }
         }
     }
@@ -323,9 +325,9 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info, double mi
     if(counter == 0){
         return false;
     }
-    info.collisionPoint = sum/counter; // center of polygon made by collision
-    info.normal = norm;
-    cout<<info.normal<<endl;
+    info.setColPoint(sum/counter); // center of polygon made by collision
+    info.setNormal(norm.unit());
+    cout<<info.getNormal()<<endl;
     return true;
 }
 
@@ -336,12 +338,19 @@ bool collides(ayin::CollisionShape *s, ayin::Circle *c, CollisionInfo& info, dou
     ShapeType x = s->type();
     switch(x){
     case ShapeType::circle:
-        return collides(c, static_cast<Circle*>(s), info, minDistance);
+    {
+        bool returnVal = collides(c, static_cast<Circle*>(s), info, minDistance);
+        if(returnVal){
+            info.setNormal(-info.getNormal());
+        }
+        return returnVal;
+    }
+
     case ShapeType::rectangle:
     {
         bool returnVal = collides(c, static_cast<Rectangle*>(s), info, minDistance);
         if(returnVal){
-            info.normal = -info.normal;
+            info.setNormal(-info.getNormal());
         }
         return returnVal;
     }
@@ -349,7 +358,7 @@ bool collides(ayin::CollisionShape *s, ayin::Circle *c, CollisionInfo& info, dou
     {
         bool returnVal = collides(c, static_cast<Triangle*>(s), info, minDistance);
         if(returnVal){
-            info.normal = -info.normal;
+            info.setNormal(-info.getNormal());
         }
         return returnVal;
     }
@@ -371,11 +380,24 @@ bool collides(ayin::CollisionShape *s, ayin::Triangle *t, CollisionInfo& info, d
     ShapeType x = s->type();
     switch(x){
     case ShapeType::circle:
-        return collides(static_cast<Circle*>(s), t, info, minDistance);
+    {
+        bool col = collides(static_cast<Circle*>(s), t, info, minDistance);
+        if(col){
+            info.setNormal(-info.getNormal());
+        }
+        return col;
+    }
     case ShapeType::rectangle:
     case ShapeType::triangle:
-        return collides(static_cast<PolygonShape*>(s), static_cast<PolygonShape*>(t), info, minDistance);
+    {
+        bool col = collides(static_cast<PolygonShape*>(s), static_cast<PolygonShape*>(t), info, minDistance);
+        if(col){
+            info.setNormal(-info.getNormal());
+        }
+        return col;
     }
+    }
+
 }
 
 bool collides(ayin::CollisionShape *s1, ayin::CollisionShape *s2, CollisionInfo& info, double minDistance)

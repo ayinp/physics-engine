@@ -21,17 +21,18 @@ void ayin::Scene::draw(Camera& c)
 
 }
 
-void ayin::Scene::update(Graphics& g)
+void ayin::Scene::update(Graphics& g, Camera& c)
 {
     //erase dead game objects
     erase_if(objects, [](const auto& obj){return obj->isDead();});
     //update objects
     for(int i = 0; i < objects.size(); i++){
-        objects[i]->update(g, gravity);
+        objects[i]->update(g, c, gravity);
     }
     //look for colisions
     detectCollisions();
 }
+
 
 void Scene::detectCollisions()
 {
@@ -39,12 +40,11 @@ void Scene::detectCollisions()
         for(int j = 0; j < objects[i]->collisionInfos.size(); j++){
             CollisionInfo &info = objects[i]->collisionInfos[j];
             if(collides(info.obj1->getHitbox(), info.obj2->getHitbox(), info, 2)){
-                //still collidin
-                info.dead = false;
+                info.checkNorm();
                 info.obj1->onCollisionStay(info);
             }
             else{
-                info.dead = true;
+                info.kill();
             }
 
         }
@@ -60,7 +60,8 @@ void Scene::detectCollisions()
                 if(!existing){
                     CollisionInfo info2 = info;
                     info2.reverse();
-
+                    info.checkNorm();
+                    info2.checkNorm();
                     info.obj1->collisionInfos.push_back(info);
                     info.obj2->collisionInfos.push_back(info2);
                     info.obj1->onCollisionEnter(info);
@@ -74,7 +75,8 @@ void Scene::detectCollisions()
             if(info.dead){
                 objects[i]->onCollisionLeave(info);
             }
-            return info.dead;});
+            return info.dead;
+        });
     }
 }
 

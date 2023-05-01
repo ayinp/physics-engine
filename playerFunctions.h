@@ -10,6 +10,7 @@ public:
 public:
     Counter(ayin::GameObject* owner, std::string name, int num);
     virtual void update() override {};
+    virtual void revUpdate() override {};
     void addCount(int n){num = num + n;};
     virtual void draw(ayin::Camera& c) override {};
 };

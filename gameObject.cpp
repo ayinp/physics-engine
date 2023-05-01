@@ -12,7 +12,7 @@ using namespace mssm;
 
 GameObject::GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void(CollisionInfo)> onCollisionEnter,
                        function<void(CollisionInfo)> onCollisionLeave, function<void(CollisionInfo)> onCollisionStay,
-                       function<void(GameObject*, Camera& c)> addUpdate)
+                       function<void(GameObject*, Graphics& g, Camera& c)> addUpdate)
     :width{width}, height{height}, location{location}, collisionEnter{onCollisionEnter}, collisionLeave{onCollisionLeave},
       collisionStay{onCollisionStay}, addUpdate{addUpdate}
 
@@ -69,7 +69,7 @@ void GameObject::onCollisionEnter(CollisionInfo info)
     else{
 
         location = lastLoc;
-        Vec2d normal = -info.normal;
+        Vec2d normal = -info.getNormal();
         Vec2d newX = normal * (dotProduct(normal, velocity)/dotProduct(normal, normal));
         Vec2d newY = velocity - newX;
         velocity = (newX - elasticity*newY);
@@ -96,7 +96,7 @@ void GameObject::onCollisionLeave(CollisionInfo info)
 
 void GameObject::onCollisionStay(CollisionInfo info)
 {
-//    affectedByGravity = false;
+    //    affectedByGravity = false;
     if(collisionStay){
         collisionStay(info);
     }
@@ -109,10 +109,10 @@ void GameObject::onCollisionStay(CollisionInfo info)
 void GameObject::draw(Camera& c)
 {
 
-//    c.line(location, location + 100*velocity, YELLOW);
-//    c.line(location, location + 100*velocity, RED);
+    //    c.line(location, location + 100*velocity, YELLOW);
+    //    c.line(location, location + 100*velocity, RED);
     for(int i = 0; i < collisionInfos.size(); i++){
-        c.line(location, location +collisionInfos[i].normal*50, ORANGE);
+        c.line(location, location +collisionInfos[i].getNormal()*50, ORANGE);
     }
     if(affectedByGravity){
         hitBox->draw(c, WHITE);
@@ -124,12 +124,12 @@ void GameObject::draw(Camera& c)
     for(int i = 0; i < components.size(); i++){
         components[i]->draw(c);
     }
-    c.ellipse(location, 20, 20, PURPLE, PURPLE);
-    c.line(location, location + 100*velocity, PURPLE);
+    //    c.ellipse(location, 20, 20, PURPLE, PURPLE);
+    //    c.line(location, location + 100*velocity, PURPLE);
 
 }
 
-void GameObject::update(Graphics &g, Vec2d gravity)
+void GameObject::update(Graphics &g, Camera& c, Vec2d gravity)
 {
     netForce = {0,0};
     for(int i = 0; i < components.size(); i++){
@@ -141,9 +141,9 @@ void GameObject::update(Graphics &g, Vec2d gravity)
     if(affectedByGravity){
         netForce += gravity;
     }
-    playerMovement(g, this);
-
+    netForce += movementForce;
     normalCalcs();
+
     acceleration = netForce/mass;
     velocity = velocity + acceleration;
     location = location + velocity;
@@ -166,10 +166,11 @@ void GameObject::update(Graphics &g, Vec2d gravity)
         }
     }
 
-//    if(addUpdate){
-//        addUpdate(this, g);
-//    }
+    if(addUpdate){
+        addUpdate(this, g, c);
+    }
 }
+
 
 Vec2d GameObject::momentum()
 {
@@ -191,11 +192,11 @@ bool GameObject::canMove(Graphics& g, Camera& c, Vec2d vel)
     //returns true if you can move in the direction of vel
     return all_of(collisionInfos.begin(), collisionInfos.end(), [this, vel, &c, &g](auto& info)
     {
-        if(dot(vel.unit(), info.normal) <= 0.015){
+        if(dot(vel.unit(), info.getNormal()) <= 0.015){
             return true;
         }
-        g.cout<<dot(vel.unit(), info.normal)<<endl;
-        c.line(location, location + info.normal*75, YELLOW);
+        g.cout<<dot(vel.unit(), info.getNormal())<<endl;
+        c.line(location, location + info.getNormal()*75, YELLOW);
         return false;
     });
 
@@ -204,11 +205,14 @@ bool GameObject::canMove(Graphics& g, Camera& c, Vec2d vel)
 void GameObject::normalCalcs()
 {
     for(int i = 0; i < collisionInfos.size(); i++){
-        Vec2d n = collisionInfos[i].normal.unit();
+        Vec2d n = collisionInfos[i].getNormal();
         double d = dot(n, netForce);
-        netForce -= d*n;
+        if(d > 0){
+            netForce -= d*n;
+        }
     }
 }
+
 
 
 

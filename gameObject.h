@@ -26,22 +26,23 @@ public:
     Vec2d velocity = {0,0};
     Vec2d acceleration = {0,0};
     Vec2d netForce = {0,0};
+    Vec2d movementForce = {0,0};
     vector<CollisionInfo> collisionInfos;
     function<void(CollisionInfo)> collisionEnter;
     function<void(CollisionInfo)> collisionLeave;
     function<void(CollisionInfo)> collisionStay;
-    function<void(GameObject*, Camera& c)> addUpdate;
+    function<void(GameObject*, mssm::Graphics& g, Camera& c)> addUpdate;
 public:
     GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void (CollisionInfo)> onCollisionEnter = nullptr,
                function<void (CollisionInfo)> onCollisionLeave = nullptr, function<void (CollisionInfo)> onCollisionStay = nullptr,
-               function<void(GameObject*, Camera& c)> addUpdate = nullptr);
+               function<void (GameObject *, mssm::Graphics &, Camera &)> addUpdate = nullptr);
     GameObject(const GameObject& other);
     void generateHitbox(ShapeType hitboxShape);
     void onCollisionEnter(CollisionInfo info);
     void onCollisionLeave(CollisionInfo info);
     void onCollisionStay(CollisionInfo info);
     void draw(Camera& c);
-    void update(mssm::Graphics& g, Vec2d gravity);
+    void update(mssm::Graphics& g, Camera &c, Vec2d gravity);
     bool isDead() const {return dead;};
     Vec2d momentum();
     void addTag(string tag ){tags.push_back(tag);};

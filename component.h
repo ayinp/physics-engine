@@ -15,6 +15,7 @@ public:
 public:
     Component(GameObject* owner, std::string name);
     virtual void update() = 0;
+    virtual void revUpdate() = 0;
     virtual void draw(Camera& c) = 0;
 };
 

@@ -9,9 +9,9 @@ World::World(vector<Scene*> scenes)
 
 }
 
-void World::update(mssm::Graphics &g)
+void World::update(mssm::Graphics &g, Camera& c)
 {
-    getCurrentScene()->update(g);
+    getCurrentScene()->update(g,c);
 }
 
 void World::draw(Camera &c)
