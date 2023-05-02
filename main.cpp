@@ -78,13 +78,17 @@ int main(){
     Graphics g("mini-platformer", 1024, 768);
     Camera c(g);
     Scene scene0({0, 0.1});
-
     playerInitialization(c, scene0);
-    groundInitialization(scene0, Vec2d{g.width()/2, g.height()-25},  g.width()+200, 50, ShapeType::rectangle);
-    wallInitialization(scene0, Vec2d{0, g.height()/2 - 50}, 50, g.height(), ShapeType::rectangle);
-    obstacleInitialization(scene0, Vec2d{g.width()/2+50, 500}, 100, 100, ShapeType::triangle);
-    obstacleInitialization(scene0, Vec2d{800, 400}, 50,50,ShapeType::circle);
-    obstacleInitialization(scene0, Vec2d{900, 400}, 50,50,ShapeType::circle);
+
+    vector<Vec2d> grndPts = {{-g.width()/2, -20}, {-g.width()/2, 20}, {g.width()/2, 20}, {g.width()/2, -20}};
+    groundInitialization(scene0, Vec2d{g.width()/2, g.height() + 25}, grndPts, ShapeType::rectangle);
+
+    vector<Vec2d> wlPts = {{-20, -g.height()/2}, {-20, g.height()/2}, {20, g.height()/2}, {20, -g.height()}};
+    wallInitialization(scene0, Vec2d{0, g.height()/2 - 50}, wlPts, ShapeType::rectangle);
+
+    obstacleInitialization(scene0, Vec2d{g.width()/2+50, 500}, {{0,10}, {-10, -10}, {10, -10}}, ShapeType::polygon);
+    obstacleInitialization(scene0, Vec2d{800, 400}, 50,50, ShapeType::circle);
+    obstacleInitialization(scene0, Vec2d{900, 400}, 50,50, ShapeType::circle);
 
     World world({move(&scene0)});
     bool debug = false;

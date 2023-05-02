@@ -3,28 +3,28 @@
 using namespace mssm;
 using namespace ayin;
 
-Triangle::Triangle(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc,  bool isRightTriangle, bool slopeLeft, int width, int height)
-    :PolygonShape(locFunc, velFunc), isRightTriangle{isRightTriangle}, slopeLeft{slopeLeft}, width{width}, height{height}
+Polygon::Polygon(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc,  vector<Vec2d> points)
+    :PolygonShape(locFunc, velFunc, points)
 {
 
 }
 
-CollisionShape *Triangle::clone(std::function<Vec2d ()> locFunc, std::function<Vec2d()> velFunc)
+CollisionShape *Polygon::clone(std::function<Vec2d ()> locFunc, std::function<Vec2d()> velFunc)
 {
-    return new Triangle(locFunc, velFunc, isRightTriangle, slopeLeft, width, height);
+    return new Polygon(locFunc, velFunc, points);
 }
 
-ShapeType Triangle::type()
+ShapeType Polygon::type()
 {
     return ShapeType::triangle;
 }
 
-Vec2d Triangle::center()
+Vec2d Polygon::center()
 {
     return location();
 }
 
-Vec2d Triangle::centerOfMass()
+Vec2d Polygon::centerOfMass()
 {
     if(isRightTriangle){
         if(slopeLeft){
@@ -42,7 +42,7 @@ Vec2d Triangle::centerOfMass()
     }
 }
 
-vector<Vec2d> Triangle::corners()
+vector<Vec2d> Polygon::corners()
 {
     Vec2d corner1;
     Vec2d corner2;
@@ -73,7 +73,7 @@ vector<Vec2d> Triangle::corners()
 vector<Vec2d> expand(vector<Vec2d>, double);
 
 
-void Triangle::draw(Camera& c, Color color)
+void Polygon::draw(Camera& c, Color color)
 {
     c.polygon(corners(), color);
 

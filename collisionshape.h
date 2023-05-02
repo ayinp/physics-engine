@@ -11,7 +11,7 @@ namespace ayin {
 enum ShapeType
 {
     rectangle,
-    triangle,
+    polygon,
     circle
 };
 

@@ -51,12 +51,12 @@ add_executable(${PROJECT_NAME} ${ADD_EX_EXTRA}
     gameObject.cpp
     collisionshape.h
     collisionshape.cpp
-    triangle.h
-    triangle.cpp
     circle.h
     circle.cpp
     rectangle.h
     rectangle.cpp
+    polygon.h
+    polygon.cpp
     collision.h
     collision.cpp
     polygonshape.h

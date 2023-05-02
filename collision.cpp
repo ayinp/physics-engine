@@ -195,7 +195,7 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info, double minDistance)
 }
 
 // Circle Triangle
-bool collides(Circle *c, Triangle *t, CollisionInfo& info, double minDistance)
+bool collides(Circle *c, Polygon *t, CollisionInfo& info, double minDistance)
 {
     Vec2d p1 = t->corners()[0];
     Vec2d p2 = t->corners()[1];
@@ -354,9 +354,9 @@ bool collides(ayin::CollisionShape *s, ayin::Circle *c, CollisionInfo& info, dou
         }
         return returnVal;
     }
-    case ShapeType::triangle:
+    case ShapeType::polygon:
     {
-        bool returnVal = collides(c, static_cast<Triangle*>(s), info, minDistance);
+        bool returnVal = collides(c, static_cast<Polygon*>(s), info, minDistance);
         if(returnVal){
             info.setNormal(-info.getNormal());
         }
@@ -371,12 +371,12 @@ bool collides(ayin::CollisionShape *s, ayin::Rectangle *r, CollisionInfo& info, 
     case ShapeType::circle:
         return collides(static_cast<Circle*>(s), r, info, minDistance);
     case ShapeType::rectangle:
-    case ShapeType::triangle:
+    case ShapeType::polygon:
         return collides(static_cast<PolygonShape*>(r), static_cast<PolygonShape*>(s), info, minDistance);
     }
 }
 
-bool collides(ayin::CollisionShape *s, ayin::Triangle *t, CollisionInfo& info, double , double minDistance){
+bool collides(ayin::CollisionShape *s, ayin::Polygon *t, CollisionInfo& info, double , double minDistance){
     ShapeType x = s->type();
     switch(x){
     case ShapeType::circle:
@@ -388,7 +388,7 @@ bool collides(ayin::CollisionShape *s, ayin::Triangle *t, CollisionInfo& info, d
         return col;
     }
     case ShapeType::rectangle:
-    case ShapeType::triangle:
+    case ShapeType::polygon:
     {
         bool col = collides(static_cast<PolygonShape*>(s), static_cast<PolygonShape*>(t), info, minDistance);
         if(col){
@@ -408,7 +408,7 @@ bool collides(ayin::CollisionShape *s1, ayin::CollisionShape *s2, CollisionInfo&
         return collides(s2, static_cast<Circle*>(s1), info, minDistance);
     case ShapeType::rectangle:
         return collides(s2, static_cast<Rectangle*>(s1), info, minDistance);
-    case ShapeType::triangle:
-        return collides(s2, static_cast<Triangle*>(s1), info, minDistance);
+    case ShapeType::polygon:
+        return collides(s2, static_cast<Polygon*>(s1), info, minDistance);
     }
 }

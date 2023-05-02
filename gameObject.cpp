@@ -9,15 +9,26 @@ using namespace ayin;
 using namespace mssm;
 
 
-
-GameObject::GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void(CollisionInfo)> onCollisionEnter,
-                       function<void(CollisionInfo)> onCollisionLeave, function<void(CollisionInfo)> onCollisionStay,
-                       function<void(GameObject*, Graphics& g, Camera& c)> addUpdate)
+GameObject::GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void (CollisionInfo)> onCollisionEnter,
+                       function<void (CollisionInfo)> onCollisionLeave, function<void (CollisionInfo)> onCollisionStay,
+                       function<void (GameObject *, mssm::Graphics &, Camera &)> addUpdate)
     :width{width}, height{height}, location{location}, collisionEnter{onCollisionEnter}, collisionLeave{onCollisionLeave},
       collisionStay{onCollisionStay}, addUpdate{addUpdate}
 
 {
     generateHitbox(hitboxShape);
+}
+
+GameObject::GameObject(Vec2d location, vector<Vec2d> points, ShapeType hitboxShape, function<void (CollisionInfo)> onCollisionEnter,
+                       function<void (CollisionInfo)> onCollisionLeave, function<void (CollisionInfo)> onCollisionStay,
+                       function<void (GameObject*, Graphics& g, Camera& c)> addUpdate)
+    :points{points}, location{location}, collisionEnter{onCollisionEnter}, collisionLeave{onCollisionLeave},
+      collisionStay{onCollisionStay}, addUpdate{addUpdate}
+
+{
+    generateHitbox(hitboxShape);
+    calcWidth();
+    calcHeight();
 }
 
 GameObject::GameObject(const GameObject &other)
@@ -48,13 +59,13 @@ void GameObject::generateHitbox(ShapeType hitboxShape)
         break;
     }
     case ShapeType::rectangle: {
-        Rectangle* r = new Rectangle([this](){return location;}, [this](){return velocity;}, width, height);
+        Rectangle* r = new Rectangle([this](){return location;}, [this](){return velocity;}, points);
         hitBox = r;
         break;
     }
-    case ShapeType::triangle:{
-        Triangle* t = new Triangle([this](){return location;}, [this](){return velocity;}, 0, 0, width, height);
-        hitBox = t;
+    case ShapeType::polygon:{
+        Polygon* p = new Polygon([this](){return location;}, [this](){return velocity;}, points);
+        hitBox = p;
         break;
     }
     }
@@ -207,10 +218,34 @@ void GameObject::normalCalcs()
     for(int i = 0; i < collisionInfos.size(); i++){
         Vec2d n = collisionInfos[i].getNormal();
         double d = dot(n, netForce);
+        Vec2d Fnormal = d*n;
+
+        if(collisionInfos[i].obj2->hitBox->type() == ShapeType::polygon){
+
+        }
+        else if(collisionInfos[i].obj2->hitBox->type() == ShapeType::rectangle){
+
+        }
+        else if(collisionInfos[i].obj2->hitBox->type() == ShapeType::circle){
+
+        }
+
+//        double Ffriction = cK*;
         if(d > 0){
             netForce -= d*n;
+//            netForce -=
         }
     }
+}
+
+void GameObject::calcWidth()
+{
+
+}
+
+void GameObject::calcHeight()
+{
+
 }
 
 

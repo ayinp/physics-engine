@@ -3,15 +3,16 @@
 using namespace mssm;
 using namespace ayin;
 
-Rectangle::Rectangle(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc, int width, int height)
-    :PolygonShape(locFunc, velFunc), width{width}, height{height}
+Rectangle::Rectangle(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc, vector<Vec2d> points)
+    :PolygonShape(locFunc, velFunc, points)
 {
-
+    setWidth();
+    setHeight();
 }
 
 CollisionShape *Rectangle::clone(std::function<Vec2d ()> locFunc, std::function<Vec2d()> velFunc)
 {
-    return new Rectangle(locFunc, velFunc, width, height);
+    return new Rectangle(locFunc, velFunc, points);
 }
 
 ShapeType Rectangle::type()
@@ -41,12 +42,32 @@ Vec2d Rectangle::topRight()
 
 Vec2d Rectangle::bottomLeft()
 {
-     return {location().x - width/2, location().y + height/2};
+    return {location().x - width/2, location().y + height/2};
 }
 
 Vec2d Rectangle::bottomRight()
 {
-     return {location().x + width/2, location().y + height/2};
+    return {location().x + width/2, location().y + height/2};
+}
+
+double Rectangle::setHeight()
+{
+    if(points[0].y != points[1].y){
+        height = abs(points[0].y-points[1].y);
+    }
+    else{
+        height = abs(points[0].y-points[2].y);
+    }
+}
+
+double Rectangle::setWidth()
+{
+    if(points[0].x != points[1].x){
+        width = abs(points[0].x-points[1].x);
+    }
+    else{
+        width = abs(points[0].x-points[2].x);
+    }
 }
 
 void Rectangle::draw(Camera& c, Color color)

@@ -9,15 +9,18 @@ namespace ayin {
 class GameObject
 {
 private:
+    vector<Vec2d> points;
     double width;
     double height;
     double elasticity = 1;
     double mass = 1;
+    double Ck = 0.1;
     bool dead = false;
     vector<string> tags;
     vector<unique_ptr<Component>> components;
     CollisionShape* hitBox;
     Vec2d lastLoc;
+
 public:
     bool affectedByGravity = false;
     bool wrapInX = false;
@@ -36,6 +39,9 @@ public:
     GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void (CollisionInfo)> onCollisionEnter = nullptr,
                function<void (CollisionInfo)> onCollisionLeave = nullptr, function<void (CollisionInfo)> onCollisionStay = nullptr,
                function<void (GameObject *, mssm::Graphics &, Camera &)> addUpdate = nullptr);
+    GameObject(Vec2d location, vector<Vec2d> points, ShapeType hitboxShape, function<void (CollisionInfo)> onCollisionEnter = nullptr,
+                           function<void (CollisionInfo)> onCollisionLeave = nullptr, function<void (CollisionInfo)> onCollisionStay = nullptr,
+                           function<void (GameObject*, mssm::Graphics& g, Camera& c)> addUpdate = nullptr);
     GameObject(const GameObject& other);
     void generateHitbox(ShapeType hitboxShape);
     void onCollisionEnter(CollisionInfo info);
@@ -54,8 +60,8 @@ public:
     void kill(){dead = true;};
     bool isDead(){return dead;};
     CollisionShape* getHitbox() const {return hitBox;};
-    double getWidth() const {return width;};
-    double getHeight() const {return height;};
+//    double getWidth() const {return width;};
+//    double getHeight() const {return height;};
     void addComponent(unique_ptr<Component> c){components.push_back(std::move(c));};
     template<typename T>
     T* getComponent(string name);
@@ -65,6 +71,8 @@ public:
     CollisionInfo* getCollisionInfo(GameObject* him);
     bool canMove(mssm::Graphics& g, Camera &c, Vec2d vel);
     void normalCalcs();
+    void calcWidth();
+    void calcHeight();
 };
 
 template<typename T>
