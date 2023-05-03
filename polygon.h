@@ -1,5 +1,5 @@
-#ifndef TRIANGLE_H
-#define TRIANGLE_H
+#ifndef POLYGON_H
+#define POLYGON_H
 
 #include "polygonshape.h"
 
@@ -8,7 +8,6 @@ namespace ayin{
 class Polygon : public PolygonShape
 {
 public:
-    Vec2d centerOfMass;
 public:
     Polygon(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc, vector<Vec2d> points);
     virtual CollisionShape* clone(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc) override;
@@ -16,8 +15,8 @@ public:
     virtual Vec2d center() override;
     virtual vector<Vec2d> corners() override;
     virtual void draw(Camera& c,  mssm::Color color = mssm::WHITE) override;
-    void calcCenterOfMass();
+    Vec2d centerOfMass();
 };
 }
 
-#endif // TRIANGLE_H
+#endif // POLYGON_H

@@ -45,7 +45,7 @@ void playerColLeave(CollisionInfo info){
 
 //PLAYER INITIALIZATION
 void playerInitialization(Camera& c, Scene& scene){
-    unique_ptr<GameObject> p = make_unique<GameObject>(Vec2d{c.width()/2, c.height()/2}, 50, 100, ShapeType::circle,
+    unique_ptr<GameObject> p = make_unique<GameObject>(Vec2d{c.width()/2, c.height()/2}, 50, 100, ShapeType::rectangle,
                                                        playerColEnter, playerColLeave);
     p->affectedByGravity = true;
     p->setElasticity(0);

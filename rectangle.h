@@ -11,6 +11,7 @@ public:
     double height;
 public:
     Rectangle(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc, vector<Vec2d> points);
+    Rectangle(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc, double width, double height);
     virtual CollisionShape* clone(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc) override;
     virtual ShapeType type() override;
     virtual Vec2d center() override;

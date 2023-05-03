@@ -1,5 +1,6 @@
 #include "gameObject.h"
 #include "circle.h"
+#include "polygon.h"
 #include "rectangle.h"
 #include "triangle.h"
 #include <cmath>
@@ -26,9 +27,9 @@ GameObject::GameObject(Vec2d location, vector<Vec2d> points, ShapeType hitboxSha
       collisionStay{onCollisionStay}, addUpdate{addUpdate}
 
 {
-    generateHitbox(hitboxShape);
     calcWidth();
     calcHeight();
+    generateHitbox(hitboxShape);
 }
 
 GameObject::GameObject(const GameObject &other)
@@ -59,14 +60,36 @@ void GameObject::generateHitbox(ShapeType hitboxShape)
         break;
     }
     case ShapeType::rectangle: {
-        Rectangle* r = new Rectangle([this](){return location;}, [this](){return velocity;}, points);
-        hitBox = r;
-        break;
+        if(points.size()!= 0){
+            Rectangle* r = new Rectangle([this](){return location;}, [this](){return velocity;}, points);
+            hitBox = r;
+            break;
+        }
+        else{
+            Rectangle* r = new Rectangle([this](){return location;}, [this](){return velocity;}, width, height);
+            hitBox = r;
+            break;
+        }
+    }
+    case ShapeType::triangle:{
+        if(points.size()!= 0){
+            Triangle* t = new Triangle([this](){return location;}, [this](){return velocity;}, points);
+            hitBox = t;
+            break;
+        }
+        else{
+            cout << "you did not add any points to this triangle!" << endl;
+        }
     }
     case ShapeType::polygon:{
-        Polygon* p = new Polygon([this](){return location;}, [this](){return velocity;}, points);
-        hitBox = p;
-        break;
+        if(points.size()!= 0){
+            Polygon* p = new Polygon([this](){return location;}, [this](){return velocity;}, points);
+            hitBox = p;
+            break;
+        }
+        else{
+            cout << "you did not add any points to this polygon!" << endl;
+        }
     }
     }
 }
@@ -220,20 +243,20 @@ void GameObject::normalCalcs()
         double d = dot(n, netForce);
         Vec2d Fnormal = d*n;
 
-        if(collisionInfos[i].obj2->hitBox->type() == ShapeType::polygon){
+//        if(collisionInfos[i].obj2->hitBox->type() == ShapeType::polygon){
 
-        }
-        else if(collisionInfos[i].obj2->hitBox->type() == ShapeType::rectangle){
+//        }
+//        else if(collisionInfos[i].obj2->hitBox->type() == ShapeType::rectangle){
 
-        }
-        else if(collisionInfos[i].obj2->hitBox->type() == ShapeType::circle){
+//        }
+//        else if(collisionInfos[i].obj2->hitBox->type() == ShapeType::circle){
 
-        }
+//        }
 
-//        double Ffriction = cK*;
+        //        double Ffriction = cK*;
         if(d > 0){
             netForce -= d*n;
-//            netForce -=
+            //            netForce -=
         }
     }
 }

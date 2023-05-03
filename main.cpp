@@ -80,15 +80,17 @@ int main(){
     Scene scene0({0, 0.1});
     playerInitialization(c, scene0);
 
-    vector<Vec2d> grndPts = {{-g.width()/2, -20}, {-g.width()/2, 20}, {g.width()/2, 20}, {g.width()/2, -20}};
-    groundInitialization(scene0, Vec2d{g.width()/2, g.height() + 25}, grndPts, ShapeType::rectangle);
 
-    vector<Vec2d> wlPts = {{-20, -g.height()/2}, {-20, g.height()/2}, {20, g.height()/2}, {20, -g.height()}};
-    wallInitialization(scene0, Vec2d{0, g.height()/2 - 50}, wlPts, ShapeType::rectangle);
+    groundInitialization(scene0, Vec2d{g.width()/2, g.height() + 25}, g.width(), 25, ShapeType::rectangle);
 
-    obstacleInitialization(scene0, Vec2d{g.width()/2+50, 500}, {{0,10}, {-10, -10}, {10, -10}}, ShapeType::polygon);
+    wallInitialization(scene0, Vec2d{0, g.height()/2 - 50}, 25, g.height(), ShapeType::rectangle);
+
+    obstacleInitialization(scene0, Vec2d{g.width()/2+50, 500}, {{0,-100}, {-100, 100}, {100, 100}}, ShapeType::triangle);
+
     obstacleInitialization(scene0, Vec2d{800, 400}, 50,50, ShapeType::circle);
     obstacleInitialization(scene0, Vec2d{900, 400}, 50,50, ShapeType::circle);
+
+//    obstacleInitialization(scene0, Vec2d{500,200}, {{0,-100}, {-100,0}, {-100, 10}, {10, 30}, {100, -40}, {-20, -30}}, ShapeType::polygon);
 
     World world({move(&scene0)});
     bool debug = false;

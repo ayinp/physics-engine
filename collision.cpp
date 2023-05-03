@@ -1,5 +1,7 @@
 #include "collision.h"
+#include "circle.h"
 #include "clipper.h"
+#include "polygon.h"
 
 #ifndef _MSC_VER
 #pragma GCC diagnostic ignored "-Wsign-compare"
@@ -85,6 +87,14 @@ vector<Vec2d> expand(vector<Vec2d>points, double val){
 }
 
 //collision functions ----------------------------------------------------------------------------------------
+
+// Circle Polygon
+bool collides(Circle *c, Polygon *p, CollisionInfo& info, double minDistance)
+{
+//NEED A CIRCLE POLY COLISION
+    return false;
+}
+
 
 //Circle Circle
 bool collides(Circle *c1, Circle *c2, CollisionInfo& info, double minDistance)
@@ -195,8 +205,9 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info, double minDistance)
 }
 
 // Circle Triangle
-bool collides(Circle *c, Polygon *t, CollisionInfo& info, double minDistance)
+bool collides(Circle *c, Triangle *t, CollisionInfo& info, double minDistance)
 {
+    cout<< "WE ARE COLIDING" <<endl;
     Vec2d p1 = t->corners()[0];
     Vec2d p2 = t->corners()[1];
     Vec2d p3 = t->corners()[2];
@@ -234,9 +245,6 @@ bool collides(Circle *c, Polygon *t, CollisionInfo& info, double minDistance)
         return true;
     }
     return false;
-
-
-
 }
 
 // Polygon Polygon
@@ -362,6 +370,14 @@ bool collides(ayin::CollisionShape *s, ayin::Circle *c, CollisionInfo& info, dou
         }
         return returnVal;
     }
+    case ShapeType::triangle:
+    {
+        bool returnVal = collides(c, static_cast<Triangle*>(s), info, minDistance);
+        if(returnVal){
+            info.setNormal(-info.getNormal());
+        }
+        return returnVal;
+    }
     }
 }
 
@@ -372,11 +388,37 @@ bool collides(ayin::CollisionShape *s, ayin::Rectangle *r, CollisionInfo& info, 
         return collides(static_cast<Circle*>(s), r, info, minDistance);
     case ShapeType::rectangle:
     case ShapeType::polygon:
+    case ShapeType::triangle:
         return collides(static_cast<PolygonShape*>(r), static_cast<PolygonShape*>(s), info, minDistance);
     }
 }
 
-bool collides(ayin::CollisionShape *s, ayin::Polygon *t, CollisionInfo& info, double , double minDistance){
+bool collides(ayin::CollisionShape *s, ayin::Polygon *p, CollisionInfo& info, double , double minDistance){
+    ShapeType x = s->type();
+    switch(x){
+    case ShapeType::circle:
+    {
+        bool col = collides(static_cast<Circle*>(s), p, info, minDistance);
+        if(col){
+            info.setNormal(-info.getNormal());
+        }
+        return col;
+    }
+    case ShapeType::rectangle:
+    case ShapeType::polygon:
+    case ShapeType::triangle:
+    {
+        bool col = collides(static_cast<PolygonShape*>(s), static_cast<PolygonShape*>(p), info, minDistance);
+        if(col){
+            info.setNormal(-info.getNormal());
+        }
+        return col;
+    }
+    }
+
+}
+
+bool collides(ayin::CollisionShape *s, ayin::Triangle *t, CollisionInfo& info, double , double minDistance){
     ShapeType x = s->type();
     switch(x){
     case ShapeType::circle:
@@ -389,6 +431,7 @@ bool collides(ayin::CollisionShape *s, ayin::Polygon *t, CollisionInfo& info, do
     }
     case ShapeType::rectangle:
     case ShapeType::polygon:
+    case ShapeType::triangle:
     {
         bool col = collides(static_cast<PolygonShape*>(s), static_cast<PolygonShape*>(t), info, minDistance);
         if(col){
@@ -410,5 +453,7 @@ bool collides(ayin::CollisionShape *s1, ayin::CollisionShape *s2, CollisionInfo&
         return collides(s2, static_cast<Rectangle*>(s1), info, minDistance);
     case ShapeType::polygon:
         return collides(s2, static_cast<Polygon*>(s1), info, minDistance);
+    case ShapeType::triangle:
+        return collides(s2, static_cast<Triangle*>(s1), info, minDistance);
     }
 }
