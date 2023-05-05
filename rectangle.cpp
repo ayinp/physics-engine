@@ -13,6 +13,7 @@ Rectangle::Rectangle(std::function<Vec2d()> locFunc, std::function<Vec2d()> velF
 Rectangle::Rectangle(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc, double width , double height)
     :PolygonShape(locFunc, velFunc), width{width}, height{height}
 {
+    calculatePoints();
 }
 
 CollisionShape *Rectangle::clone(std::function<Vec2d ()> locFunc, std::function<Vec2d()> velFunc)
@@ -32,7 +33,7 @@ Vec2d Rectangle::center()
 
 vector<Vec2d> Rectangle::corners()
 {
-     return {topLeft(), bottomLeft(), bottomRight(), topRight()};
+    return {topLeft(), bottomLeft(), bottomRight(), topRight()};
 }
 
 Vec2d Rectangle::topLeft()
@@ -53,6 +54,14 @@ Vec2d Rectangle::bottomLeft()
 Vec2d Rectangle::bottomRight()
 {
     return {location().x + width/2, location().y + height/2};
+}
+
+void Rectangle::calculatePoints()
+{
+    points.push_back({location().x - width/2, location().y - height/2});
+    points.push_back({location().x - width/2, location().y + height/2});
+    points.push_back({location().x + width/2, location().y + height/2});
+    points.push_back({location().x + width/2, location().y - height/2});
 }
 
 double Rectangle::setHeight()

@@ -21,6 +21,7 @@ public:
     Vec2d topRight();
     Vec2d bottomLeft();
     Vec2d bottomRight();
+    void calculatePoints();
     double setHeight();
     double setWidth();
 };
