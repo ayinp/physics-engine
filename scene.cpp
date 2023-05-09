@@ -25,14 +25,25 @@ void ayin::Scene::update(Graphics& g, Camera& c)
 {
     //erase dead game objects
     erase_if(objects, [](const auto& obj){return obj->isDead();});
+
+
+    //look for colisions
+    detectCollisions();
+
+    //forces and normals
+    for(int i = 0; i < objects.size(); i++){
+        objects[i]->appliedForce(gravity);
+        objects[i]->normalCalcs(g);
+    }
+//    for(int i = 0; i < objects.size(); i++){
+//        objects[i]->normalCalcs(g);
+//    }
     //update objects
     for(int i = 0; i < objects.size(); i++){
         objects[i]->update(g, c, gravity);
     }
-    //look for colisions
-    detectCollisions();
-}
 
+}
 
 void Scene::detectCollisions()
 {

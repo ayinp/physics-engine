@@ -165,18 +165,12 @@ void GameObject::draw(Camera& c)
 
 void GameObject::update(Graphics &g, Camera& c, Vec2d gravity)
 {
-    netForce = {0,0};
     for(int i = 0; i < components.size(); i++){
         components[i]->update();
     }
     lastLoc = location;
 
 
-    if(affectedByGravity){
-        netForce += gravity;
-    }
-    netForce += movementForce;
-    normalCalcs();
 
     acceleration = netForce/mass;
     velocity = velocity + acceleration;
@@ -236,29 +230,34 @@ bool GameObject::canMove(Graphics& g, Camera& c, Vec2d vel)
 
 }
 
-void GameObject::normalCalcs()
+void GameObject::normalCalcs(Graphics& g)
 {
+    vector<Vec2d> normals;
     for(int i = 0; i < collisionInfos.size(); i++){
         Vec2d n = collisionInfos[i].getNormal();
-        double d = dot(n, netForce);
-        Vec2d Fnormal = d*n;
-
-//        if(collisionInfos[i].obj2->hitBox->type() == ShapeType::polygon){
-
-//        }
-//        else if(collisionInfos[i].obj2->hitBox->type() == ShapeType::rectangle){
-
-//        }
-//        else if(collisionInfos[i].obj2->hitBox->type() == ShapeType::circle){
-
-//        }
-
-        //        double Ffriction = cK*;
+        double d = dot(n,  netForce);
+        normals.push_back(d*n);
         if(d > 0){
             netForce -= d*n;
-            //            netForce -=
         }
     }
+}
+
+void GameObject::appliedForce(Vec2d grav)
+{
+    netForce = {0,0};
+    if(affectedByGravity){
+        netForce += grav*mass;
+    }
+    netForce += movementForce;
+    //    if(abs(netForce.x) < 0.01){
+    //        netForce.x = 0;
+    //    }
+    //    if(abs(netForce.y) < 0.01){
+    //        netForce.y = 0;
+    //    }
+
+
 }
 
 void GameObject::calcWidth()

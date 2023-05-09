@@ -48,6 +48,7 @@ void enterScreen(Graphics& g){
 }
 
 void game(Graphics& g, Camera& c, World& world , bool& debug){
+
     if(g.onKeyPress('T')){
         debug = !debug;
     }
@@ -64,6 +65,8 @@ void game(Graphics& g, Camera& c, World& world , bool& debug){
     GameObject* player = world.getCurrentScene()->getFirstTag("player");
     c.offset = Vec2d{g.width()/2, 3*g.height()/5} - (player->location);
 
+    g.cout<< "PLAYER LOC: " <<  player->location << endl;
+
     if(player){
         //player movement
         playerMovement(g, player);
@@ -76,31 +79,36 @@ void game(Graphics& g, Camera& c, World& world , bool& debug){
 
 int main(){
     Graphics g("mini-platformer", 1024, 768);
-    Camera c(g);
-    Scene scene0({0, 0.1});
-    playerInitialization(c, scene0);
+    while(g.draw()){
+        Camera c(g);
+        Scene scene0({0, 0.1});
+
+        playerInitialization(c, scene0);
 
 
-    groundInitialization(scene0, Vec2d{g.width()/2, g.height() + 25}, g.width(), 25, ShapeType::rectangle);
+        groundInitialization(scene0, Vec2d{g.width()/2, g.height() + 25}, g.width(), 25, ShapeType::rectangle);
 
-    wallInitialization(scene0, Vec2d{0, g.height()/2 - 50}, 25, g.height(), ShapeType::rectangle);
+        wallInitialization(scene0, Vec2d{0, g.height()/2 - 50}, 25, g.height(), ShapeType::rectangle);
 
-    obstacleInitialization(scene0, Vec2d{g.width()/2+50, 500}, {{0,-100}, {-100, 100}, {100, 100}}, ShapeType::triangle);
+        obstacleInitialization(scene0, Vec2d{g.width()/2+50, 500}, {{0,-100}, {-100, 100}, {100, 100}}, ShapeType::triangle);
 
-    obstacleInitialization(scene0, Vec2d{800, 400}, 50,50, ShapeType::circle);
-    obstacleInitialization(scene0, Vec2d{900, 400}, 50,50, ShapeType::circle);
+        obstacleInitialization(scene0, Vec2d{800, 400}, 50,50, ShapeType::circle);
+        obstacleInitialization(scene0, Vec2d{900, 400}, 50,50, ShapeType::circle);
+        //    obstacleInitialization(scene0, Vec2d{500,200}, {{0,-100}, {-100,0}, {-100, 10}, {10, 30}, {100, -40}, {-20, -30}}, ShapeType::polygon);
 
-//    obstacleInitialization(scene0, Vec2d{500,200}, {{0,-100}, {-100,0}, {-100, 10}, {10, 30}, {100, -40}, {-20, -30}}, ShapeType::polygon);
+        World world({move(&scene0)});
+        bool debug = false;
 
-    World world({move(&scene0)});
-    bool debug = false;
-
-    while (g.draw()) {
-        if(!playing){
-            enterScreen(g);
-        }
-        else{
-            game(g, c, world, debug);
+        while (g.draw()) {
+            if(!playing){
+                enterScreen(g);
+            }
+            else{
+                game(g, c, world, debug);
+            }
+            if(g.onKeyPress('R')){
+                break;
+            }
         }
     }
 

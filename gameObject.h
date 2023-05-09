@@ -70,7 +70,8 @@ public:
     Vec2d getLastLoc(){return lastLoc;};
     CollisionInfo* getCollisionInfo(GameObject* him);
     bool canMove(mssm::Graphics& g, Camera &c, Vec2d vel);
-    void normalCalcs();
+    void normalCalcs(mssm::Graphics &g);
+    void appliedForce(Vec2d grav);
     void calcWidth();
     void calcHeight();
 };

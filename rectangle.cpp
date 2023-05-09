@@ -64,7 +64,7 @@ void Rectangle::calculatePoints()
     points.push_back({location().x + width/2, location().y - height/2});
 }
 
-double Rectangle::setHeight()
+void Rectangle::setHeight()
 {
     if(points.size() >= 2){
         if(points[0].y != points[1].y){
@@ -76,7 +76,7 @@ double Rectangle::setHeight()
     }
 }
 
-double Rectangle::setWidth()
+void Rectangle::setWidth()
 {
     if(points.size() >= 2){
         if(points[0].x != points[1].x){
