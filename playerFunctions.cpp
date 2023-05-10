@@ -16,15 +16,6 @@ Counter::Counter(GameObject* owner, std::string name, int num)
 
 //PLAYER COLLISION FUNCTIONS
 void playerColEnter(CollisionInfo info){
-    info.obj1->location = info.obj1->getLastLoc();
-    Vec2d normal = -info.getNormal();
-    Vec2d newX = normal * (dotProduct(normal, info.obj1->velocity)/dotProduct(normal, normal));
-    Vec2d newY = info.obj1->velocity - newX;
-    info.obj1->velocity = (newY - info.obj1->getElasticity()*newX);
-
-    if(info.obj1->velocity.magnitude() < 0.1){
-        info.obj1->velocity= {0,0};
-    }
     //cases
     if((info.obj2->hasTag("ground") || info.obj2->hasTag("obs")) && info.getColPoint().y > info.obj1->location.y){
         info.obj1->getComponent<Counter>("jumps")->num = 0;

@@ -102,19 +102,6 @@ void GameObject::onCollisionEnter(CollisionInfo info)
     }
     else{
 
-        location = lastLoc;
-        Vec2d normal = -info.getNormal();
-        Vec2d newX = normal * (dotProduct(normal, velocity)/dotProduct(normal, normal));
-        Vec2d newY = velocity - newX;
-        velocity = (newX - elasticity*newY);
-
-        if(abs(velocity.x) < 0.01){
-            velocity.x = 0;
-
-        }
-        if(abs(velocity.y) < 0.01){
-            velocity.y = 0;
-        }
     }
 
 }
@@ -135,6 +122,40 @@ void GameObject::onCollisionStay(CollisionInfo info)
         collisionStay(info);
     }
     else{
+    }
+
+
+}
+
+void GameObject::impulseHandler()
+{
+    int count = 0;
+    bool cols = true;
+    double initialSpeed = velocity.magnitude();
+    while(cols){
+        count++;
+        cols = false;
+        for(int i = 0; i < collisionInfos.size(); i++){
+            Vec2d normal = -collisionInfos[i].getNormal();
+            Vec2d newX = normal * (-dotProduct(normal, velocity)/dotProduct(normal, normal));
+            Vec2d newY = velocity + newX;
+
+            if(dot(normal, velocity) < 0){
+                location = lastLoc;
+                velocity = (newY + elasticity*newX);
+                double newSpeed = velocity.magnitude();
+                cols = true;
+            }
+            if(velocity.magSquared() < 1){
+                velocity = {0,0};
+            }
+        }
+        if(count == 3){
+            cout << "IM AT 3" << endl;
+        }
+        if(count > 10){
+           break;
+        }
     }
 
 

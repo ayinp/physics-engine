@@ -47,6 +47,7 @@ public:
     void onCollisionEnter(CollisionInfo info);
     void onCollisionLeave(CollisionInfo info);
     void onCollisionStay(CollisionInfo info);
+    void impulseHandler();
     void draw(Camera& c);
     void update(mssm::Graphics& g, Camera &c, Vec2d gravity);
     bool isDead() const {return dead;};

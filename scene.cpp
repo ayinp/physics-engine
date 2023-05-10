@@ -53,6 +53,7 @@ void Scene::detectCollisions()
             if(collides(info.obj1->getHitbox(), info.obj2->getHitbox(), info, 2)){
                 info.checkNorm();
                 info.obj1->onCollisionStay(info);
+                info.obj1->impulseHandler();
             }
             else{
                 info.kill();
@@ -71,12 +72,18 @@ void Scene::detectCollisions()
                 if(!existing){
                     CollisionInfo info2 = info;
                     info2.reverse();
+
                     info.checkNorm();
                     info2.checkNorm();
+
                     info.obj1->collisionInfos.push_back(info);
                     info.obj2->collisionInfos.push_back(info2);
+
                     info.obj1->onCollisionEnter(info);
                     info.obj2->onCollisionEnter(info2);
+
+                    info.obj1->impulseHandler();
+                    info.obj2->impulseHandler();
                 }
             }
         }
