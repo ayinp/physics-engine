@@ -24,7 +24,7 @@ void ayin::Scene::draw(Camera& c)
 void ayin::Scene::update(Graphics& g, Camera& c)
 {
     //erase dead game objects
-    erase_if(objects, [](const auto& obj){return obj->isDead();});
+     erase_if(objects, [](const auto& obj){return obj->isDead();});
 
 
     //look for colisions

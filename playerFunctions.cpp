@@ -39,7 +39,7 @@ void playerInitialization(Camera& c, Scene& scene){
     unique_ptr<GameObject> p = make_unique<GameObject>(Vec2d{c.width()/2, c.height()/2}, 50, 100, ShapeType::rectangle,
                                                        playerColEnter, playerColLeave);
     p->affectedByGravity = true;
-    p->setElasticity(0);
+    p->setElasticity(0.3);
     p->addTag("player");
     p->addComponent(make_unique<Counter>(p.get(), "jumps", 0));
 
@@ -54,7 +54,7 @@ void playerMovement(Graphics& g, GameObject* player){
         //                player->netForce -= {0.5,0}
         //            }
         //            else{
-        player->movementForce = {0.5, 0};
+        player->movementForce = {0.8, 0};
         //            }
         //        }
         //        else{
@@ -69,7 +69,7 @@ void playerMovement(Graphics& g, GameObject* player){
         //                player->acceleration.x = 0;
         //            }
         //            else{
-        player->movementForce = {-0.5,0};
+        player->movementForce = {-0.8,0};
         //            }
         //        }
         //        else{

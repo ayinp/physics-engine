@@ -66,6 +66,8 @@ void game(Graphics& g, Camera& c, World& world , bool& debug){
     c.offset = Vec2d{g.width()/2, 3*g.height()/5} - (player->location);
 
     g.cout<< "PLAYER LOC: " <<  player->location << endl;
+    g.cout<< "PLAYER VEL: " <<  player->velocity << endl;
+
 
     if(player){
         //player movement
@@ -90,10 +92,10 @@ int main(){
 
         wallInitialization(scene0, Vec2d{0, g.height()/2 - 50}, 25, g.height(), ShapeType::rectangle);
 
-        obstacleInitialization(scene0, Vec2d{g.width()/2+50, 500}, {{0,-100}, {-100, 100}, {100, 100}}, ShapeType::triangle);
+//        obstacleInitialization(scene0, Vec2d{g.width()/2+50, 500}, {{0,-100}, {-100, 100}, {100, 100}}, ShapeType::triangle);
 
-        obstacleInitialization(scene0, Vec2d{800, 400}, 50,50, ShapeType::circle);
-        obstacleInitialization(scene0, Vec2d{900, 400}, 50,50, ShapeType::circle);
+//        obstacleInitialization(scene0, Vec2d{800, 400}, 50,50, ShapeType::circle);
+//        obstacleInitialization(scene0, Vec2d{900, 400}, 50,50, ShapeType::circle);
         //    obstacleInitialization(scene0, Vec2d{500,200}, {{0,-100}, {-100,0}, {-100, 10}, {10, 30}, {100, -40}, {-20, -30}}, ShapeType::polygon);
 
         World world({move(&scene0)});

@@ -1,5 +1,6 @@
 #include "gameObject.h"
 #include "circle.h"
+#include "collision.h"
 #include "polygon.h"
 #include "rectangle.h"
 #include "triangle.h"
@@ -127,34 +128,70 @@ void GameObject::onCollisionStay(CollisionInfo info)
 
 }
 
+
+Vec2d newLoc(Vec2d velocity, Vec2d lastLoc, CollisionInfo info, int& c){
+    Vec2d retLoc = lastLoc;
+    CollisionInfo randInfo;
+    if(c < 4){
+        info.obj1->location = lastLoc + 0.5*velocity;
+        if(!collides(info.obj1->getHitbox(), info.obj2->getHitbox(), randInfo,0)){
+            c++;
+            retLoc = lastLoc + 0.5*velocity;
+            return newLoc(velocity, retLoc, info, c);
+        }
+        else{
+            return retLoc;
+        }
+    }
+    else if(c > 3 && c < 7){
+        info.obj1->location = lastLoc - 0.5*velocity;
+        if(!collides(info.obj1->getHitbox(), info.obj2->getHitbox(), randInfo,0)){
+            c++;
+            retLoc = lastLoc + 0.5*velocity;
+            return newLoc(velocity, retLoc, info, c);
+        }
+        else{
+            return retLoc;
+        }
+    }
+    else{
+        return retLoc;
+    }
+
+
+}
+
 void GameObject::impulseHandler()
 {
     int count = 0;
     bool cols = true;
-    double initialSpeed = velocity.magnitude();
     while(cols){
         count++;
         cols = false;
         for(int i = 0; i < collisionInfos.size(); i++){
+
             Vec2d normal = -collisionInfos[i].getNormal();
             Vec2d newX = normal * (-dotProduct(normal, velocity)/dotProduct(normal, normal));
             Vec2d newY = velocity + newX;
 
             if(dot(normal, velocity) < 0){
-                location = lastLoc;
+                int c = 0;
+                location = (newLoc(velocity, lastLoc, collisionInfos[i], c));
+                lastLoc = location;
                 velocity = (newY + elasticity*newX);
-                double newSpeed = velocity.magnitude();
                 cols = true;
+                if(velocity.magnitude() < 1){
+                    velocity = {0,0};
+                }
             }
-            if(velocity.magSquared() < 1){
-                velocity = {0,0};
-            }
+
+
         }
         if(count == 3){
             cout << "IM AT 3" << endl;
         }
         if(count > 10){
-           break;
+            break;
         }
     }
 
@@ -181,7 +218,6 @@ void GameObject::draw(Camera& c)
     }
     //    c.ellipse(location, 20, 20, PURPLE, PURPLE);
     //    c.line(location, location + 100*velocity, PURPLE);
-
 }
 
 void GameObject::update(Graphics &g, Camera& c, Vec2d gravity)
