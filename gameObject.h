@@ -43,11 +43,11 @@ public:
                            function<void (CollisionInfo)> onCollisionLeave = nullptr, function<void (CollisionInfo)> onCollisionStay = nullptr,
                            function<void (GameObject*, mssm::Graphics& g, Camera& c)> addUpdate = nullptr);
     GameObject(const GameObject& other);
-    void generateHitbox(ShapeType hitboxShape);
+    CollisionShape* generateHitbox(ShapeType hitboxShape);
     void onCollisionEnter(CollisionInfo info);
     void onCollisionLeave(CollisionInfo info);
     void onCollisionStay(CollisionInfo info);
-    void impulseHandler();
+    void impulseHandler(mssm::Graphics &g);
     void draw(Camera& c);
     void update(mssm::Graphics& g, Camera &c, Vec2d gravity);
     bool isDead() const {return dead;};

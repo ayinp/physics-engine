@@ -18,7 +18,7 @@ GameObject::GameObject(Vec2d location, double width, double height, ShapeType hi
       collisionStay{onCollisionStay}, addUpdate{addUpdate}
 
 {
-    generateHitbox(hitboxShape);
+  hitBox = generateHitbox(hitboxShape);
 }
 
 GameObject::GameObject(Vec2d location, vector<Vec2d> points, ShapeType hitboxShape, function<void (CollisionInfo)> onCollisionEnter,
@@ -30,7 +30,7 @@ GameObject::GameObject(Vec2d location, vector<Vec2d> points, ShapeType hitboxSha
 {
     calcWidth();
     calcHeight();
-    generateHitbox(hitboxShape);
+    hitBox = generateHitbox(hitboxShape);
 }
 
 GameObject::GameObject(const GameObject &other)
@@ -52,30 +52,30 @@ GameObject::GameObject(const GameObject &other)
     collisionStay = other.collisionStay;
 }
 
-void GameObject::generateHitbox(ShapeType hitboxShape)
+CollisionShape* GameObject::generateHitbox(ShapeType hitboxShape)
 {
     switch(hitboxShape){
     case ShapeType::circle:{
         Circle* c = new Circle([this](){return location;}, [this](){return velocity;}, width);
-        hitBox = c;
+        return c;
         break;
     }
     case ShapeType::rectangle: {
         if(points.size()!= 0){
             Rectangle* r = new Rectangle([this](){return location;}, [this](){return velocity;}, points);
-            hitBox = r;
+            return r;
             break;
         }
         else{
             Rectangle* r = new Rectangle([this](){return location;}, [this](){return velocity;}, width, height);
-            hitBox = r;
+            return r;
             break;
         }
     }
     case ShapeType::triangle:{
         if(points.size()!= 0){
             Triangle* t = new Triangle([this](){return location;}, [this](){return velocity;}, points);
-            hitBox = t;
+            return t;
             break;
         }
         else{
@@ -85,7 +85,7 @@ void GameObject::generateHitbox(ShapeType hitboxShape)
     case ShapeType::polygon:{
         if(points.size()!= 0){
             Polygon* p = new Polygon([this](){return location;}, [this](){return velocity;}, points);
-            hitBox = p;
+            return p;
             break;
         }
         else{
@@ -129,39 +129,39 @@ void GameObject::onCollisionStay(CollisionInfo info)
 }
 
 
-Vec2d newLoc(Vec2d velocity, Vec2d lastLoc, CollisionInfo info, int& c){
-    Vec2d retLoc = lastLoc;
+Vec2d newLoc(Vec2d velocity, Vec2d lastLoc, CollisionInfo info, int c){
+//    Vec2d retLoc = lastLoc;
     CollisionInfo randInfo;
-    if(c < 4){
-        info.obj1->location = lastLoc + 0.5*velocity;
-        if(!collides(info.obj1->getHitbox(), info.obj2->getHitbox(), randInfo,0)){
-            c++;
-            retLoc = lastLoc + 0.5*velocity;
-            return newLoc(velocity, retLoc, info, c);
+    CollisionShape* newHB = info.obj1->generateHitbox(info.obj1->getHitbox()->type());
+
+    if(c < 10){
+        newHB->offset = lastLoc+0.5*velocity-info.obj1->location;
+        if(collides(newHB, info.obj2->getHitbox(), randInfo,0)){
+//            retLoc = lastLoc + 0.5*velocity;
+            return newLoc(0.5*velocity, lastLoc, info, c+1);
         }
         else{
-            return retLoc;
+            return lastLoc;
         }
     }
-    else if(c > 3 && c < 7){
-        info.obj1->location = lastLoc - 0.5*velocity;
-        if(!collides(info.obj1->getHitbox(), info.obj2->getHitbox(), randInfo,0)){
-            c++;
-            retLoc = lastLoc + 0.5*velocity;
-            return newLoc(velocity, retLoc, info, c);
+    else if(c < 20){
+        newHB->offset = lastLoc-0.5*velocity-info.obj1->location;
+        if(collides(newHB, info.obj2->getHitbox(), randInfo,0)){
+//            retLoc = lastLoc - 0.5*velocity;
+            return newLoc(0.5*velocity, lastLoc, info, c+1);
         }
         else{
-            return retLoc;
+            return lastLoc;
         }
     }
     else{
-        return retLoc;
+        return lastLoc;
     }
 
 
 }
 
-void GameObject::impulseHandler()
+void GameObject::impulseHandler(mssm::Graphics &g)
 {
     int count = 0;
     bool cols = true;
@@ -175,8 +175,9 @@ void GameObject::impulseHandler()
             Vec2d newY = velocity + newX;
 
             if(dot(normal, velocity) < 0){
-                int c = 0;
-                location = (newLoc(velocity, lastLoc, collisionInfos[i], c));
+                g.cerr << "Impulse ->  LastLoc: " << lastLoc << " ";
+                location = (newLoc(velocity, lastLoc, collisionInfos[i], 0));
+                g.cerr << "  NewLoc: " << location << endl;
                 lastLoc = location;
                 velocity = (newY + elasticity*newX);
                 cols = true;

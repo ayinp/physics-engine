@@ -28,7 +28,7 @@ void ayin::Scene::update(Graphics& g, Camera& c)
 
 
     //look for colisions
-    detectCollisions();
+    detectCollisions(g);
 
     //forces and normals
     for(int i = 0; i < objects.size(); i++){
@@ -45,7 +45,7 @@ void ayin::Scene::update(Graphics& g, Camera& c)
 
 }
 
-void Scene::detectCollisions()
+void Scene::detectCollisions(Graphics &g)
 {
     for(int i = 0; i < objects.size(); i++){
         for(int j = 0; j < objects[i]->collisionInfos.size(); j++){
@@ -53,7 +53,7 @@ void Scene::detectCollisions()
             if(collides(info.obj1->getHitbox(), info.obj2->getHitbox(), info, 2)){
                 info.checkNorm();
                 info.obj1->onCollisionStay(info);
-                info.obj1->impulseHandler();
+                info.obj1->impulseHandler(g);
             }
             else{
                 info.kill();
@@ -82,8 +82,8 @@ void Scene::detectCollisions()
                     info.obj1->onCollisionEnter(info);
                     info.obj2->onCollisionEnter(info2);
 
-                    info.obj1->impulseHandler();
-                    info.obj2->impulseHandler();
+                    info.obj1->impulseHandler(g);
+                    info.obj2->impulseHandler(g);
                 }
             }
         }
