@@ -9,7 +9,7 @@ CollisionShape::CollisionShape(std::function<Vec2d()> locFunc, std::function<Vec
 
 Vec2d CollisionShape::location()
 {
-    return locFunc();
+    return locFunc()+offset;
 }
 
 Vec2d CollisionShape::velocity()

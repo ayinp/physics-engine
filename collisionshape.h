@@ -22,6 +22,8 @@ private:
     std::function<Vec2d()> locFunc;
     std::function<Vec2d()> velFunc;
 public:
+    Vec2d offset = {0,0};
+
     CollisionShape(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc);
     virtual CollisionShape* clone(std::function<Vec2d()> locFunc, std::function<Vec2d()> velFunc) = 0;
     Vec2d location();
