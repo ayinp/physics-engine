@@ -129,26 +129,24 @@ void GameObject::onCollisionStay(CollisionInfo info)
 }
 
 
-Vec2d newLoc(Vec2d velocity, Vec2d lastLoc, CollisionInfo info, int& c){
+Vec2d newLoc(Vec2d velocity, Vec2d lastLoc, CollisionInfo info, int c){
     Vec2d retLoc = lastLoc;
     CollisionInfo randInfo;
-    if(c < 4){
-        info.obj1->location = lastLoc + 0.5*velocity;
-        if(!collides(info.obj1->getHitbox(), info.obj2->getHitbox(), randInfo,0)){
+    if(c < 10){
+        if(!collides(info.obj1->getHitbox(), info.obj2->getHitbox(), randInfo, 0)){
             c++;
             retLoc = lastLoc + 0.5*velocity;
-            return newLoc(velocity, retLoc, info, c);
+            return newLoc(velocity, retLoc, info, c+1);
         }
         else{
             return retLoc;
         }
     }
-    else if(c > 3 && c < 7){
-        info.obj1->location = lastLoc - 0.5*velocity;
+    else if(c < 20){
         if(!collides(info.obj1->getHitbox(), info.obj2->getHitbox(), randInfo,0)){
             c++;
-            retLoc = lastLoc + 0.5*velocity;
-            return newLoc(velocity, retLoc, info, c);
+            retLoc = lastLoc - 0.5*velocity;
+            return newLoc(velocity, retLoc, info, c+1);
         }
         else{
             return retLoc;
@@ -174,10 +172,16 @@ void GameObject::impulseHandler()
             Vec2d newX = normal * (-dotProduct(normal, velocity)/dotProduct(normal, normal));
             Vec2d newY = velocity + newX;
 
-            if(dot(normal, velocity) < 0){
-                int c = 0;
-                location = (newLoc(velocity, lastLoc, collisionInfos[i], c));
+            if(dot(normal.unit(), velocity.unit()) < 0 && dot(normal.unit(), velocity.unit()) > -1){
+                location = (newLoc(velocity, lastLoc, collisionInfos[i], 0));
                 lastLoc = location;
+                velocity = (newY + elasticity*newX);
+                cols = true;
+                if(velocity.magnitude() < 1){
+                    velocity = {0,0};
+                }
+            }
+            else if(dot(normal.unit(), velocity.unit()) == -1){
                 velocity = (newY + elasticity*newX);
                 cols = true;
                 if(velocity.magnitude() < 1){

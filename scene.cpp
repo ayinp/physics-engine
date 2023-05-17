@@ -24,26 +24,33 @@ void ayin::Scene::draw(Camera& c)
 void ayin::Scene::update(Graphics& g, Camera& c)
 {
     //erase dead game objects
-     erase_if(objects, [](const auto& obj){return obj->isDead();});
+    erase_if(objects, [](const auto& obj){return obj->isDead();});
 
-
-    //look for colisions
     detectCollisions();
+
+    processCollision();
 
     //forces and normals
     for(int i = 0; i < objects.size(); i++){
         objects[i]->appliedForce(gravity);
         objects[i]->normalCalcs(g);
     }
-//    for(int i = 0; i < objects.size(); i++){
-//        objects[i]->normalCalcs(g);
-//    }
+    //    for(int i = 0; i < objects.size(); i++){
+    //        objects[i]->normalCalcs(g);
+    //    }
     //update objects
     for(int i = 0; i < objects.size(); i++){
         objects[i]->update(g, c, gravity);
     }
 
 }
+
+void Scene::processCollision(){
+    for(int i = 0; i < objects.size(); i++){
+        objects[i]->impulseHandler();
+    }
+}
+
 
 void Scene::detectCollisions()
 {
@@ -53,7 +60,6 @@ void Scene::detectCollisions()
             if(collides(info.obj1->getHitbox(), info.obj2->getHitbox(), info, 2)){
                 info.checkNorm();
                 info.obj1->onCollisionStay(info);
-                info.obj1->impulseHandler();
             }
             else{
                 info.kill();
@@ -81,9 +87,6 @@ void Scene::detectCollisions()
 
                     info.obj1->onCollisionEnter(info);
                     info.obj2->onCollisionEnter(info2);
-
-                    info.obj1->impulseHandler();
-                    info.obj2->impulseHandler();
                 }
             }
         }
