@@ -188,7 +188,7 @@ void GameObject::impulseHandler(mssm::Graphics &g, CollisionInfo info, bool& col
 
         velocity = VF1;
         info.obj2->velocity = VF2;
-    }
+    }s
 
 
 }
