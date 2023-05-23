@@ -26,9 +26,9 @@ void ayin::Scene::update(Graphics& g, Camera& c)
     //erase dead game objects
     erase_if(objects, [](const auto& obj){return obj->isDead();});
 
-
-    //look for colisions
     detectCollisions(g);
+
+    processCollisions(g);
 
     //forces and normals
     for(int i = 0; i < objects.size(); i++){
@@ -45,18 +45,12 @@ void ayin::Scene::update(Graphics& g, Camera& c)
 
 }
 
-void Scene::processCollision(){
+void Scene::processCollisions(Graphics& g){
     for(int i = 0; i < objects.size(); i++){
-        objects[i]->impulseHandler();
+        objects[i]->impulseHandler(g);
     }
 }
 
-
-void Scene::processCollision(){
-    for(int i = 0; i < objects.size(); i++){
-        objects[i]->impulseHandler();
-    }
-}
 
 
 void Scene::detectCollisions(Graphics &g)

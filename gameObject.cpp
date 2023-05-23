@@ -130,14 +130,14 @@ void GameObject::onCollisionStay(CollisionInfo info)
 
 
 Vec2d newLoc(Vec2d velocity, Vec2d lastLoc, CollisionInfo info, int c){
-//    Vec2d retLoc = lastLoc;
+    Vec2d retLoc = lastLoc;
     CollisionInfo randInfo;
     CollisionShape* newHB = info.obj1->generateHitbox(info.obj1->getHitbox()->type());
 
     if(c < 10){
         newHB->offset = lastLoc+0.5*velocity-info.obj1->location;
         if(collides(newHB, info.obj2->getHitbox(), randInfo,0)){
-//            retLoc = lastLoc + 0.5*velocity;
+            retLoc = lastLoc + 0.5*velocity;
             return newLoc(0.5*velocity, lastLoc, info, c+1);
         }
         else{
@@ -145,10 +145,10 @@ Vec2d newLoc(Vec2d velocity, Vec2d lastLoc, CollisionInfo info, int c){
         }
     }
     else if(c < 20){
-        newHB->offset = lastLoc-0.5*velocity-info.obj1->location;
+        newHB->offset = lastLoc-2*velocity-info.obj1->location;
         if(collides(newHB, info.obj2->getHitbox(), randInfo,0)){
-//            retLoc = lastLoc - 0.5*velocity;
-            return newLoc(0.5*velocity, lastLoc, info, c+1);
+            retLoc = lastLoc - 0.5*velocity;
+            return newLoc(2*velocity, lastLoc, info, c+1);
         }
         else{
             return lastLoc;
