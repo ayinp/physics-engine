@@ -100,35 +100,23 @@ CollisionShape* GameObject::generateHitbox(ShapeType hitboxShape)
 
 void GameObject::onCollisionEnter(CollisionInfo info)
 {
-
     if(collisionEnter){
         collisionEnter(info);
     }
-    else{
-
-    }
-
 }
 
 void GameObject::onCollisionLeave(CollisionInfo info)
 {
-
     if(collisionLeave){
         collisionLeave(info);
     }
-
 }
 
 void GameObject::onCollisionStay(CollisionInfo info)
 {
-    //    affectedByGravity = false;
     if(collisionStay){
         collisionStay(info);
     }
-    else{
-    }
-
-
 }
 
 
@@ -166,7 +154,7 @@ Vec2d newLoc(Vec2d velocity, Vec2d lastLoc, CollisionInfo info, int c){
 
 void GameObject::impulseHandler(mssm::Graphics &g, CollisionInfo info, bool& cols)
 {
-    if(isStatic() ||  info.obj2->isStatic()){
+    if(info.obj2->isStatic()){
         Vec2d normal = -info.getNormal();
         Vec2d newX = normal * (-dotProduct(normal, velocity)/dotProduct(normal, normal));
         Vec2d newY = velocity + newX;
@@ -219,7 +207,7 @@ void GameObject::draw(Camera& c)
     else{
         hitBox->draw(c, RED);
     }
-    //    c.text(Vec2d{10,10}+location, 50, to_string(collisionInfos.size()));
+        c.text(Vec2d{10,10}+location, 50, to_string(collisionInfos.size()));
     for(int i = 0; i < components.size(); i++){
         components[i]->draw(c);
     }
@@ -270,7 +258,7 @@ Vec2d GameObject::momentum()
 CollisionInfo *GameObject::getCollisionInfo(GameObject *him)
 {
     for(int i = 0; i < collisionInfos.size(); i++){
-        if(him == collisionInfos[i].obj1||him == collisionInfos[i].obj2){
+        if(/*him == collisionInfos[i].obj1||*/him == collisionInfos[i].obj2){
             return &collisionInfos[i];
         }
     }

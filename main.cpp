@@ -94,7 +94,7 @@ int main(){
 
         playerInitialization(c, scene0);
 
-        groundInitialization(scene0, Vec2d{g.width()/2, g.height() - 25}, g.width(), 25, ShapeType::rectangle);
+        wallInitialization(scene0, Vec2d{g.width()/2, g.height() - 25}, g.width(), 25, ShapeType::rectangle);
 
         wallInitialization(scene0, Vec2d{0, g.height()/2}, 25, g.height()-25, ShapeType::rectangle);
 

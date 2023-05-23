@@ -83,6 +83,10 @@ add_executable(${PROJECT_NAME} ${ADD_EX_EXTRA}
     dynamicobjectfunctions.cpp
     triangle.h
     triangle.cpp
+    infopair.h
+    infopair.cpp
+    uniqueid.h
+    uniqueid.cpp
 )
 
 #set(CMAKE_THREAD_PREFER_PTHREAD TRUE)

@@ -46,27 +46,57 @@ void ayin::Scene::update(Graphics& g, Camera& c)
 }
 
 void Scene::processCollisions(Graphics& g){
-    for(int i = 0; i < objects.size(); i++){
+    //    for(int i = 0; i < objects.size(); i++){
+    //        int count = 0;
+    //        bool cols = true;
+    //        while(cols){
+    //            count++;
+    //            cols = false;
+    //            for(int j = 0; j < objects[i]->collisionInfos.size(); j++){
+    //                objects[i]->impulseHandler(g, objects[i]->collisionInfos[j], cols);
+    //            }
+    //            if(count > 10){
+    //                break;
+    //            }
+
+
+    //        }
+    //    }
+
+    for(int i = 0; i < infoPairs.size(); i++){
         int count = 0;
         bool cols = true;
         while(cols){
             count++;
             cols = false;
-            for(int j = 0; j < objects[i]->collisionInfos.size(); j++){
-                objects[i]->impulseHandler(g, objects[i]->collisionInfos[j], cols);
+
+            if(!infoPairs[i].info1.obj1->isStatic()){
+                infoPairs[i].info1.obj1->impulseHandler(g, infoPairs[i].info1, cols);
+            }
+            else if(!infoPairs[i].info1.obj2->isStatic()){
+                infoPairs[i].info1.obj2->impulseHandler(g, infoPairs[i].info2, cols);
+            }
+            else{
+                if(!infoPairs[i].info1.obj1->hasTag("wall") && !infoPairs[i].info1.obj2->hasTag("wall") )
+                g.cout<< infoPairs[i].info1.obj1->isStatic() << infoPairs[i].info1.obj2->isStatic() <<endl;
             }
             if(count > 10){
                 break;
             }
-
-
         }
     }
 }
 
-
 void Scene::detectCollisions(Graphics &g)
 {
+    for(int i = 0; i < infoPairs.size(); i++){
+        if(!collides(infoPairs[i].info1.obj1->getHitbox(), infoPairs[i].info1.obj2->getHitbox(), infoPairs[i].info1, 2)){
+            infoPairs[i].kill();
+        }
+
+    }
+
+
     for(int i = 0; i < objects.size(); i++){
         for(int j = 0; j < objects[i]->collisionInfos.size(); j++){
             CollisionInfo &info = objects[i]->collisionInfos[j];
@@ -80,6 +110,8 @@ void Scene::detectCollisions(Graphics &g)
 
         }
     }
+
+
     for(int i = 0; i < objects.size(); i++){
         for(int j = i+1; j < objects.size(); j++){
             //establish an info object
@@ -100,10 +132,13 @@ void Scene::detectCollisions(Graphics &g)
 
                     info.obj1->onCollisionEnter(info);
                     info.obj2->onCollisionEnter(info2);
+
+                    infoPairs.push_back(InfoPair(info, info2, id.newId()));
                 }
             }
         }
     }
+
     for(int i = 0; i < objects.size(); i++){
         erase_if(objects[i]->collisionInfos, [this, i](const auto& info){
             if(info.dead){
@@ -112,6 +147,8 @@ void Scene::detectCollisions(Graphics &g)
             return info.dead;
         });
     }
+
+    erase_if(infoPairs, [this](const auto& ip){return ip.dead;});
 }
 
 std::vector<GameObject*> Scene::whoHasTag(string tag)
