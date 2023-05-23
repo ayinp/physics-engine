@@ -7,5 +7,5 @@ void groundInitialization(ayin::Scene& scene, Vec2d location, vector<Vec2d> poin
 void groundInitialization(ayin::Scene& scene, Vec2d location, double width, double height, ayin::ShapeType shape);
 void wallInitialization(ayin::Scene& scene, Vec2d location, vector<Vec2d> points, ayin::ShapeType shape);
 void wallInitialization(ayin::Scene& scene, Vec2d location, double width, double height, ayin::ShapeType shape);
-void obstacleInitialization(ayin::Scene& scene, Vec2d location, vector<Vec2d> points, ayin::ShapeType shape);
-void obstacleInitialization(ayin::Scene &scene, Vec2d location, double width, double height, ayin::ShapeType shape);
+void staticObstacleInitialization(mssm::Graphics &g, ayin::Scene& scene, Vec2d location, vector<Vec2d> points, ayin::ShapeType shape);
+void staticObstacleInitialization(mssm::Graphics &g, ayin::Scene &scene, Vec2d location, double width, double height, ayin::ShapeType shape);

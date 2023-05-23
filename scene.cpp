@@ -47,10 +47,22 @@ void ayin::Scene::update(Graphics& g, Camera& c)
 
 void Scene::processCollisions(Graphics& g){
     for(int i = 0; i < objects.size(); i++){
-        objects[i]->impulseHandler(g);
+        int count = 0;
+        bool cols = true;
+        while(cols){
+            count++;
+            cols = false;
+            for(int j = 0; j < objects[i]->collisionInfos.size(); j++){
+                objects[i]->impulseHandler(g, objects[i]->collisionInfos[j], cols);
+            }
+            if(count > 10){
+                break;
+            }
+
+
+        }
     }
 }
-
 
 
 void Scene::detectCollisions(Graphics &g)

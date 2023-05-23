@@ -207,7 +207,6 @@ bool collides(Circle *c, Rectangle *r, CollisionInfo& info, double minDistance)
 // Circle Triangle
 bool collides(Circle *c, Triangle *t, CollisionInfo& info, double minDistance)
 {
-    cout<< "WE ARE COLIDING" <<endl;
     Vec2d p1 = t->corners()[0];
     Vec2d p2 = t->corners()[1];
     Vec2d p3 = t->corners()[2];
@@ -335,7 +334,6 @@ bool collides(PolygonShape *s1, PolygonShape *s2, CollisionInfo& info, double mi
     }
     info.setColPoint(sum/counter); // center of polygon made by collision
     info.setNormal(norm.unit());
-    cout<<info.getNormal()<<endl;
     return true;
 }
 

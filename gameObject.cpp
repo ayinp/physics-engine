@@ -11,26 +11,29 @@ using namespace ayin;
 using namespace mssm;
 
 
-GameObject::GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void (CollisionInfo)> onCollisionEnter,
+GameObject::GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, bool isStatic, function<void (CollisionInfo)> onCollisionEnter,
                        function<void (CollisionInfo)> onCollisionLeave, function<void (CollisionInfo)> onCollisionStay,
                        function<void (GameObject *, mssm::Graphics &, Camera &)> addUpdate)
-    :width{width}, height{height}, location{location}, collisionEnter{onCollisionEnter}, collisionLeave{onCollisionLeave},
+    :width{width}, height{height}, location{location}, stat{isStatic}, collisionEnter{onCollisionEnter}, collisionLeave{onCollisionLeave},
       collisionStay{onCollisionStay}, addUpdate{addUpdate}
 
 {
-  hitBox = generateHitbox(hitboxShape);
+    hitBox = generateHitbox(hitboxShape);
+    lastLoc = location;
 }
 
-GameObject::GameObject(Vec2d location, vector<Vec2d> points, ShapeType hitboxShape, function<void (CollisionInfo)> onCollisionEnter,
+GameObject::GameObject(Vec2d location, vector<Vec2d> points, ShapeType hitboxShape, bool isStatic, function<void (CollisionInfo)> onCollisionEnter,
                        function<void (CollisionInfo)> onCollisionLeave, function<void (CollisionInfo)> onCollisionStay,
                        function<void (GameObject*, Graphics& g, Camera& c)> addUpdate)
-    :points{points}, location{location}, collisionEnter{onCollisionEnter}, collisionLeave{onCollisionLeave},
+    :points{points}, location{location}, stat{isStatic}, collisionEnter{onCollisionEnter}, collisionLeave{onCollisionLeave},
       collisionStay{onCollisionStay}, addUpdate{addUpdate}
 
 {
     calcWidth();
     calcHeight();
     hitBox = generateHitbox(hitboxShape);
+    lastLoc = location;
+
 }
 
 GameObject::GameObject(const GameObject &other)
@@ -161,46 +164,42 @@ Vec2d newLoc(Vec2d velocity, Vec2d lastLoc, CollisionInfo info, int c){
 
 }
 
-void GameObject::impulseHandler(mssm::Graphics &g)
+void GameObject::impulseHandler(mssm::Graphics &g, CollisionInfo info, bool& cols)
 {
-    int count = 0;
-    bool cols = true;
-    while(cols){
-        count++;
-        cols = false;
-        for(int i = 0; i < collisionInfos.size(); i++){
-
-            Vec2d normal = -collisionInfos[i].getNormal();
-            Vec2d newX = normal * (-dotProduct(normal, velocity)/dotProduct(normal, normal));
-            Vec2d newY = velocity + newX;
-
-            if(dot(normal, velocity) < 0){
-                g.cerr << "Impulse ->  LastLoc: " << lastLoc << " ";
-                location = (newLoc(velocity, lastLoc, collisionInfos[i], 0));
-                g.cerr << "  NewLoc: " << location << endl;
-                lastLoc = location;
-                velocity = (newY + elasticity*newX);
-                cols = true;
-                if(velocity.magnitude() < 1){
-                    velocity = {0,0};
-                }
+    if(isStatic() ||  info.obj2->isStatic()){
+        Vec2d normal = -info.getNormal();
+        Vec2d newX = normal * (-dotProduct(normal, velocity)/dotProduct(normal, normal));
+        Vec2d newY = velocity + newX;
+        if(dot(normal, velocity) < 0){
+            location = (newLoc(velocity, lastLoc, info, 0));
+            lastLoc = location;
+            velocity = (newY + elasticity*newX)/mass;
+            cols = true;
+            if(velocity.magnitude() < 1){
+                velocity = {0,0};
             }
-            else if(dot(normal.unit(), velocity.unit()) == -1){
-                velocity = (newY + elasticity*newX);
-                cols = true;
-                if(velocity.magnitude() < 1){
-                    velocity = {0,0};
-                }
+        }
+        else if(dot(normal.unit(), velocity.unit()) == -1){
+            velocity = (newY + elasticity*newX);
+            cols = true;
+            if(velocity.magnitude() < 1){
+                velocity = {0,0};
             }
+        }
 
+    }
+    else{
+        double m1 = mass;
+        double m2 = info.obj2->mass;
+        Vec2d VI1 = velocity;
+        Vec2d VI2 = info.obj2->velocity;
+        double totalMass = m1 + m2;
 
-        }
-        if(count == 3){
-            cout << "IM AT 3" << endl;
-        }
-        if(count > 10){
-            break;
-        }
+        Vec2d VA1 = (m1-m2)*VI1/totalMass + (2*m2)*VI2/totalMass;
+        Vec2d VA2 = (2*m1)*VI1/totalMass + (m2-m1)*VI2/totalMass;
+
+        velocity = VA1;
+        info.obj2->velocity = VA2;
     }
 
 
@@ -220,7 +219,7 @@ void GameObject::draw(Camera& c)
     else{
         hitBox->draw(c, RED);
     }
-    c.text(Vec2d{10,10}+location, 50, to_string(collisionInfos.size()));
+    //    c.text(Vec2d{10,10}+location, 50, to_string(collisionInfos.size()));
     for(int i = 0; i < components.size(); i++){
         components[i]->draw(c);
     }
@@ -234,8 +233,6 @@ void GameObject::update(Graphics &g, Camera& c, Vec2d gravity)
         components[i]->update();
     }
     lastLoc = location;
-
-
 
     acceleration = netForce/mass;
     velocity = velocity + acceleration;

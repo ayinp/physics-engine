@@ -14,32 +14,32 @@ private:
     double height;
     double elasticity = 1;
     double mass = 1;
-    double Ck = 0.1;
     bool dead = false;
     vector<string> tags;
     vector<unique_ptr<Component>> components;
     CollisionShape* hitBox;
     Vec2d lastLoc;
+    bool stat;
 
 public:
     bool affectedByGravity = false;
     bool wrapInX = false;
     bool wrapInY = false;
     Vec2d location;
-    Vec2d velocity = {0,0};
-    Vec2d acceleration = {0,0};
-    Vec2d netForce = {0,0};
-    Vec2d movementForce = {0,0};
+    Vec2d velocity;
+    Vec2d acceleration;
+    Vec2d netForce;
+    Vec2d movementForce;
     vector<CollisionInfo> collisionInfos;
     function<void(CollisionInfo)> collisionEnter;
     function<void(CollisionInfo)> collisionLeave;
     function<void(CollisionInfo)> collisionStay;
     function<void(GameObject*, mssm::Graphics& g, Camera& c)> addUpdate;
 public:
-    GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, function<void (CollisionInfo)> onCollisionEnter = nullptr,
+    GameObject(Vec2d location, double width, double height, ShapeType hitboxShape, bool isStatic = false, function<void (CollisionInfo)> onCollisionEnter = nullptr,
                function<void (CollisionInfo)> onCollisionLeave = nullptr, function<void (CollisionInfo)> onCollisionStay = nullptr,
                function<void (GameObject *, mssm::Graphics &, Camera &)> addUpdate = nullptr);
-    GameObject(Vec2d location, vector<Vec2d> points, ShapeType hitboxShape, function<void (CollisionInfo)> onCollisionEnter = nullptr,
+    GameObject(Vec2d location, vector<Vec2d> points, ShapeType hitboxShape, bool isStatic = false, function<void (CollisionInfo)> onCollisionEnter = nullptr,
                            function<void (CollisionInfo)> onCollisionLeave = nullptr, function<void (CollisionInfo)> onCollisionStay = nullptr,
                            function<void (GameObject*, mssm::Graphics& g, Camera& c)> addUpdate = nullptr);
     GameObject(const GameObject& other);
@@ -47,10 +47,11 @@ public:
     void onCollisionEnter(CollisionInfo info);
     void onCollisionLeave(CollisionInfo info);
     void onCollisionStay(CollisionInfo info);
-    void impulseHandler(mssm::Graphics &g);
+    void impulseHandler(mssm::Graphics &g, CollisionInfo info, bool& cols);
     void draw(Camera& c);
     void update(mssm::Graphics& g, Camera &c, Vec2d gravity);
     bool isDead() const {return dead;};
+    bool isStatic() const {return stat;};
     Vec2d momentum();
     void addTag(string tag ){tags.push_back(tag);};
     bool hasTag(string tag){
@@ -75,6 +76,8 @@ public:
     void appliedForce(Vec2d grav);
     void calcWidth();
     void calcHeight();
+    double getMass() const{return mass;};
+
 };
 
 template<typename T>

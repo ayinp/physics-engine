@@ -26,6 +26,6 @@ Vec2d Circle::center()
 
 void Circle::draw(Camera& c, Color color)
 {
-    c.ellipse(location(), rad*2, rad*2, color);
+    c.ellipse(location(), rad*2, rad*2, color, color);
     c.ellipse(center(), 5, 5, RED, RED);
 }
