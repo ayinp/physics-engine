@@ -15,6 +15,7 @@ public:
     InfoPair(CollisionInfo info1, CollisionInfo info2, int id);
     void kill();
     bool isDead(){return dead;};
+    void impulseHandler();
 };
 }
 

@@ -56,10 +56,5 @@ void playerMovement(Graphics& g, GameObject* player){
     else{
         player->movementForce = {0,0};
     }
-//    if(((g.onKeyPress('W')|| g.onKeyPress(Key::Up) || g.onKeyPress(Key::Space))
-//        && player->getComponent<Counter>("jumps")->num < 1)){
 
-//        player->velocity = {player->velocity.x, -10};
-//        player->getComponent<Counter>("jumps")->addCount(1);
-//    }
 }

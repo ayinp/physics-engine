@@ -179,15 +179,15 @@ void GameObject::impulseHandler(mssm::Graphics &g, CollisionInfo info, bool& col
     else{
         double m1 = mass;
         double m2 = info.obj2->mass;
+
         Vec2d VI1 = velocity;
         Vec2d VI2 = info.obj2->velocity;
-        double totalMass = m1 + m2;
 
-        Vec2d VA1 = (m1-m2)*VI1/totalMass + (2*m2)*VI2/totalMass;
-        Vec2d VA2 = (2*m1)*VI1/totalMass + (m2-m1)*VI2/totalMass;
+        Vec2d VF1 = ((m1-m2)/(m1+m2))*VI1 + ((2*m2)/(m1+m2))*VI2;
+        Vec2d VF2 = ((m2-m1)/(m2+m1))*VI2 + ((2*m1)/(m2+m1))*VI1;
 
-        velocity = VA1;
-        info.obj2->velocity = VA2;
+        velocity = VF1;
+        info.obj2->velocity = VF2;
     }
 
 
@@ -212,7 +212,7 @@ void GameObject::draw(Camera& c)
         components[i]->draw(c);
     }
     //    c.ellipse(location, 20, 20, PURPLE, PURPLE);
-    //    c.line(location, location + 100*velocity, PURPLE);
+        c.line(location, location + 100*velocity, PURPLE);
 }
 
 void GameObject::update(Graphics &g, Camera& c, Vec2d gravity)

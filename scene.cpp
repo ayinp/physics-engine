@@ -19,6 +19,7 @@ void ayin::Scene::draw(Camera& c)
     }
 
 
+
 }
 
 void ayin::Scene::update(Graphics& g, Camera& c)
@@ -58,15 +59,13 @@ void Scene::processCollisions(Graphics& g){
     //            if(count > 10){
     //                break;
     //            }
-
-
     //        }
     //    }
-
-    for(int i = 0; i < infoPairs.size(); i++){
-        int count = 0;
-        bool cols = true;
-        while(cols){
+    g.cout<<infoPairs.size()<<endl;
+    int count = 0;
+    bool cols = true;
+    while(cols){
+        for(int i = 0; i < infoPairs.size(); i++){
             count++;
             cols = false;
 
@@ -77,12 +76,15 @@ void Scene::processCollisions(Graphics& g){
                 infoPairs[i].info1.obj2->impulseHandler(g, infoPairs[i].info2, cols);
             }
             else{
-                if(!infoPairs[i].info1.obj1->hasTag("wall") && !infoPairs[i].info1.obj2->hasTag("wall") )
-                g.cout<< infoPairs[i].info1.obj1->isStatic() << infoPairs[i].info1.obj2->isStatic() <<endl;
+                if(!infoPairs[i].info1.obj1->hasTag("wall") && !infoPairs[i].info1.obj2->hasTag("wall") ){
+                    g.cout<< infoPairs[i].info1.obj1->isStatic() << infoPairs[i].info1.obj2->isStatic() <<endl;
+                }
             }
-            if(count > 10){
-                break;
-            }
+
+        }
+        if(count > 10){
+            g.cerr << "BREAK LOOP" << endl;
+            break;
         }
     }
 }
